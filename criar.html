@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crie sua conta</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+     <link rel="stylesheet" href="css/estilos2.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" style="gap: 0; padding: 0;">
+  <img src="imagens/logo1.png" alt="Logo" width="100" height="80" style="margin: 0; padding: 0; display: block;">
+  <span class="fw-bold" style="margin: 0; padding: 0;">SmartCash</span>
+</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Como funciona</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+
+<div class="container my-5 d-flex justify-content-center form-box">
+  <div class="card shadow">
+    <div class="card-body">
+          <div class="stepper d-flex justify-content-center mb-4">
+          <div class="step active">
+            <div class="circle">1</div>
+            <div class="label">
+              <strong>Informações de usuário</strong><br>
+              <small>Preencha seus dados</small>
+            </div>
+          </div>
+          <div class="step">
+            <div class="circle">2</div>
+            <div class="label">
+              <strong>Preencher senha</strong><br>
+              <small>Preencha e confirme senha</small>
+            </div>
+          </div>
+        </div>
+        
+       <h3 class="card-title text-center mb-4">Preencha seus dados pessoais</h3>
+      <form class="row g-2">
+
+        <div class="col-md-12">
+          <label for="nome" class="form-label">Nome completo</label>
+          <input type="text" class="form-control" id="nome" placeholder="Isabella Sofia Machado Coelho" required>
+        </div>
+
+         <div class="col-md-6">
+          <label for="email" class="form-label">E-mail</label>
+          <input type="email" class="form-control" id="email" placeholder="xxxxxxxxxxxxxxx@gmail.com" required>
+        </div>
+
+        <div class="col-md-6">
+          <label for="cpf" class="form-label">CPF</label>
+          <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" required>
+        </div>
+
+        <div class="col-md-6">
+          <label for="nascimento" class="form-label">Data de nascimento</label>
+          <input type="date" class="form-control" id="nascimento">
+        </div>
+
+        
+        <div class="col-md-6">
+          <label for="telefone" class="form-label">Telefone</label>
+          <input type="tel" class="form-control" id="telefone" placeholder="(00) 00000-0000">
+        </div>
+
+        <div class="col-12 mt-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="termos" required>
+            <label class="form-check-label" for="termos">
+              Aceito os <a href="#">termos de uso</a>.
+            </label>
+          </div>
+        </div>
+
+    <div class="col-12 text-center">
+  <input type="submit" value="Próximo" class="btn btn-primary px-5" />
+</div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <p>&copy; 2026 Smartcash. Todos os direitos reservados.</p>
+     <p>Este site foi desenvolvido para fins educativos e pessoais.</p>
+  </div>
+</footer>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>     
+</body>
+</html>

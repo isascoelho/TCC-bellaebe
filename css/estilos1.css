@@ -1,0 +1,267 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+
+ .navbar-brand {
+      gap: 0;
+      padding: 0;
+    }
+
+    .navbar-brand img {
+      margin: 0;
+      padding: 0;
+      display: block;
+    }
+
+    .navbar-brand span {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Espaçamento entre os botões da navbar */
+    .navbar-nav .nav-item {
+      margin-right: 1.5rem;
+    }
+
+    .navbar-nav .nav-item:last-child {
+      margin-right: 0;
+    }
+
+    body{
+        background-color: rgb(196, 210, 255) !important;
+    }
+
+    .navbar-custom {
+    background-color: #0d0a48; /* Roxo escuro, por exemplo */
+    }
+
+    .navbar-custom .nav-link,
+    .navbar-custom .navbar-brand {
+     color: white;
+    }
+
+    .navbar-custom .nav-link:hover {
+    color: #FFD700; /* Dourado no hover, opcional */
+    }
+
+
+    /* LOGIN CARD */
+    .container {
+display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 70px); /* 70px é a altura da sua navbar */
+}
+
+    .card {
+      background-color: white;
+      padding: 40px 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 22px;
+    }
+
+    .underline {
+      width: 200px !important;
+      height: 5px;
+      background-color: #0d0a48;
+      margin-bottom: 20px;
+      border-radius: 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #444;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f2f2f2;
+      font-size: 14px;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .checkbox-container input {
+      margin-right: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background-color: #2d8dbf;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #2277a0;
+    }
+
+    .forgot {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .forgot a {
+      color: #2d8dbf;
+      text-decoration: none;
+    }
+
+    .forgot a:hover {
+      text-decoration: underline;
+    }
+
+    .display-6{
+        text-align: center;
+        color:#0d0a48
+    }
+
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 60px;
+        padding: 60px 40px;
+        flex-wrap: wrap; /* Responsivo */
+        }
+
+        .frase-box {
+        flex: 1;
+        min-width: 250px;
+        }
+
+        .card {
+        flex: 1;
+        min-width: 300px;
+        }
+
+        h5{
+          color:#0d0a48
+        }
+
+        .container.login-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.frase-box {
+  flex: 1 1 300px;
+  text-align: center;
+  color: #1a1a40;
+}
+
+.icone-frase {
+  width: 100px;
+  margin-bottom: 1rem;
+}
+
+.card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  flex: 1 1 300px;
+  max-width: 400px;
+}
+
+.login-wrapper h2 {
+  margin-bottom: 0.5rem;
+}
+
+.underline {
+  width: 50px;
+  height: 3px;
+  background-color: #1a1a40;
+  margin-bottom: 1rem;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: bold;
+}
+
+.forgot {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.forgot a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .container.login-container {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .frase-box,
+  .card {
+    width: 100%;
+  }
+}
+
+.site-footer {
+  background-color: #0d0a48;
+  color: #f0f0f0;
+  padding: 10px 0;
+  text-align: center;
+  font-size: 15px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.site-footer p {
+  margin: 6px 0;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+

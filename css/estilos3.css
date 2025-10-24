@@ -1,0 +1,78 @@
+/* Deixa o menu fixo na esquerda */
+.offcanvas {
+  background-color: #0d0a48 !important;
+  color: white;
+  width: 260px !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1030;
+}
+
+/* Ajusta os links */
+.offcanvas .nav-link,
+.offcanvas .dropdown-item {
+  color: white !important;
+}
+
+.offcanvas .nav-link:hover,
+.offcanvas .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+}
+
+.offcanvas-title {
+  color: white;
+}
+
+.btn-close {
+  filter: invert(1);
+}
+
+/* Move o conteúdo principal para o lado do menu */
+.content {
+  margin-left: 250px; /* mesmo valor da largura do menu */
+  padding: 20px;
+}
+
+body{
+    background-color: rgb(217, 217, 217) !important;;
+}
+
+.offcanvas-title img {
+  width: 60px;        /* largura da imagem */
+  height: 50px;       /* altura da imagem */
+  margin-right: 10px; /* espaço entre a imagem e o texto */
+  vertical-align: middle; /* centraliza verticalmente com o texto */
+}
+
+.offcanvas .nav-link:hover {
+    color: rgb(255, 238, 0) !important; /* texto fica amarelo */
+}
+
+.icon-menu {
+  width: 70px;          /* ícone maior */
+  height: 70px;
+  margin-right: 1px;    /* bem pertinho do texto */
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center; /* alinha verticalmente */
+  gap: 0;              /* remove o espaço entre itens */
+  color: white;
+  font-size: 18px;
+  text-decoration: none;
+  padding: 0 !important; /* remove padding do link */
+  margin: 0 !important;  /* remove margens internas do link */
+}
+
+.nav-link * {
+  margin: 0;  /* zera margens de todos os elementos dentro do link */
+  padding: 0; /* zera padding interno de todos os elementos dentro do link */
+}
+
+.nav-item {
+  margin: 0 !important;   /* remove margem entre os itens do menu */
+  padding: 0 !important;  /* remove padding interno dos itens */
+}
