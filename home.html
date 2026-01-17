@@ -52,8 +52,91 @@
     </a>
   </li>
 </ul>
+
+ <div class="user-box">
+  <img id="userFoto" src="imagens/card4.png" alt="Usuário">
+  <div class="user-info">
+    <strong id="userNome">Isabella</strong>
+    <small id="userEmail">Isascoelhok@gmail.com</small>
   </div>
 </div>
 
+  </div>
+</div>
+
+ <div class="content">
+  <h2 class="mb-4">Início</h2>
+  <div class="dashboard-cards">
+  
+  <!-- Card Saldo -->
+  <div class="card-dashboard card-saldo">
+    <div class="icon-circle icon-saldo">
+      💰
+    </div>
+    <div class="card-content">
+      <span class="card-label">Saldo</span>
+      <strong class="card-value">R$ 2.490,00</strong>
+    </div>
+  </div>
+
+  <!-- Card Última Receita -->
+  <div class="card-dashboard card-light">
+    <div class="icon-circle">
+      📈
+    </div>
+    <div class="card-content">
+      <span class="card-label">Última receita</span>
+      <strong class="card-value dark">R$ 50,00</strong>
+    </div>
+  </div>
+
+  <!-- Card Última Despesa -->
+  <div class="card-dashboard card-light">
+    <div class="icon-circle">
+      💸
+    </div>
+    <div class="card-content">
+      <span class="card-label">Última despesa</span>
+      <strong class="card-value dark">R$ 10,00</strong>
+    </div>
+  </div>
+
+</div>
+</div> 
+
+
+
+
+<script>
+const userId = localStorage.getItem("userId");
+
+// proteção
+if (!userId) {
+  window.location.href = "comece.html";
+}
+
+// busca dados do usuário
+fetch(`/me/${userId}`)
+  .then(res => res.json())
+  .then(user => {
+    if (!user) return;
+
+    // nome e email
+    document.getElementById("userNome").innerText = user.nome;
+    document.getElementById("userEmail").innerText = user.email;
+
+    // FOTO — sempre redefinir
+    const img = document.getElementById("userFoto");
+    const fotoPadrao = "imagens/avatar.png";
+
+    img.src = ""; // limpa qualquer imagem anterior
+
+    if (user.foto && user.foto.trim() !== "") {
+      img.src = user.foto;
+    } else {
+      img.src = fotoPadrao;
+    }
+  });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>     
 </body>

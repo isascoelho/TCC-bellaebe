@@ -1,6 +1,14 @@
 @charset "UTF-8";
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
 
+
+
+:root{
+  --brand: #0d0a48;
+  --bg: rgb(215, 224, 251);
+  --gold: #FFD700;
+  --text: #0b1740;
+}
  .navbar-brand {
       gap: 0;
       padding: 0;
@@ -45,7 +53,7 @@
 
 
     /* LOGIN CARD */
-    .container {
+    .container.login-container {
 display: flex;
   justify-content: center;
   align-items: center;
@@ -246,22 +254,35 @@ button {
   }
 }
 
-.site-footer {
-  background-color: #0d0a48;
-  color: #f0f0f0;
-  padding: 10px 0;
+.site-footer{
+  background-color: var(--brand);
+  color: #fff;
+  padding: 48px 0 42px;
   text-align: center;
-  font-size: 15px;
-  font-family: "Segoe UI", sans-serif;
 }
 
-.site-footer p {
-  margin: 6px 0;
+.footer-inner{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
 }
 
-.footer-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+.footer-brand{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
 }
 
+.footer-pill{
+  font-size: 13px;
+  color: rgba(255,255,255,.75);
+  margin: 4px 0 6px;
+}
+
+.footer-copy{
+  font-size: 13px;
+  color: rgba(255,255,255,.70);
+  line-height: 1.6;
+}

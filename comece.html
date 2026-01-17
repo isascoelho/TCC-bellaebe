@@ -19,7 +19,7 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Como funciona</a>
+          <a class="nav-link active" aria-current="page" href="index.html">Página principal</a>
         </li>
       </ul>
     </div>
@@ -37,7 +37,7 @@
     <div class="login-wrapper">
       <h2>Faça o seu login</h2>
       <div class="underline"></div>
-      <form action="#" method="POST">
+      <form id="loginForm"action="#" method="POST">
         <label for="email" placeholder="Smartcash@gmail.com">Seu e-mail*</label>
         <input type="email" id="email" name="email" required>
    
@@ -52,13 +52,53 @@
     </div>
   </div>
 </div>
-<footer class="site-footer">
-  <div class="footer-container">
-    <p>&copy; 2026 Smartcash. Todos os direitos reservados.</p>
-     <p>Este site foi desenvolvido para fins educativos e pessoais.</p>
-  </div>
-</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>     
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="imagens/logo1.png" alt="Logo SmartCash" width="90" height="70">
+        <span class="fw-bold">SmartCash</span>
+      </div>
+
+      <p class="footer-pill">Simples • Seguro • Educativo</p>    
+
+      <div class="footer-copy">
+        <p>&copy; 2026 SmartCash. Todos os direitos reservados.</p>
+        <p>Este site foi desenvolvido para fins educativos e pessoais.</p>
+      </div>
+    </div>
+  </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>  
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
+
+  fetch("/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, senha })
+  })
+  .then(res => res.json())
+  .then(user => {
+    if (user.error) {
+      alert(user.error);
+      return;
+    }
+
+    // 🔐 guarda quem está logado
+    localStorage.setItem("userId", user.id);
+
+    // 👉 vai para HOME
+    window.location.href = "home.html";
+  });
+});
+</script>
+
 </body>
 </html>
