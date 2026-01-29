@@ -22,7 +22,7 @@
 .offcanvas-body {
   display: flex;
   flex-direction: column;
-  height: 10%;
+  height: 100%;
 }
 .offcanvas-title {
   color: white;
@@ -36,11 +36,13 @@
 .content {
   margin-left: 260px; /* mesmo valor da largura do menu */
   padding: 20px;
+    position: relative; 
 }
 
 body{
     background-color: rgb(233, 231, 231) !important;
     margin-left: 20px;
+     overflow-y: auto !important;
 }
 
 .offcanvas-title img {
@@ -160,27 +162,34 @@ body{
 
 /* Cards claros */
 .card-light {
-  background-color: #bababa;
+  background-color: #d1d1d1;
   color: #0d0a48;
 }
 
-/* Ícone circular */
 .icon-circle {
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background-color: #0d0a48;
-  color: #ffd600;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+}
+
+.icon-circle img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 /* Ícone especial do saldo */
 .icon-saldo {
   background-color: #ffd600;
   color: #0d0a48;
+}
+
+.icon-saldo2 {
+  background-color: #0d0a48;
+  color: #ffd600 !important;
 }
 
 /* Texto */
@@ -208,4 +217,207 @@ body{
   .dashboard-cards {
     flex-direction: column;
   }
+}
+
+.grafico-container {
+  padding: 24px;
+  height: 400px; /* 👈 ESSENCIAL */
+   width: 70%;
+  margin-right: auto;
+ 
+}
+
+#graficoSemanal {
+  width: 100%;
+  height: 100%;
+}
+
+.grafico-container h3 {
+  margin-bottom: 16px; /* ajuste: 12px, 20px, etc */
+}
+
+.grafico-wrapper {
+  display: flex;
+  align-items: flex-start;;
+  gap: 32px;
+}
+
+
+.grafico-legenda {
+  width: 24.5%;       /* legenda à direita */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 270px;
+}
+
+.legenda-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* quadradinhos */
+.legenda-cor {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+/* cores */
+.legenda-cor.alto {
+  background-color: #FFD43B; /* amarelo forte */
+}
+
+.legenda-cor.moderado {
+  background-color: #FFE58A; /* amarelo claro */
+}
+
+.legenda-cor.baixo {
+  background-color: #D3D3D3; /* cinza */
+}
+
+.atividades-card {
+  width: 250px !important;
+  background: #e5e5e5;
+  border-radius: 24px;
+  padding: 20px;
+  border: 3px solid #0d0a48;
+    position: absolute;
+  top: 120px;     /* distância do topo */
+  right: 80px;   /* distância da direita */
+  width: 260px;
+  
+}
+
+.atividades-card h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0d0a48;
+  margin-bottom: 16px;
+}
+
+.bolhas-container {
+  position: relative;
+  width: 100%;
+  height: 260px;   /* 👈 maior que antes */
+}
+
+/* bolha base */
+.bolha {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 700;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+
+/* tamanhos */
+.bolha-grande {
+  width: 100px;   /* Farmácia menor */
+  height: 100px;
+ 
+}
+
+.bolha-media {
+  width: 90px;    /* Pix */
+  height: 90px;
+  
+}
+
+.bolha-pequena {
+  width: 80px;    /* Uber */
+  height: 80px;
+  
+}
+
+/* cores */
+.bolha-despesa {
+  background: #FFD43B;
+  color: #0d0a48;
+}
+
+.bolha-receita {
+  background: #0d0a48;
+  color: #fff;
+}
+
+.sem-atividades {
+  display: block;
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #7a7a7a;
+  opacity: 0.8;
+}
+
+.bolha span {
+  font-size: 13px;
+}
+
+.bolha strong {
+  font-size: 14px;
+}
+
+/* cores individuais das bolhas */
+.bolha-1 {
+  background-color: #FFD43B; /* amarelo forte */
+  color: #0d0a48;
+}
+
+.bolha-2 {
+  background-color: #0d0a48; /* azul escuro */
+  color: #ffffff;
+}
+
+.bolha-3 {
+  background-color: #FFE58A; /* amarelo claro */
+  color: #0d0a48;
+}
+
+
+.atividades-subtitulo {
+  display: block;
+  font-size: 13px;
+  color: #6b6b6b;
+  margin-top: -8px;
+  margin-bottom: 12px;
+}
+
+@keyframes surgirBolha {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.bolha {
+  animation: surgirBolha 0.4s ease-out forwards;
+}
+
+.nav-link.active {
+  position: relative;
+  color: #FFD43B !important;
+  background-color: rgba(255, 212, 59, 0.08);
+  border-radius: 8px;
+}
+
+.nav-link.active::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 10%;
+  width: 4px;
+  height: 80%;
+  background-color: #FFD43B;
+  border-radius: 4px;
 }
