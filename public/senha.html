@@ -104,27 +104,28 @@ document.getElementById("senhaForm").addEventListener("submit", function(e) {
     return;
   }
 
-  fetch("/cadastro", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      ...dadosUsuario,
-      senha: senha
-    })
+fetch("/cadastro", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    ...dadosUsuario,
+    email: dadosUsuario.email.trim(),
+    senha: senha.trim()
   })
-  .then(res => res.json())
-  .then(resp => {
-    if (resp.error) {
-      msg.innerText = resp.error;
-    } else {
-      localStorage.removeItem("dadosCadastro");
-      alert("Cadastro realizado com sucesso!");
-      window.location.href = "index.html";
-    }
-  })
-  .catch(() => {
-    msg.innerText = "Erro ao finalizar cadastro";
-  });
+})
+.then(res => {
+  if (!res.ok) throw new Error("Erro HTTP " + res.status);
+  return res.json();
+})
+.then(resp => {
+  localStorage.removeItem("dadosCadastro");
+  alert("Cadastro realizado com sucesso!");
+  window.location.href = "index.html";
+})
+.catch(err => {
+  msg.innerText = "Erro ao finalizar cadastro";
+  console.error(err);
+});
 });
 </script>
 

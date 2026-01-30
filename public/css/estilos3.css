@@ -3,8 +3,22 @@
   background-color: #0d0a48 !important;
   color: white;
   width: 260px !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 1030;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
+  transform: none !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  position: fixed !important;
+  inset: 0 auto 0 0 !important; /* só ocupa a lateral esquerda */
+  width: 260px !important;
+  height: 100vh !important;
+  overflow: visible !important;
+}
+.offcanvas * {
+  pointer-events: auto;
 }
 
 /* Ajusta os links */
@@ -23,9 +37,37 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+    pointer-events: auto;
 }
 .offcanvas-title {
   color: white;
+}
+
+.offcanvas-backdrop {
+  display: none !important;
+}
+
+/* 🚫 Impede o offcanvas de capturar cliques fora da barra */
+.offcanvas::before,
+.offcanvas::after {
+  pointer-events: none !important;
+   display: none !important;
+  content: none !important;
+}
+
+body,
+.content,
+.content * {
+  pointer-events: auto !important;
+}
+.offcanvas:not(.offcanvas-start) {
+  pointer-events: none;
+}
+
+/* 🔓 Libera interação total no conteúdo */
+.content,
+.content * {
+  pointer-events: auto;
 }
 
 .btn-close {
@@ -131,6 +173,7 @@ body{
 .content {
   padding: 32px 40px;         /* espaçamento geral */
   padding-left: 28px;    /* espaço extra da navbar */
+   pointer-events: auto;
 }
 
 
@@ -420,4 +463,303 @@ body{
   height: 80%;
   background-color: #FFD43B;
   border-radius: 4px;
+}
+
+/* =========================
+   PÁGINA GERENCIAR RECEITAS
+========================= */
+
+.pagina-receitas h2 {
+  margin-bottom: 8px;
+}
+
+.pagina-receitas .subtitle {
+  color: #6b6b6b;
+  margin-bottom: 24px;
+}
+.pagina-receitas {
+  max-width: 1100px;
+}
+
+
+
+/* FORMULÁRIO */
+.receitas-form {
+  background: #dddddd;
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 32px;
+  margin-top: 10px;
+}
+
+.receitas-form,
+.receitas-tabela,
+.receita-resumo {
+  position: relative;
+  z-index: 10;
+}
+.receitas-form h3 {
+  margin-bottom: 16px;
+  color: #0d0a48;
+}
+
+.receitas-form .grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.receitas-form input,
+.receitas-form select {
+    height: 52px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+
+}
+
+
+.receitas-form input:focus,
+.receitas-form select:focus {
+  outline: none;
+  border-color: #ffd43b;
+  box-shadow: 0 0 0 3px rgba(255, 212, 59, 0.25);
+}
+
+
+
+/* TABELA */
+.receitas-tabela {
+ background: #dddddd;
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);}
+
+  .tabela-header {
+  margin-bottom: 20px;
+}
+
+.tabela-header h3 {
+  margin: 0;
+  color: #0d0a48;
+}
+
+.tabela-subtitle {
+  font-size: 14px;
+  color: #777;
+}
+
+.receitas-tabela table {
+   width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px; /* espaço entre linhas */
+}
+
+.receitas-tabela thead th {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #444343;
+  padding-bottom: 10px;
+}
+.receitas-tabela th {
+  text-align: left;
+  color: #0d0a48;
+  padding-bottom: 12px;
+}
+
+.receitas-tabela tbody tr {
+  background: transparent;
+  border-radius: 14px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.receitas-tabela tbody tr:hover {
+  background: #c0bdbd;
+  transform: scale(1.01);
+}
+
+.receitas-tabela td {
+.receitas-tabela td {
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #0d0a48;
+}
+}
+.tag.categoria {
+  background: rgba(255, 212, 59, 0.25);
+  color: #0d0a48;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.valor.positivo {
+  font-weight: 700;
+  color: #0d0a48;
+}
+
+.receitas-tabela table tbody tr td {
+  background: transparent;
+  border-top: none;
+}
+
+
+/* ===== AÇÕES DA TABELA ===== */
+td.acoes {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+button.acao {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+/* editar */
+button.acao.editar:hover {
+  background: rgba(255, 212, 59, 0.25);
+}
+
+/* excluir */
+button.acao.excluir:hover {
+  background: rgba(255, 107, 107, 0.25);
+}
+.tabela-vazia {
+  margin-top: 40px;
+  text-align: center;
+  color: #888;
+}
+
+.tabela-vazia span {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.tabela-vazia p {
+  font-size: 15px;
+}
+.tag.periodo {
+  background: rgba(13, 10, 72, 0.1);
+  color: #0d0a48;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.descricao {
+  color: #555;
+  font-size: 14px;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.receitas-tabela thead th:nth-child(4),
+.receitas-tabela td:nth-child(4) {
+  width: 240px;
+}
+
+
+.receita-coluna {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 55%;
+}
+
+/* container dos cards de receita */
+.receita-resumo {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+   max-width: 1000px; 
+   margin-top: 20px;
+}
+
+/* cards específicos da página de receita */
+.receita-card {
+  flex: 1;
+  border-radius: 28px;
+  padding: 28px;
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+}
+.receita-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}
+
+
+/* amarelo */
+.receita-card.amarelo {
+  background-color: #ffd53b98;
+  color: #0d0a48;
+}
+
+/* azul */
+.receita-card.azul {
+  background-color: #0d0a48;
+  color: #ffffff;
+}
+
+/* texto */
+.receita-card span {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.receita-card strong {
+  font-size: 30px;
+  margin-top: 6px;
+}
+
+
+@media (max-width: 900px) {
+  .receita-resumo {
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .receita-card {
+    min-width: 100%;
+  }
+}
+
+
+.btnSalvarReceita {
+  margin-top: 24px;
+  width: 180px;
+  height: 46px;
+  background: linear-gradient(180deg, #ffd43b, #ffcc00);
+  color: #0d0a48;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(255, 212, 59, 0.5);
+  transition: all 0.2s ease;
+}
+
+.btnSalvarReceita:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 2px rgba(236, 223, 177, 0.65);
 }

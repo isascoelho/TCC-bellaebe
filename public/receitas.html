@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+    <title>Página principal</title>
+     <link rel="stylesheet" href="css/estilos3.css">
+
+</head>
+
+<body>
+<!-- Menu lateral fixo -->
+<div class="offcanvas offcanvas-start show" id="offcanvasNavbar"  data-bs-backdrop="false"
+  data-bs-scroll="true">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasNavbarLabel"> <img src="imagens/logo1.png">SmartCash</h5>
+    <!-- Se quiser pode remover o botão de fechar -->
+    <!-- <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
+  </div>
+  <div class="offcanvas-body">
+ <ul class="navbar-nav flex-grow-1">
+  <p>Menu</p>
+
+  <li class="nav-item">
+    <a class="nav-link" aria-current="page" href="home.html">
+      <img src="imagens/logohome.png" class="icon-menu"> Início
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="#">
+      <img src="imagens/logoreceita.png" class="icon-menu"> Gerenciar receitas
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="despesas.html">
+      <img src="imagens/logodespesa.png" class="icon-menu"> Gerenciar despesas
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">
+      <img src="imagens/logoagenda.png" class="icon-menu"> Agenda
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">
+      <img src="imagens/logografico.png" class="icon-menu"> Gráficos
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">
+      <img src="imagens/logoconfig.png" class="icon-menu"> Configurações
+    </a>
+  </li>
+</ul>
+
+ <div class="user-box">
+  <img id="userFoto" src="imagens/avatar.png" alt="Foto do usuário">
+  <div class="user-info">
+    <strong id="userNome">Usuário</strong>
+<small id="userEmail"></small>
+  </div>
+</div>
+
+  </div>
+</div>
+    <div class="content pagina-receitas"> 
+
+
+       <h2 class="mb-4">Gerenciar receitas</h2>
+     <p class="subtitle">Acompanhe e registre todas as entradas de dinheiro</p>
+     
+<div class="receita-resumo">
+ <div class="receita-card amarelo">
+  <span>Total no mês</span>
+  <strong id="totalMes">R$ 0,00</strong>
+</div>
+
+<div class="receita-card azul">
+  <span>Última receita</span>
+  <strong id="ultimaReceita">—</strong>
+</div>
+</div>
+
+  <!-- ===== FORMULÁRIO ===== -->
+ 
+<div class="receitas-form">
+  <h3>Nova receita</h3>
+
+  <div class="grid">
+    <!-- Valor -->
+    <input
+      type="number"
+      step="0.01"
+      placeholder="Valor (R$)"
+      id="valor"
+      required
+    />
+
+    <!-- Data -->
+    <input
+      type="date"
+      id="data"
+      required
+    />
+
+    <!-- Categoria (digitável) -->
+    <input
+      type="text"
+      placeholder="Categoria (ex: Salário, Pix, Extra)"
+      id="categoria"
+      required
+    />
+
+    <!-- Banco (digitável) -->
+    <input
+      type="text"
+      placeholder="Banco (ex: Nubank, Caixa)"
+      id="banco"
+      required
+    />
+
+    <!-- Descrição -->
+    <input
+      type="text"
+      placeholder="Descrição (opcional)"
+      id="descricao"
+    />
+
+
+  <select id="periodicidade"> 
+    <option value="">Periodicidade</option>
+     <option>Única</option>
+     <option>Semanal</option>
+      <option>Mensal</option> 
+      <option>Anual</option>
+     </select>
+     <button id="btnSalvarReceita" class="btnSalvarReceita" type="button">Salvar receita</button>
+
+  </div>
+  </div>
+  
+
+
+<!-- ===== TABELA ===== -->
+<!-- ===== TABELA ===== -->
+<div class="receitas-tabela">
+  <div class="tabela-header">
+    <h3>Receitas cadastradas</h3>
+    <span class="tabela-subtitle">Histórico das entradas registradas</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Categoria</th>
+        <th>Banco</th>
+        <th>Descrição</th>
+        <th>Período</th>
+        <th>Valor</th>
+        <th></th>
+      </tr>
+    </thead>
+
+      <tbody id="lista-receitas">
+      <!-- JS VAI INJETAR AQUI -->
+    </tbody>
+
+   
+  </table>
+
+  <!-- Estado vazio -->
+
+
+
+  
+</div>
+
+</div>
+
+<script src="/js/receitas.js"></script>
+<script src="/js/navbar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script> 
+</body>
