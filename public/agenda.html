@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Agenda | SmartCash</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="css/estilos3.css" />
+</head>
+
+<body>
+
+<!-- =========================
+     NAVBAR LATERAL
+========================= -->
+<div class="offcanvas offcanvas-start show" id="offcanvasNavbar"
+     data-bs-backdrop="false" data-bs-scroll="true">
+
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">
+      <img src="imagens/logo1.png" /> SmartCash
+    </h5>
+  </div>
+
+  <div class="offcanvas-body">
+
+    <ul class="navbar-nav flex-grow-1">
+      <p>Menu</p>
+
+      <li class="nav-item">
+        <a class="nav-link" href="home.html">
+          <img src="imagens/logohome.png" class="icon-menu" /> Início
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="receitas.html">
+          <img src="imagens/logoreceita.png" class="icon-menu" /> Gerenciar receitas
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="despesas.html">
+          <img src="imagens/logodespesa.png" class="icon-menu" /> Gerenciar despesas
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link active" href="agenda.html">
+          <img src="imagens/logoagenda.png" class="icon-menu" /> Agenda
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="graficos.html">
+          <img src="imagens/logografico.png" class="icon-menu" /> Gráficos
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="configuracoes.html">
+          <img src="imagens/logoconfig.png" class="icon-menu" /> Configurações
+        </a>
+      </li>
+    </ul>
+
+    <div class="user-box">
+      <img id="userFoto" src="imagens/avatar.png" />
+      <div class="user-info">
+        <strong id="userNome">Usuário</strong>
+        <small id="userEmail"></small>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- =========================
+     CONTEÚDO PRINCIPAL
+========================= -->
+<div class="content pagina-agenda">
+
+  <h2>Agenda</h2>
+  <p class="subtitle">
+    Planeje seus objetivos financeiros e acompanhe sua evolução
+  </p>
+
+  <!-- ===== CARDS ===== -->
+<div class="agenda-cards">
+
+  <!-- 1. Orçamento do mês -->
+  <div class="agenda-card limite">
+    <span class="card-label">Saldo disponível do mês</span>
+    <strong class="card-valor" id="cardSaldo">—</strong>
+  </div>
+
+  <!-- 2. Valor planejado -->
+  <div class="agenda-card planejado">
+    <span class="card-label">Valor planejado</span>
+
+    <strong class="card-valor" id="cardPlanejado">—</strong>
+
+    <input
+      type="number"
+      step="0.01"
+      id="inputPlanejado"
+      placeholder="Definir valor"
+      class="agenda-input"
+    />
+  </div>
+
+  <!-- 3. Total gasto planejado -->
+  <div class="agenda-card gasto">
+    <span class="card-label">Somátorio dos planejamentos</span>
+    <strong class="card-valor" id="cardGastoPlanejado">—</strong>
+  </div>
+
+  <!-- 4. Planejamentos ativos -->
+  <div class="agenda-card ativos">
+    <span class="card-label">Planejamentos ativos</span>
+    <strong class="card-valor" id="cardAtivos">—</strong>
+  </div>
+
+</div>
+
+<input
+  type="text"
+  id="buscarPlanejamento"
+  placeholder="Pesquisar por objetivo..."
+  class="agenda-busca"
+/>
+
+  <!-- ===== TABELA DE PLANEJAMENTOS ===== -->
+  <div class="agenda-tabela">
+
+  <h3>Planejamentos ativos</h3>
+  <p class="subtitulo">Acompanhe seus objetivos em andamento</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Objetivo</th>
+        <th>Início</th>
+        <th>Previsão</th>
+        <th>Limite</th>
+        <th>Gasto</th>
+        <th>Status</th>
+        <th>Ações</th>
+        
+      </tr>
+    </thead>
+
+    <tbody id="lista-planejamentos">
+      <tr>
+        <td colspan="6">Nenhum planejamento cadastrado</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+<br>
+
+  <!-- ===== NOVO PLANEJAMENTO ===== -->
+<div class="receitas-form agenda-form">
+
+  <h3>Novo planejamento</h3>
+
+  <div class="grid">
+
+    <div class="campo">
+      <label for="objetivo">Objetivo</label>
+      <input type="text" id="objetivo" placeholder="(ex: comprar um celular)" />
+    </div>
+
+    <div class="campo">
+      <label for="dataInicial">Data inicial</label>
+      <input type="date" id="dataInicial" />
+    </div>
+
+    <div class="campo">
+      <label for="dataFinal">Data prevista para o final</label>
+      <input type="date" id="dataFinal" />
+    </div>
+
+    <div class="campo">
+      <label for="valorLimite">Valor limite</label>
+      <input type="number" step="0.01" id="valorLimite" placeholder="(ex: R$1500,00)"/>
+    </div>
+
+<div class="campo">
+  <label for="valorGasto">
+    Valor gasto até agora <small>(opcional)</small>
+  </label>
+  <input type="number" step="0.01" id="valorGasto"  placeholder="(ex: R$1400,00)" />
+</div>
+
+    <div class="campo campo-full">
+      <label for="observacoes">Observações</label>
+      <input type="text" id="observacoes" placeholder="(ex: comprar até segunda)" />
+    </div>
+
+    <button class="btnSalvarPlanejamento"  id="btnSalvarPlanejamento" type="button">
+      Salvar planejamento
+    </button>
+
+  </div>
+
+</div>
+
+</div>
+
+<script src="js/navbar.js"></script>
+<script src="js/agenda.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

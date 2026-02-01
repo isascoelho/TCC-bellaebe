@@ -763,3 +763,498 @@ button.acao.excluir:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 2px rgba(236, 223, 177, 0.65);
 }
+
+/* =========================
+   TABELA RESUMO DO MÊS
+========================= */
+
+.tabela-resumo-mes {
+  background: #dddddd;
+  border-radius: 28px;
+  padding: 28px;
+  margin-top: 32px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+}
+
+.tabela-resumo-header {
+  margin-bottom: 20px;
+}
+
+.tabela-resumo-header h3 {
+  margin: 0;
+  color: #0d0a48;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.periodo-info {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: #7a7a7a;
+}
+
+/* tabela */
+.tabela-resumo {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+}
+
+.tabela-resumo thead th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #444343;
+  padding-bottom: 10px;
+  text-align: left;
+}
+
+/* linha */
+.tabela-resumo tbody tr {
+  background: #d6d6d6;
+  border-radius: 14px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.tabela-resumo tbody tr:hover {
+  background: #0d0a48;
+  transform: scale(1.01);
+}
+
+.tabela-resumo tbody tr:hover td {
+  color: #eaeaea;
+}
+
+/* células */
+.tabela-resumo td {
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #646464;
+  transition: color 0.2s ease;
+}
+
+/* hierarquia */
+.tabela-resumo td:first-child {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0d0a48;
+}
+
+.tabela-resumo td:last-child {
+  font-weight: 700;
+}
+
+/* estados */
+.resumo-info {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #7a7a7a;
+}
+
+.resumo-update {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #8a8a8a;
+}
+
+/* feedback */
+.atualizado {
+  animation: atualizarValor 0.4s ease;
+}
+
+@keyframes atualizarValor {
+  from {
+    color: #ffd43b;
+  }
+  to {
+    color: inherit;
+  }
+}
+
+/*AGENDA*/ 
+
+/*cards*/
+
+/* =========================
+   AGENDA — CARDS
+========================= */
+
+.agenda-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin: 24px 0 36px;
+}
+
+/* card base */
+.agenda-card {
+  border-radius: 24px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 140px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.agenda-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
+
+/* label */
+.agenda-card .card-label {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+/* valor */
+.agenda-card .card-valor {
+  font-size: 26px;
+  font-weight: 800;
+}
+
+/* =========================
+   VARIAÇÕES DE COR
+========================= */
+
+/* 1️⃣ Orçamento do mês (AZUL ESCURO) */
+.agenda-card.limite {
+  background: linear-gradient(180deg, #0d0a48, #0b083b);
+  color: #ffffff;
+}
+
+/* 2️⃣ Valor planejado (AMARELO) */
+.agenda-card.planejado {
+  background: linear-gradient(180deg, #ffd43b, #ffcc00);
+  color: #0d0a48;
+}
+
+/* 3️⃣ Gastos planejados (CINZA CLARO) */
+.agenda-card.gasto {
+  background: #d1d1d1;
+  color: #0d0a48;
+}
+
+/* 4️⃣ Planejamentos ativos (AZUL CLARO) */
+.agenda-card.ativos {
+  background: rgba(13, 10, 72, 0.15);
+  color: #0d0a48;
+}
+
+/* =========================
+   INPUT DO CARD PLANEJADO
+========================= */
+
+.agenda-input {
+  margin-top: auto;
+  height: 42px;
+  border-radius: 14px;
+  border: none;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  background: #ffffff;
+  color: #0d0a48;
+  box-shadow: inset 0 0 0 2px rgba(13,10,72,0.15);
+  transition: box-shadow 0.2s ease;
+}
+
+.agenda-input:focus {
+  box-shadow: inset 0 0 0 3px rgba(13,10,72,0.35);
+}
+
+/* =========================
+   ESTADOS VISUAIS (FUTURO JS)
+========================= */
+
+.card-valor.alerta {
+  color: #b8860b;
+}
+
+.card-valor.negativo {
+  color: #dc3545;
+}
+
+.card-valor.positivo {
+  color: #198754;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media (max-width: 768px) {
+  .agenda-card {
+    padding: 18px 20px;
+  }
+
+  .agenda-card .card-valor {
+    font-size: 22px;
+  }
+}
+
+
+/*tabela agenda*/
+.agenda-tabela {
+  background: #dddddd;
+  border-radius: 28px;
+  padding: 28px;
+  margin-top: 32px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+}
+
+/* header */
+.agenda-tabela-header {
+  margin-bottom: 20px;
+}
+
+.agenda-tabela-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0d0a48;
+}
+
+.agenda-tabela-subtitle {
+  font-size: 14px;
+  color: #777;
+}
+
+/* tabela base */
+.agenda-tabela table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+}
+
+/* cabeçalho */
+.agenda-tabela thead th {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #444343;
+  padding-bottom: 10px;
+  text-align: left;
+}
+
+/* linhas */
+.agenda-tabela tbody tr {
+  background: #d1d1d1;
+  border-radius: 16px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.agenda-tabela tbody tr:hover {
+  background: #c0bdbd;
+  transform: scale(1.01);
+}
+
+/* células */
+.agenda-tabela td {
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #0d0a48;
+  vertical-align: middle;
+}
+
+/* status */
+.agenda-status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* variações de status */
+.agenda-status.ativo {
+  background: rgba(25, 135, 84, 0.2);
+  color: #198754;
+}
+
+.agenda-status.estourado {
+  background: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+}
+
+.agenda-status.concluido {
+  background: rgba(13, 10, 72, 0.15);
+  color: #0d0a48;
+}
+
+/* ações */
+.agenda-acoes {
+  display: flex;
+  gap: 10px;
+}
+
+.agenda-acoes button {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.agenda-acoes button:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+/* tabela vazia */
+.agenda-tabela-vazia {
+  text-align: center;
+  font-size: 15px;
+  color: #777;
+  padding: 24px;
+}
+
+/* responsivo */
+@media (max-width: 900px) {
+  .agenda-tabela {
+    padding: 20px;
+  }
+}
+
+/* =========================
+   AGENDA — FORMULÁRIO
+========================= */
+
+.agenda-form .grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.agenda-form .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.agenda-form .campo label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0d0a48;
+}
+
+.agenda-form .campo input {
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid #ddd;
+  padding: 0 14px;
+  font-size: 14px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.agenda-form .campo input:focus {
+  outline: none;
+  border-color: #ffd43b;
+  box-shadow: 0 0 0 3px rgba(255, 212, 59, 0.25);
+}
+
+/* campo largura total */
+.agenda-form .campo-full {
+  grid-column: span 3;
+}
+
+/* campo valor gasto */
+.agenda-form .campo-gasto input {
+  background: #eeeeee;
+  color: #555;
+  cursor: not-allowed;
+}
+
+/* responsivo */
+@media (max-width: 900px) {
+  .agenda-form .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .agenda-form .campo-full {
+    grid-column: span 3;
+  }
+}
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0d0a48;
+}
+
+/* =========================
+   BARRA DE PESQUISA - AGENDA
+========================= */
+.agenda-busca {
+  width: 100%;
+  max-width: 420px;
+  padding: 12px 16px;
+
+  border-radius: 12px;
+  border: 2px solid transparent;
+
+  background-color: #ffffff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+
+  font-size: 14px;
+  color: #1f2937;
+
+  transition: all 0.25s ease;
+}
+
+/* Placeholder */
+.agenda-busca::placeholder {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* Foco */
+.agenda-busca:focus {
+  outline: none;
+  border-color: #1e3a8a; /* azul SmartCash */
+  box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.15);
+}
+
+/* Ícone fake (opcional) */
+.agenda-busca {
+  background-image: url("../icons/lupa.svg");
+  background-repeat: no-repeat;
+  background-position: 14px center;
+  padding-left: 42px;
+}
+.btnSalvarPlanejamento {
+  margin-top: 24px;
+  width: 180px;
+  height: 46px;
+  background: linear-gradient(180deg, #ffd43b, #ffcc00);
+  color: #0d0a48;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(255, 212, 59, 0.5);
+  transition: all 0.2s ease;
+}
+
+.btnSalvarPlanejamento:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 2px rgba(236, 223, 177, 0.65);
+}
+
+.agenda-card .agenda-input {
+  display: none;
+}

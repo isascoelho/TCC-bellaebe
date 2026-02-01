@@ -140,3 +140,85 @@ function limparFormulario() {
 function formatarData(data) {
   return new Date(data).toLocaleDateString("pt-BR");
 }
+
+
+function definirPeriodoResumo() {
+  const agora = new Date();
+
+  const meses = [
+    "Janeiro", "Fevereiro", "Março", "Abril",
+    "Maio", "Junho", "Julho", "Agosto",
+    "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+
+  const mes = meses[agora.getMonth()];
+  const ano = agora.getFullYear();
+
+  document.getElementById("periodoResumo").innerText =
+    `Período: ${mes} / ${ano}`;
+}
+
+function atualizarResumoMes() {
+  const linhas = document.querySelectorAll("#lista-receitas tr");
+
+  let total = 0;
+  let maior = 0;
+  let quantidade = 0;
+
+  linhas.forEach(linha => {
+    const colunaValor = linha.querySelector("td:nth-child(6)");
+    if (!colunaValor) return;
+
+    const valor = parseFloat(
+      colunaValor.innerText
+        .replace("R$", "")
+        .replace(/\./g, "")
+        .replace(",", ".")
+        .trim()
+    );
+
+    if (isNaN(valor)) return;
+
+    total += valor;
+    quantidade++;
+
+    if (valor > maior) {
+      maior = valor;
+    }
+  });
+
+  const media = quantidade > 0 ? total / quantidade : 0;
+
+  const totalEl = document.getElementById("resumoTotal");
+  const mediaEl = document.getElementById("resumoMedia");
+  const maiorEl = document.getElementById("resumoMaior");
+  const estadoEl = document.getElementById("resumoEstado");
+
+  totalEl.innerText = total.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+
+  mediaEl.innerText = media.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+
+  maiorEl.innerText = maior.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
+
+  // estado vazio
+  estadoEl.hidden = quantidade !== 0;
+
+  // feedback visual
+  [totalEl, mediaEl, maiorEl].forEach(el => {
+    el.classList.add("atualizado");
+    setTimeout(() => el.classList.remove("atualizado"), 400);
+  });
+}
+
+/* chama ao carregar */
+definirPeriodoResumo();
+atualizarResumoMes();

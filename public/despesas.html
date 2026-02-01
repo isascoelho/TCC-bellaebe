@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
-    <title>Página principal</title>
+    <title>Gerenciar despesas</title>
      <link rel="stylesheet" href="css/estilos3.css">
 
 </head>
@@ -38,17 +38,17 @@
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#">
+    <a class="nav-link" href="agenda.html">
       <img src="imagens/logoagenda.png" class="icon-menu"> Agenda
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#">
+    <a class="nav-link" href="graficos.html">
       <img src="imagens/logografico.png" class="icon-menu"> Gráficos
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#">
+    <a class="nav-link" href="configuracoes.html">
       <img src="imagens/logoconfig.png" class="icon-menu"> Configurações
     </a>
   </li>
@@ -83,62 +83,79 @@
 </div>
 
   <!-- ===== FORMULÁRIO ===== -->
- 
+
 <div class="receitas-form">
   <h3>Nova despesa</h3>
 
   <div class="grid">
-    <!-- Valor -->
-    <input
-      type="number"
-      step="0.01"
-      placeholder="Valor (R$)"
-      id="valor"
-      required
-    />
 
-    <!-- Data -->
-    <input
-      type="date"
-      id="data"
-      required
-    />
+    <div class="campo">
+      <label for="valor">Valor</label>
+      <input type="number" step="0.01" id="valor" required placeholder="R$00,00" />
+    </div>
 
-    <!-- Categoria (digitável) -->
-    <input
-      type="text"
-      placeholder="Categoria (ex: Salário, Pix, Extra)"
-      id="categoria"
-      required
-    />
+    <div class="campo">
+      <label for="data">Data</label>
+      <input type="date" id="data" required />
+    </div>
 
-    <!-- Banco (digitável) -->
-    <input
-      type="text"
-      placeholder="Banco (ex: Nubank, Caixa)"
-      id="banco"
-      required
-    />
+    <div class="campo">
+      <label for="categoria">Categoria</label>
+      <input type="text" id="categoria" required placeholder="(ex: Aluguel, Mercado)"/>
+    </div>
 
-    <!-- Descrição -->
-    <input
-      type="text"
-      placeholder="Descrição (opcional)"
-      id="descricao"
-    />
+    <div class="campo">
+      <label for="banco">Banco</label>
+      <input type="text" id="banco" required  placeholder="(ex: Nubank, Caixa)" />
+    </div>
 
+    <div class="campo">
+      <label for="descricao">Descrição</label>
+      <input type="text" id="descricao"   placeholder="(opcional)" />
+    </div>
 
-  <select id="periodicidade"> 
-    <option value="">Periodicidade</option>
-     <option>Única</option>
-     <option>Semanal</option>
-      <option>Mensal</option> 
-      <option>Anual</option>
-     </select>
-     <button id="btnSalvarReceita" class="btnSalvarReceita" type="button">Salvar receita</button>
+    <div class="campo">
+      <label for="situacao">Situação</label>
+      <select id="situacao" required>
+        <option value="">Selecione</option>
+        <option value="1">Paga</option>
+        <option value="2">Em aberto</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="periodicidade">Periodicidade</label>
+      <select id="periodicidade" required>
+        <option value="">Selecione</option>
+        <option value="1">Única</option>
+        <option value="2">Mensal</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="parcelamento">Parcelamento</label>
+      <select id="parcelamento">
+            <option value="">Selecione</option>
+        <option value="À vista">À vista</option>
+        <option value="Parcelada">Parcelada</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="parcelas">Quantidade de parcelas</label>
+      <input type="number" id="parcelas" min="1"  placeholder="(opcional)" />
+    </div>
+
+    <button
+      id="btnSalvarReceita"
+      class="btnSalvarReceita"
+      type="button">
+      Salvar despesa
+    </button>
 
   </div>
-  </div>
+</div>
+
   
 
 
@@ -146,8 +163,8 @@
 <!-- ===== TABELA ===== -->
 <div class="receitas-tabela">
   <div class="tabela-header">
-    <h3>Receitas cadastradas</h3>
-    <span class="tabela-subtitle">Histórico das entradas registradas</span>
+    <h3>Despesas cadastradas</h3>
+    <span class="tabela-subtitle">Histórico das saídas registradas</span>
   </div>
 
   <table>
@@ -159,27 +176,57 @@
         <th>Descrição</th>
         <th>Período</th>
         <th>Valor</th>
+        <th>Parcelas</th>
         <th></th>
       </tr>
     </thead>
 
-      <tbody id="lista-receitas">
+      <tbody id="lista-despesas">
       <!-- JS VAI INJETAR AQUI -->
     </tbody>
 
    
   </table>
+</div>
+<div class="tabela-resumo-mes">
+  <div class="tabela-resumo-header">
+    <h3>Resumo financeiro do período</h3>
+    <span class="periodo-info" id="periodoResumo"></span>
+  </div>
 
-  <!-- Estado vazio -->
+  <table class="tabela-resumo">
+    <thead>
+      <tr>
+        <th>Total do período</th>
+        <th>Média por saída</th>
+        <th>Maior saída</th>
+      </tr>
+    </thead>
 
+    <tbody>
+      <tr>
+        <td id="resumoTotal">R$ 0,00</td>
+        <td id="resumoMedia">R$ 0,00</td>
+        <td id="resumoMaior">R$ 0,00</td>
+      </tr>
+    </tbody>
+  </table>
 
+  <p id="resumoEstado" class="resumo-info" hidden>
+    Nenhuma despesa registrada no período selecionado.
+  </p>
 
-  
+  <p class="resumo-update">
+    Valores atualizados automaticamente.
+  </p>
+</div>
 </div>
 
 </div>
 
-<script src="js/receitas.js"></script>
+
 <script src="js/navbar.js"></script>
+
+<script src="js/despesas.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script> 
 </body>
