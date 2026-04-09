@@ -1,12 +1,13 @@
 let receitaEditandoId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+  definirPeriodoResumoReceitas();
   carregarReceitas();
-  if (typeof atualizarTudo === "function") atualizarTudo();
+  atualizarCardsReceitas();
+  carregarResumoReceitas();
 
-  document
-    .getElementById("btnSalvarReceita")
-    .addEventListener("click", salvarReceita);
+  const btn = document.getElementById("btnSalvarReceita");
+  if (btn) btn.addEventListener("click", salvarReceita);
 });
 
 /* =========================
@@ -29,26 +30,49 @@ function salvarReceita() {
 
   fetch(url, {
     method: metodo,
+    credentials: "include", // 🔥 ESSENCIAL
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(dados)
   })
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao salvar receita");
+      return res.json();
+    })
   .then(() => {
-    limparFormulario();
-    receitaEditandoId = null;
-    document.getElementById("btnSalvarReceita").innerText = "Salvar";
-    carregarReceitas();
-    if (typeof atualizarTudo === "function") atualizarTudo();
-  });
+  limparFormulario();
+  receitaEditandoId = null;
+
+  const btn = document.getElementById("btnSalvarReceita");
+  if (btn) btn.innerText = "Salvar";
+
+  carregarReceitas();
+  atualizarCardsReceitas();
+  carregarResumoReceitas();
+
+  if (typeof atualizarTudo === "function") atualizarTudo();
+  if (typeof carregarAtividadesHome === "function") carregarAtividadesHome();
+})
+    .catch(err => {
+      console.error(err);
+      alert("Erro ao salvar receita");
+    });
 }
 
 /* =========================
    LISTAR
 ========================= */
 function carregarReceitas() {
-  fetch("/receitas")
-    .then(res => res.json())
+  fetch("/receitas", {
+    credentials: "include" // 🔥 ESSENCIAL
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao carregar receitas");
+      return res.json();
+    })
     .then(receitas => {
       const tbody = document.getElementById("lista-receitas");
+      if (!tbody) return;
+
       tbody.innerHTML = "";
 
       if (!Array.isArray(receitas) || receitas.length === 0) {
@@ -65,7 +89,9 @@ function carregarReceitas() {
         const descricao =
           r.descricao && r.descricao !== "null" ? r.descricao : "-";
         const periodicidade =
-          r.periodicidade && r.periodicidade !== "null" ? r.periodicidade : "Única";
+          r.periodicidade && r.periodicidade !== "null"
+            ? r.periodicidade
+            : "Única";
 
         tbody.innerHTML += `
           <tr>
@@ -81,6 +107,9 @@ function carregarReceitas() {
             </td>
           </tr>`;
       });
+    })
+    .catch(err => {
+      console.error("Erro ao listar receitas:", err);
     });
 }
 
@@ -88,12 +117,9 @@ function carregarReceitas() {
    EDITAR
 ========================= */
 function editarReceita(id) {
-  if (!id) {
-    console.error("ID inválido para edição:", id);
-    return;
-  }
-
-  fetch(`/receitas/${id}`)
+  fetch(`/receitas/${id}`, {
+    credentials: "include" // 🔥 ESSENCIAL
+  })
     .then(res => res.json())
     .then(r => {
       if (!r) {
@@ -120,11 +146,17 @@ function editarReceita(id) {
 function excluirReceita(id) {
   if (!confirm("Deseja excluir esta receita?")) return;
 
-  fetch(`/receitas/${id}`, { method: "DELETE" })
-    .then(() => {
-      carregarReceitas();
-      if (typeof atualizarTudo === "function") atualizarTudo();
-    });
+  fetch(`/receitas/${id}`, {
+    method: "DELETE",
+    credentials: "include" // 🔥 ESSENCIAL
+  })
+   .then(() => {
+  carregarReceitas();
+  atualizarCardsReceitas();
+  carregarResumoReceitas();
+
+  if (typeof atualizarTudo === "function") atualizarTudo();
+});
 }
 
 /* =========================
@@ -141,84 +173,127 @@ function formatarData(data) {
   return new Date(data).toLocaleDateString("pt-BR");
 }
 
-
-function definirPeriodoResumo() {
+function definirPeriodoResumoReceitas() {
   const agora = new Date();
-
   const meses = [
-    "Janeiro", "Fevereiro", "Março", "Abril",
-    "Maio", "Junho", "Julho", "Agosto",
-    "Setembro", "Outubro", "Novembro", "Dezembro"
+    "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+    "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
   ];
 
-  const mes = meses[agora.getMonth()];
-  const ano = agora.getFullYear();
-
-  document.getElementById("periodoResumo").innerText =
-    `Período: ${mes} / ${ano}`;
+  const periodoEl = document.getElementById("periodoResumo");
+  if (periodoEl) {
+    periodoEl.innerText = `Período: ${meses[agora.getMonth()]} / ${agora.getFullYear()}`;
+  }
 }
 
-function atualizarResumoMes() {
-  const linhas = document.querySelectorAll("#lista-receitas tr");
+function atualizarCardsReceitas() {
+  Promise.all([
+    fetch("/receitas/total-mes", { credentials: "include" }).then(r => r.json()),
+    fetch("/receitas/ultima", { credentials: "include" }).then(r => r.json())
+  ])
+    .then(([totalMes, ultimaReceita]) => {
+      const totalMesEl = document.getElementById("totalMes");
+      const ultimaReceitaEl = document.getElementById("ultimaReceita");
 
-  let total = 0;
-  let maior = 0;
-  let quantidade = 0;
+      const totalValor = Number(totalMes?.total || 0);
+      const ultimaValor = Number(ultimaReceita?.valor || 0);
 
-  linhas.forEach(linha => {
-    const colunaValor = linha.querySelector("td:nth-child(6)");
-    if (!colunaValor) return;
+      if (totalMesEl) {
+        totalMesEl.innerText = `R$ ${totalValor.toFixed(2)}`;
+      }
 
-    const valor = parseFloat(
-      colunaValor.innerText
-        .replace("R$", "")
-        .replace(/\./g, "")
-        .replace(",", ".")
-        .trim()
-    );
-
-    if (isNaN(valor)) return;
-
-    total += valor;
-    quantidade++;
-
-    if (valor > maior) {
-      maior = valor;
-    }
-  });
-
-  const media = quantidade > 0 ? total / quantidade : 0;
-
-  const totalEl = document.getElementById("resumoTotal");
-  const mediaEl = document.getElementById("resumoMedia");
-  const maiorEl = document.getElementById("resumoMaior");
-  const estadoEl = document.getElementById("resumoEstado");
-
-  totalEl.innerText = total.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL"
-  });
-
-  mediaEl.innerText = media.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL"
-  });
-
-  maiorEl.innerText = maior.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL"
-  });
-
-  // estado vazio
-  estadoEl.hidden = quantidade !== 0;
-
-  // feedback visual
-  [totalEl, mediaEl, maiorEl].forEach(el => {
-    el.classList.add("atualizado");
-    setTimeout(() => el.classList.remove("atualizado"), 400);
-  });
+      if (ultimaReceitaEl) {
+        ultimaReceitaEl.innerText = ultimaReceita
+          ? `R$ ${ultimaValor.toFixed(2)}`
+          : "—";
+      }
+    })
+    .catch(err => {
+      console.error("Erro ao atualizar cards de receitas:", err);
+    });
 }
 
-/* chama ao carregar */
-definirPeriodoResumo();
-atualizarResumoMes();
+function carregarResumoReceitas() {
+  const hoje = new Date();
+  const ano = hoje.getFullYear();
+  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+
+  const inicio = `${ano}-${mes}-01`;
+  const fim = `${ano}-${mes}-31`;
+
+  fetch(`/receitas/relatorio?inicio=${inicio}&fim=${fim}`, {
+    credentials: "include"
+  })
+    .then(res => res.json())
+    .then(dados => {
+      const resumoTotal = document.getElementById("resumoTotal");
+      const resumoMedia = document.getElementById("resumoMedia");
+      const resumoMaior = document.getElementById("resumoMaior");
+      const resumoEstado = document.getElementById("resumoEstado");
+
+      if (!Array.isArray(dados) || !dados.length) {
+        if (resumoTotal) resumoTotal.innerText = "R$ 0,00";
+        if (resumoMedia) resumoMedia.innerText = "R$ 0,00";
+        if (resumoMaior) resumoMaior.innerText = "R$ 0,00";
+        if (resumoEstado) resumoEstado.hidden = false;
+        return;
+      }
+
+      const valores = dados.map(item => Number(item.valor || 0));
+      const total = valores.reduce((acc, v) => acc + v, 0);
+      const media = total / valores.length;
+      const maior = Math.max(...valores);
+
+      if (resumoTotal) resumoTotal.innerText = `R$ ${total.toFixed(2)}`;
+      if (resumoMedia) resumoMedia.innerText = `R$ ${media.toFixed(2)}`;
+      if (resumoMaior) resumoMaior.innerText = `R$ ${maior.toFixed(2)}`;
+      if (resumoEstado) resumoEstado.hidden = true;
+    })
+    .catch(err => {
+      console.error("Erro ao carregar resumo de receitas:", err);
+    });
+}
+
+function carregarResumoReceitas() {
+  const hoje = new Date();
+  const ano = hoje.getFullYear();
+  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+
+  const inicio = `${ano}-${mes}-01`;
+  const fim = `${ano}-${mes}-31`;
+
+  fetch(`/receitas/relatorio?inicio=${inicio}&fim=${fim}`, {
+    credentials: "include"
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao carregar relatório de receitas");
+      return res.json();
+    })
+    .then(dados => {
+      const resumoTotal = document.getElementById("resumoTotal");
+      const resumoMedia = document.getElementById("resumoMedia");
+      const resumoMaior = document.getElementById("resumoMaior");
+      const resumoEstado = document.getElementById("resumoEstado");
+
+      if (!Array.isArray(dados) || !dados.length) {
+        if (resumoTotal) resumoTotal.innerText = "R$ 0,00";
+        if (resumoMedia) resumoMedia.innerText = "R$ 0,00";
+        if (resumoMaior) resumoMaior.innerText = "R$ 0,00";
+        if (resumoEstado) resumoEstado.hidden = false;
+        return;
+      }
+
+      const valores = dados.map(item => Number(item.valor || 0));
+      const total = valores.reduce((acc, valor) => acc + valor, 0);
+      const media = total / valores.length;
+      const maior = Math.max(...valores);
+
+      if (resumoTotal) resumoTotal.innerText = `R$ ${total.toFixed(2)}`;
+      if (resumoMedia) resumoMedia.innerText = `R$ ${media.toFixed(2)}`;
+      if (resumoMaior) resumoMaior.innerText = `R$ ${maior.toFixed(2)}`;
+      if (resumoEstado) resumoEstado.hidden = true;
+    })
+    .catch(err => {
+      console.error("Erro ao carregar resumo de receitas:", err);
+    });
+}

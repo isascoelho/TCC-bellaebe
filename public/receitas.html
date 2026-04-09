@@ -71,15 +71,15 @@
      <p class="subtitle">Acompanhe e registre todas as entradas de dinheiro</p>
      
 <div class="receita-resumo">
- <div class="receita-card amarelo">
-  <span>Total no mês</span>
-  <strong id="totalMes">R$ 0,00</strong>
-</div>
+  <div class="receita-card amarelo">
+    <span>Total no mês</span>
+    <strong id="totalMes">R$ 0,00</strong>
+  </div>
 
-<div class="receita-card azul">
-  <span>Última receita</span>
-  <strong id="ultimaReceita">—</strong>
-</div>
+  <div class="receita-card azul">
+    <span>Última receita</span>
+    <strong id="ultimaReceita">R$ 0,00</strong>
+  </div>
 </div>
 
   <!-- ===== FORMULÁRIO ===== -->
@@ -111,22 +111,29 @@
 
     <div class="campo">
       <label for="categoria">Categoria</label>
-      <input
-        type="text"
-        id="categoria"
-        placeholder="Ex: Salário, Pix, Extra"
-        required
-      />
+       <select id="categoria" required>
+       <option value="">Selecione</option>
+        <option>Benefícios</option>
+<option>Investimentos</option>
+<option>Salário</option>
+<option>Transferências/PIX</option>
+<option>Outro</option>
+      </select>
     </div>
 
     <div class="campo">
       <label for="banco">Banco</label>
-      <input
-        type="text"
-        id="banco"
-        placeholder="Ex: Nubank, Caixa"
-        required
-      />
+      <select id="banco" required>
+        <option value="">Selecione</option>
+     <option>Banco do Brasil</option>
+      <option>Bradesco</option>
+      <option>Caixa</option>
+      <option>Itaú</option>
+      <option>Nubank</option>
+      <option>Santander</option>
+      <option>Sicoob</option>
+      <option>Outro</option>
+      </select>
     </div>
 
     <div class="campo">
@@ -204,7 +211,6 @@
         <th>Maior entrada</th>
       </tr>
     </thead>
-
     <tbody>
       <tr>
         <td id="resumoTotal">R$ 0,00</td>

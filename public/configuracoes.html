@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Configurações | SmartCash</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/estilos3.css" />
+</head>
+
+<body>
+
+<!-- =========================
+     NAVBAR LATERAL
+========================= -->
+<div class="offcanvas offcanvas-start show" id="offcanvasNavbar"
+     data-bs-backdrop="false" data-bs-scroll="true">
+
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">
+      <img src="imagens/logo1.png" /> SmartCash
+    </h5>
+  </div>
+
+  <div class="offcanvas-body">
+
+    <ul class="navbar-nav flex-grow-1">
+      <p>Menu</p>
+
+      <li class="nav-item">
+        <a class="nav-link" href="home.html">
+          <img src="imagens/logohome.png" class="icon-menu" /> Início
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="receitas.html">
+          <img src="imagens/logoreceita.png" class="icon-menu" /> Gerenciar receitas
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="despesas.html">
+          <img src="imagens/logodespesa.png" class="icon-menu" /> Gerenciar despesas
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="agenda.html">
+          <img src="imagens/logoagenda.png" class="icon-menu" /> Agenda
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="graficos.html">
+          <img src="imagens/logografico.png" class="icon-menu" /> Gráficos
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link active" href="configuracoes.html">
+          <img src="imagens/logoconfig.png" class="icon-menu" /> Configurações
+        </a>
+      </li>
+    </ul>
+
+    <div class="user-box">
+      <img id="userFoto" src="imagens/avatar.png" />
+      <div class="user-info">
+        <strong id="userNome">Usuário</strong>
+        <small id="userEmail"></small>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+ <main class="config-container">
+
+<h2>Configurações</h2>
+<p class="agenda-tabela-subtitle">
+  Gerencie seus dados pessoais, informações de contato e segurança da conta
+</p>
+
+ <div class="config-user">
+  <div class="user-avatar" id="avatar">
+    <img id="avatarImg" />
+  </div>
+
+  <div class="user-info">
+    <span class="user-name" id="userName" ></span>
+    <span class="user-email" id="userEmail"></span>
+  </div>
+
+  <button class="btn-editar">
+  <span class="icon">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  </span>
+  Editar dados
+</button>
+</div>
+
+<input
+  type="file"
+  id="avatarInput"
+  accept="image/*"
+  style="display: none"
+/>
+    </header>
+
+    <section class="config-grid">
+
+      <!-- DADOS PESSOAIS -->
+      <div class="config-card">
+  <h2>Dados pessoais</h2>
+
+  <div class="config-item" data-field="cpf">
+    <span class="label">CPF</span>
+    <span class="value"></span>
+  </div>
+
+  <div class="config-item" data-field="data_nascimento">
+    <span class="label">Nascimento</span>
+    <span class="value"></span>
+    <button class="btn-completar" data-field="data_nascimento">Completar</button>
+  </div>
+
+  <div class="config-item" data-field="sexo">
+    <span class="label">Sexo</span>
+    <span class="value"></span>
+    <button class="btn-completar" data-field="sexo">Completar</button>
+  </div>
+</div>
+
+      <!-- CONTATO -->
+     <div class="config-card">
+  <h2>Contato</h2>
+
+  <div class="config-item" data-field="fone">
+    <span class="label">Telefone</span>
+    <span class="value"></span>
+    <button class="btn-completar" data-field="fone">Completar</button>
+  </div>
+
+  <div class="config-item" data-field="email">
+    <span class="label">Email</span>
+    <span class="value"></span>
+  </div>
+
+  <div class="config-item" data-field="endereco">
+    <span class="label">Endereço</span>
+    <span class="value"></span>
+    <button class="btn-completar" data-field="endereco">Completar</button>
+  </div>
+</div>
+      <!-- PROFISSIONAL -->
+     <div class="config-card">
+  <h2>Profissional</h2>
+
+  <div class="config-item" data-field="vinculo">
+    <span class="label">Vínculo empregatício</span>
+    <span class="value"></span>
+    <button class="btn-completar" data-field="vinculo">Completar</button>
+  </div>
+</div>
+
+      <!-- SEGURANÇA -->
+
+
+<div class="config-card security">
+  <h2>Segurança</h2>
+
+  <div class="config-item">
+    <span class="label">Senha</span>
+    <span class="value">••••••••</span>
+    <button class="btn-completar">Alterar</button>
+  </div>
+</div>
+
+    </section>
+
+    <footer class="config-footer">
+      <button class="btn-excluir">Excluir conta</button>
+      <button class="btn-sair">Sair</button>
+    </footer>
+
+  </main>
+
+  <div class="modal-overlay" id="modalOverlay">
+  <div class="sc-modal">
+    <h3 id="modalTitle"></h3>
+
+    <input
+      type="text"
+      id="modalInput"
+      placeholder=""
+    />
+
+    <div class="modal-actions">
+      <button id="modalCancel">Cancelar</button>
+      <button id="modalSave">Salvar</button>
+    </div>
+  </div>
+</div>
+
+
+
+<script src="js/navbar.js"></script>
+<script src="js/configuracoes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>     
+</body>
+</html>

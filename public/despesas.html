@@ -73,12 +73,12 @@
 <div class="receita-resumo">
   <div class="receita-card amarelo">
     <span>Total no mês</span>
-    <strong>R$ 0,00</strong>
+    <strong id="totalMesDespesa">R$ 0,00</strong>
   </div>
 
   <div class="receita-card azul">
     <span>Última despesa</span>
-    <strong>—</strong>
+    <strong id="ultimaDespesaCard">R$0,00</strong>
   </div>
 </div>
 
@@ -100,13 +100,42 @@
     </div>
 
     <div class="campo">
-      <label for="categoria">Categoria</label>
-      <input type="text" id="categoria" required placeholder="(ex: Aluguel, Mercado)"/>
+      <label for="datadevencimento">Data de vencimento</label>
+      <input type="date" id="datavencimento" required />
+    </div>
+
+    <div class="campo">
+        <label for="categoria">Categoria</label>
+       <select id="categoria" required>
+       <option value="">Selecione</option>
+        <option>Alimentação</option>
+      <option>Comunicação</option>
+      <option>Dívidas</option>
+      <option>Educação</option>
+      <option>Impostos</option>
+      <option>Investimentos</option>
+      <option>Lazer</option>
+      <option>Saúde</option>
+      <option>Serviços</option>
+      <option>Transporte</option>
+      <option>Vestuário</option>
+      <option>Outros</option>
+      </select>
     </div>
 
     <div class="campo">
       <label for="banco">Banco</label>
-      <input type="text" id="banco" required  placeholder="(ex: Nubank, Caixa)" />
+     <select id="banco" required>
+      <option value="">Selecione</option>
+      <option>Banco do Brasil</option>
+      <option>Bradesco</option>
+      <option>Caixa</option>
+      <option>Itaú</option>
+      <option>Nubank</option>
+      <option>Santander</option>
+      <option>Sicoob</option>
+      <option>Outro</option>
+      </select>
     </div>
 
     <div class="campo">
@@ -123,12 +152,16 @@
       </select>
     </div>
 
+    
+
     <div class="campo">
       <label for="periodicidade">Periodicidade</label>
       <select id="periodicidade" required>
         <option value="">Selecione</option>
         <option value="1">Única</option>
-        <option value="2">Mensal</option>
+        <option value="2">Semanal</option>
+         <option value="2">Mensal</option>
+         <option value="2">Anual</option>
       </select>
     </div>
 
@@ -146,6 +179,7 @@
       <input type="number" id="parcelas" min="1"  placeholder="(opcional)" />
     </div>
 
+   
     <button
       id="btnSalvarReceita"
       class="btnSalvarReceita"
@@ -157,9 +191,6 @@
 </div>
 
   
-
-
-<!-- ===== TABELA ===== -->
 <!-- ===== TABELA ===== -->
 <div class="receitas-tabela">
   <div class="tabela-header">
@@ -187,6 +218,7 @@
 
    
   </table>
+  
 </div>
 <div class="tabela-resumo-mes">
   <div class="tabela-resumo-header">
@@ -202,7 +234,6 @@
         <th>Maior saída</th>
       </tr>
     </thead>
-
     <tbody>
       <tr>
         <td id="resumoTotal">R$ 0,00</td>

@@ -144,3 +144,22 @@ body > .container {
   color: rgba(255,255,255,.70);
   line-height: 1.6;
 }
+
+.obrigatorio {
+  color: red;
+}
+
+.formulario {
+  position: relative; /* importante */
+}
+
+.aviso {
+  font-size: 10px;
+  color: red;
+  margin-top: 10px;
+
+  /* deixa no canto inferior esquerdo do form */
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}

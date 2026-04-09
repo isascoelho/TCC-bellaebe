@@ -59,6 +59,7 @@ body,
 .content,
 .content * {
   pointer-events: auto !important;
+   font-family: 'Inter', sans-serif;
 }
 .offcanvas:not(.offcanvas-start) {
   pointer-events: none;
@@ -490,6 +491,7 @@ body{
   padding: 24px;
   margin-bottom: 32px;
   margin-top: 10px;
+  
 }
 
 .receitas-form,
@@ -582,12 +584,11 @@ body{
 }
 
 .receitas-tabela td {
-.receitas-tabela td {
   padding: 14px 16px;
   font-size: 15px;
   color: #0d0a48;
 }
-}
+
 .tag.categoria {
   background: rgba(255, 212, 59, 0.25);
   color: #0d0a48;
@@ -757,12 +758,16 @@ button.acao.excluir:hover {
   cursor: pointer;
   box-shadow: 0 6px 18px rgba(255, 212, 59, 0.5);
   transition: all 0.2s ease;
-}
 
+  grid-column: 1 / -1;
+  justify-self: end;
+}
 .btnSalvarReceita:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 2px rgba(236, 223, 177, 0.65);
 }
+
+
 
 /* =========================
    TABELA RESUMO DO MÊS
@@ -1257,4 +1262,464 @@ button.acao.excluir:hover {
 
 .agenda-card .agenda-input {
   display: none;
+}
+
+/* =========================
+   CARDS – VISÃO FINANCEIRA
+========================= */
+
+.graficos-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin: 24px 0 40px;
+}
+
+.grafico-card {
+  border-radius: 24px;
+  padding: 24px;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.grafico-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
+
+.grafico-card span {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.grafico-card strong {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+/* cores */
+.grafico-card.azul {
+  background: linear-gradient(180deg, #3d4bb4, #0b083b);
+  color: #ffffff;
+}
+
+.grafico-card.amarelo {
+  background: linear-gradient(180deg, #eddc9f, #ffcc00);
+  color: #0d0a48;
+}
+
+.grafico-card.claro {
+  background: #d1d1d1;
+  color: #0d0a48;
+}
+
+/* =========================
+   GRÁFICOS
+========================= */
+
+.graficos-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.graficos-linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  width: 100%;
+}
+
+.grafico-box {
+  background: #dddddd;
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  height: 500px; /* altura fixa do card */
+  display: flex;
+  flex-direction: column;
+}
+
+.grafico-box h3 {
+  margin-bottom: 100px;
+  color: #0d0a48;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.grafico-full {
+  width: 100%;
+  height: 500px; /* altura fixa do gráfico maior */
+}
+
+.grafico-box canvas {
+  flex: 1;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 220px;
+}
+
+.grafico-full canvas {
+  max-height: 260px;
+}
+
+/* =========================
+   RESPONSIVO
+========================= */
+
+@media (max-width: 900px) {
+  .graficos-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .graficos-linha {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   FILTRO DE PERÍODO
+========================= */
+
+.filtro-graficos {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
+.filtro-graficos label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0d0a48;
+}
+
+.filtro-graficos select {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: #ffffff;
+  color: #0d0a48;
+}
+
+/* =========================
+   LEGENDA DOS GRÁFICOS
+========================= */
+
+.grafico-legenda {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.grafico-legenda span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legenda {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.legenda.receita {
+  background: #3d4bb4; /* azul */
+}
+
+.legenda.despesa {
+  background: #ffcc00; /* amarelo */
+}
+
+.sem-dados {
+  margin: 24px 0;
+  font-size: 14px;
+  color: #777;
+}
+
+.resultado-positivo {
+  color: #198754;
+}
+
+.resultado-negativo {
+  color: #dc3545;
+}
+
+/*CONFIGURAÇOES*/
+/* RESPEITA NAVBAR LATERAL */
+.config-container {
+  margin-left: 260px; /* largura da sidebar */
+  padding: 32px;
+  min-height: 100vh;
+
+}
+
+/* HEADER */
+.config-header h1 {
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+
+.config-user {
+   display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1d2b7a;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-name {
+ font-weight: 600;
+  font-size: 16px;
+}
+
+.user-email {
+  font-size: 14px;
+  color: #666;
+}
+
+.btn-editar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background: #ffffff;
+  color: #0d0a48;
+
+  border: 1px solid rgba(13, 10, 72, 0.25);
+  border-radius: 12px;
+
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* ícone */
+.btn-editar .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* hover elegante */
+.btn-editar:hover {
+  background: rgba(13, 10, 72, 0.05);
+  border-color: rgba(13, 10, 72, 0.4);
+}
+
+/* clique */
+.btn-editar:active {
+  transform: translateY(1px);
+}
+
+
+
+/* GRID */
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+/* CARD */
+.config-card {
+ background: #fff;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.config-card h2 {
+font-size: 17px;
+  font-weight: 600;
+  color: #0d0a48;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(13,10,72,0.18);
+  margin-bottom: 12px;
+}
+
+/* ITENS */
+.config-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.config-item:last-child {
+  border-bottom: none;
+}
+
+.label {
+  flex: 1;
+  font-weight: 500;
+}
+
+.value {
+  color: #333;
+}
+
+.value.vazio {
+  color: #999;
+  font-style: italic;
+}
+
+
+.btn-completar {
+  background: none;
+  border: none;
+  color: #1d2b7a;
+  cursor: pointer;
+  font-size: 14px;
+    font-weight: 600;
+}
+
+/* FOOTER */
+.config-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+.btn-excluir {
+ background: transparent;
+  border: 1px solid #fca5a5;
+  padding: 10px 18px;
+  border-radius: 10px;
+  color: #c53030;
+   opacity: 0.85;
+}
+
+.btn-excluir:hover {
+  background:  #c0392b;;
+  color: #ffeaea;
+  border: 1px solid #f5b7b1;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn-sair {
+  background: #1d2b7a;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+}
+
+
+.btn-sair:hover {
+  background: #cdcafc;
+  color: #1d2b7a;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.security {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.config-container h2 {
+  font-weight: 600;
+  color: #0d0a48;
+  padding-bottom: 8px;
+  border-bottom: 2px solid rgba(13, 10, 72, 0.15);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000;
+  pointer-events: auto;
+}
+
+.sc-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 320px;
+  pointer-events: auto;
+   z-index: 20001;
+}
+
+.modal h3 {
+  margin-bottom: 16px;
+  color: #0d0a48;
+}
+
+.modal input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+#modalCancel {
+  background: #eee;
+}
+
+#modalSave {
+  background: #1d2b7a;
+  color: #fff;
 }

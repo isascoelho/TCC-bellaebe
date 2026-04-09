@@ -1,19 +1,24 @@
-let usuarioId = localStorage.getItem("userId");
 let planejamentoEditando = null;
 let cachePlanejamentos = [];
 
-// ================== LISTAR ==================
+/* ================== LISTAR ================== */
 function carregarPlanejamentos() {
-  fetch(`/agenda/${usuarioId}`)
-    .then(res => res.json())
+  fetch("/agenda", { credentials: "include" })
+    .then(res => {
+      if (!res.ok) throw new Error("Não autenticado");
+      return res.json();
+    })
     .then(dados => {
-      cachePlanejamentos = dados;
-      renderizarTabela(dados);
-      atualizarCards(dados);
+      cachePlanejamentos = Array.isArray(dados) ? dados : [];
+      renderizarTabela(cachePlanejamentos);
+      atualizarCards(cachePlanejamentos);
+    })
+    .catch(err => {
+      console.error("Erro ao carregar planejamentos:", err);
     });
 }
 
-// ================== RENDER ==================
+/* ================== RENDER ================== */
 function renderizarTabela(lista) {
   const tbody = document.getElementById("lista-planejamentos");
   tbody.innerHTML = "";
@@ -27,15 +32,15 @@ function renderizarTabela(lista) {
 
   lista.forEach(p => {
     const status =
-      p.valor_gasto >= p.valor_limite
+      Number(p.valor_gasto || 0) >= Number(p.valor_limite)
         ? "❌ Estourado"
         : "✅ Dentro da meta";
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${p.objetivo}</td>
-      <td>${p.data_inc}</td>
-      <td>${p.data_pvst || "-"}</td>
+      <td>${formatarData(p.data_inc)}</td>
+      <td>${p.data_pvst ? formatarData(p.data_pvst) : "-"}</td>
       <td>R$ ${Number(p.valor_limite).toFixed(2)}</td>
       <td>R$ ${Number(p.valor_gasto || 0).toFixed(2)}</td>
       <td>${status}</td>
@@ -48,7 +53,7 @@ function renderizarTabela(lista) {
   });
 }
 
-// ================== CARDS ==================
+/* ================== CARDS ================== */
 function atualizarCards(lista) {
   let limite = 0;
   let gasto = 0;
@@ -58,50 +63,30 @@ function atualizarCards(lista) {
     gasto += Number(p.valor_gasto || 0);
   });
 
-  const elPlanejado = document.getElementById("cardPlanejado");
-  const elGasto = document.getElementById("cardGastoPlanejado");
-  const elAtivos = document.getElementById("cardAtivos");
+  document.getElementById("cardPlanejado").innerText =
+    `R$ ${limite.toFixed(2)}`;
 
-  if (elPlanejado)
-    elPlanejado.innerText = `R$ ${limite.toFixed(2)}`;
+  document.getElementById("cardGastoPlanejado").innerText =
+    `R$ ${gasto.toFixed(2)}`;
 
-  if (elGasto)
-    elGasto.innerText = `R$ ${gasto.toFixed(2)}`;
-
-  if (elAtivos)
-    elAtivos.innerText = lista.length;
+  document.getElementById("cardAtivos").innerText = lista.length;
 }
 
-// ================== SALVAR / EDITAR ==================
+/* ================== SALVAR / EDITAR ================== */
 document.querySelector(".btnSalvarPlanejamento")
   .addEventListener("click", () => {
 
-    const objetivo = document.getElementById("objetivo");
-    const dataInicial = document.getElementById("dataInicial");
-    const dataFinal = document.getElementById("dataFinal");
-    const valorLimite = document.getElementById("valorLimite");
-    const valorGasto = document.getElementById("valorGasto");
-    const observacoes = document.getElementById("observacoes");
-
-    if (!objetivo || !dataInicial || !valorLimite) {
-      console.error("Algum campo não foi encontrado no HTML");
-      return;
-    }
-
     const dados = {
-      objetivo: objetivo.value,
-      data_inc: dataInicial.value,
-      data_pvst: dataFinal.value || null,
-      valor_limite: Number(valorLimite.value),
-      valor_gasto: Number(valorGasto.value || 0),
-      obs: observacoes.value || null,
-      codusuario: usuarioId
+      objetivo: document.getElementById("objetivo").value,
+      data_inc: document.getElementById("dataInicial").value,
+      data_pvst: document.getElementById("dataFinal").value || null,
+      valor_limite: Number(document.getElementById("valorLimite").value),
+      valor_gasto: Number(document.getElementById("valorGasto").value || 0),
+      obs: document.getElementById("observacoes").value || null,
     };
 
-    if (!dados.objetivo || !dados.data_inc || !dados.valor_limite) {
-      alert("Preencha objetivo, data inicial e valor limite");
-      return;
-    }
+    // 🔥 DEBUG CORRETO
+    console.log("DADOS ENVIADOS:", dados);
 
     const metodo = planejamentoEditando ? "PUT" : "POST";
     const url = planejamentoEditando
@@ -119,6 +104,7 @@ document.querySelector(".btnSalvarPlanejamento")
       })
       .then(() => {
         planejamentoEditando = null;
+         limparFormularioPlanejamento();
         carregarPlanejamentos();
       })
       .catch(err => {
@@ -127,8 +113,7 @@ document.querySelector(".btnSalvarPlanejamento")
       });
 });
 
-
-// ================== EDITAR ==================
+/* ================== EDITAR ================== */
 function editarPlanejamento(id) {
   const p = cachePlanejamentos.find(x => x.ID === id);
   if (!p) return;
@@ -143,25 +128,40 @@ function editarPlanejamento(id) {
   planejamentoEditando = id;
 }
 
-// ================== EXCLUIR ==================
+/* ================== EXCLUIR ================== */
 function excluirPlanejamento(id) {
   if (!confirm("Deseja excluir este planejamento?")) return;
 
-  fetch(`/agenda/${id}`, { method: "DELETE" })
-    .then(() => carregarPlanejamentos());
+  fetch(`/agenda/${id}`, {
+    method: "DELETE",
+    credentials: "include"
+  }).then(() => carregarPlanejamentos());
 }
 
-// ================== BUSCAR ==================
+/* ================== BUSCAR ================== */
 document.getElementById("buscarPlanejamento")
   .addEventListener("input", e => {
     const termo = e.target.value.toLowerCase();
-
-    const filtrado = cachePlanejamentos.filter(p =>
-      p.objetivo.toLowerCase().includes(termo)
+    renderizarTabela(
+      cachePlanejamentos.filter(p =>
+        p.objetivo.toLowerCase().includes(termo)
+      )
     );
+});
 
-    renderizarTabela(filtrado);
-  });
+/* ================== UTIL ================== */
+function formatarData(data) {
+  return new Date(data).toLocaleDateString("pt-BR");
+}
 
-// ================== INIT ==================
+/* ================== INIT ================== */
 carregarPlanejamentos();
+
+function limparFormularioPlanejamento() {
+  document.getElementById("objetivo").value = "";
+  document.getElementById("dataInicial").value = "";
+  document.getElementById("dataFinal").value = "";
+  document.getElementById("valorLimite").value = "";
+  document.getElementById("valorGasto").value = "";
+  document.getElementById("observacoes").value = "";
+}

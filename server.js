@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require("express-session");
 const path = require("path");
 const db = require("./db");
 
@@ -8,7 +9,27 @@ const app = express();
    CONFIG
 ========================= */
 app.use(express.json());
+
+app.use(session({
+  secret: "smartcash-secret",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true
+  }
+}));
+
 app.use(express.static(path.join(__dirname, "public")));
+
+/* =========================
+   AUTH MIDDLEWARE
+========================= */
+function auth(req, res, next) {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: "Não autenticado" });
+  }
+  next();
+}
 
 /* =========================
    TESTE
@@ -36,18 +57,14 @@ app.post("/cadastro", (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(
-    sql,
-    [nome, email, cpf, data_nascimento, fone, senha],
-    (err, result) => {
-      if (err) {
-        console.error("Erro no cadastro:", err);
-        return res.status(500).json({ error: "Erro ao cadastrar usuário" });
-      }
-
-      res.json({ success: true, id: result.insertId });
+  db.query(sql, [nome, email, cpf, data_nascimento || null, fone || null, senha], err => {
+    if (err) {
+      console.error("Erro no cadastro:", err);
+      return res.status(500).json({ error: "Erro ao cadastrar usuário" });
     }
-  );
+
+    res.json({ success: true });
+  });
 });
 
 /* =========================
@@ -56,11 +73,6 @@ app.post("/cadastro", (req, res) => {
 app.post("/login", (req, res) => {
   let { email, senha } = req.body;
 
-  if (!email || !senha) {
-    return res.status(400).json({ error: "Email e senha obrigatórios" });
-  }
-
-  // 🔥 NORMALIZAÇÃO DEFINITIVA
   email = email.trim().toLowerCase();
   senha = senha.trim();
 
@@ -73,47 +85,168 @@ app.post("/login", (req, res) => {
   `;
 
   db.query(sql, [email, senha], (err, result) => {
-    if (err) {
-      console.error("Erro no login:", err);
-      return res.status(500).json({ error: "Erro no login" });
-    }
-
-    if (result.length === 0) {
+    if (err) return res.status(500).json({ error: "Erro no login" });
+    if (!result.length) {
       return res.status(401).json({ error: "Email ou senha inválidos" });
     }
 
+    req.session.userId = result[0].ID;
     res.json(result[0]);
   });
 });
 
-
 /* =========================
    USUÁRIO LOGADO
 ========================= */
-app.get("/me/:id", (req, res) => {
-  const sql = `
-    SELECT nome, email, foto
-    FROM usuario
-    WHERE ID = ?
-  `;
-
-  db.query(sql, [req.params.id], (err, result) => {
-    if (err || result.length === 0) {
-      return res.json(null);
+app.get("/me", auth, (req, res) => {
+  db.query(
+    "SELECT ID, nome, email, cpf, data_nascimento, fone FROM usuario WHERE ID = ?",
+    [req.session.userId],
+    (err, result) => {
+      if (err || !result.length) return res.status(500).json(null);
+      res.json(result[0]);
     }
+  );
+});
 
-    res.json(result[0]);
-  });
+app.put("/me", auth, (req, res) => {
+  const { field, value } = req.body;
+  const permitidos = ["cpf", "data_nascimento", "fone", "email"];
+
+  if (!permitidos.includes(field)) {
+    return res.status(400).json({ error: "Campo inválido" });
+  }
+
+  db.query(
+    `UPDATE usuario SET ${field} = ? WHERE ID = ?`,
+    [value, req.session.userId],
+    err => {
+      if (err) return res.status(500).json({ error: true });
+      res.json({ success: true });
+    }
+  );
 });
 
 /* =========================
    RECEITAS
 ========================= */
 
-// LISTAR
-app.get("/receitas", (req, res) => {
+app.get("/receitas/total", auth, (req, res) => {
   db.query(
-    "SELECT * FROM receita ORDER BY periodo DESC",
+    "SELECT IFNULL(SUM(valor),0) AS total FROM receita WHERE idusuario = ?",
+    [req.session.userId],
+    (err, result) => {
+      if (err) return res.json({ total: 0 });
+      res.json({ total: result[0].total });
+    }
+  );
+});
+
+app.get("/receitas/total-mes", auth, (req, res) => {
+  db.query(
+    `
+    SELECT IFNULL(SUM(valor),0) AS total
+    FROM receita
+    WHERE idusuario = ?
+      AND MONTH(periodo) = MONTH(CURDATE())
+      AND YEAR(periodo) = YEAR(CURDATE())
+    `,
+    [req.session.userId],
+    (err, result) => {
+      if (err) {
+        console.error("Erro ao buscar total de receitas do mês:", err);
+        return res.json({ total: 0 });
+      }
+
+      res.json({ total: result[0]?.total || 0 });
+    }
+  );
+});
+
+app.get("/receitas/ultima", auth, (req, res) => {
+  db.query(
+    `
+    SELECT *
+    FROM receita
+    WHERE idusuario = ?
+    ORDER BY periodo DESC, ID DESC
+    LIMIT 1
+    `,
+    [req.session.userId],
+    (err, result) => {
+      if (err || !result.length) return res.json(null);
+      res.json(result[0]);
+    }
+  );
+});
+
+app.get("/receitas/semana", auth, (req, res) => {
+  db.query(
+    `
+    SELECT
+      DAYNAME(periodo) AS dia,
+      SUM(valor) AS total
+    FROM receita
+    WHERE idusuario = ?
+      AND periodo >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+    GROUP BY DAYNAME(periodo)
+    `,
+    [req.session.userId],
+    (err, result) => {
+      if (err) return res.json([]);
+      res.json(result);
+    }
+  );
+});
+
+app.get("/receitas/relatorio", auth, (req, res) => {
+  const { inicio, fim } = req.query;
+
+  if (!inicio || !fim) {
+    return res.status(400).json([]);
+  }
+
+  const sql = `
+    SELECT
+      periodo,
+      categoria,
+      valor
+    FROM receita
+    WHERE idusuario = ?
+      AND periodo BETWEEN ? AND ?
+    ORDER BY periodo ASC
+  `;
+
+  db.query(
+    sql,
+    [req.session.userId, inicio, fim],
+    (err, result) => {
+      if (err) {
+        console.error("Erro relatório receitas:", err);
+        return res.json([]);
+      }
+
+      res.json(result);
+    }
+  );
+});
+
+app.get("/receitas/:id", auth, (req, res) => {
+  db.query(
+    "SELECT * FROM receita WHERE ID = ? AND idusuario = ? LIMIT 1",
+    [req.params.id, req.session.userId],
+    (err, result) => {
+      if (err || !result.length) return res.json(null);
+      res.json(result[0]);
+    }
+  );
+});
+
+// LISTAR
+app.get("/receitas", auth, (req, res) => {
+  db.query(
+    "SELECT * FROM receita WHERE idusuario = ? ORDER BY periodo DESC",
+    [req.session.userId],
     (err, result) => {
       if (err) return res.status(500).json([]);
       res.json(result);
@@ -121,47 +254,309 @@ app.get("/receitas", (req, res) => {
   );
 });
 
-// BUSCAR POR ID
-app.get("/receitas/:id", (req, res) => {
+app.post("/receitas", auth, (req, res) => {
+  const { valor, periodo, categoria, banco, periodicidade, descricao } = req.body;
+
+  const sql = `
+    INSERT INTO receita
+    (valor, periodo, categoria, banco, periodicidade, descricao, idusuario)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
   db.query(
-    "SELECT * FROM receita WHERE ID = ?",
-    [req.params.id],
+    sql,
+    [
+      valor,
+      periodo,
+      categoria,
+      banco,
+      periodicidade || null,
+      descricao || null,
+      req.session.userId // 🔥 ESSENCIAL
+    ],
+    err => {
+      if (err) {
+        console.error("ERRO AO SALVAR RECEITA:", err);
+        return res.status(500).json({ error: true });
+      }
+      res.json({ success: true });
+    }
+  );
+});
+
+//editar
+app.put("/receitas/:id", auth, (req, res) => {
+  const { valor, periodo, categoria, banco, periodicidade, descricao } = req.body;
+
+  db.query(
+    `
+    UPDATE receita SET
+      valor = ?,
+      periodo = ?,
+      categoria = ?,
+      banco = ?,
+      periodicidade = ?,
+      descricao = ?
+    WHERE ID = ? AND idusuario = ?
+    `,
+    [
+      valor,
+      periodo,
+      categoria || null,
+      banco || null,
+      periodicidade || null,
+      descricao || null,
+      req.params.id,
+      req.session.userId
+    ],
+    err => {
+      if (err) {
+        console.error("Erro ao atualizar receita:", err);
+        return res.status(500).json({ error: true });
+      }
+      res.json({ success: true });
+    }
+  );
+});
+
+// EXCLUIR
+app.delete("/receitas/:id", auth, (req, res) => {
+  db.query(
+    "DELETE FROM receita WHERE ID = ? AND idusuario = ?",
+    [req.params.id, req.session.userId],
+    err => {
+      if (err) return res.status(500).json({ error: true });
+      res.json({ success: true });
+    }
+  );
+});
+
+/* =========================
+   DESPESAS
+========================= */
+
+// LISTAR TODAS
+app.get("/despesas", auth, (req, res) => {
+  db.query(
+    "SELECT * FROM despesa WHERE idusuario = ? ORDER BY periodo DESC",
+    [req.session.userId],
     (err, result) => {
-      if (err || result.length === 0) return res.json(null);
+      if (err) return res.status(500).json([]);
+      res.json(result);
+    }
+  );
+});
+
+// TOTAL
+app.get("/despesas/total", auth, (req, res) => {
+  db.query(
+    "SELECT IFNULL(SUM(valor),0) AS total FROM despesa WHERE idusuario = ?",
+    [req.session.userId],
+    (err, result) => {
+      if (err) return res.json({ total: 0 });
+      res.json({ total: result[0].total });
+    }
+  );
+});
+
+app.get("/despesas/total-mes", auth, (req, res) => {
+  db.query(
+    `
+    SELECT IFNULL(SUM(valor),0) AS total
+    FROM despesa
+    WHERE idusuario = ?
+      AND MONTH(periodo) = MONTH(CURDATE())
+      AND YEAR(periodo) = YEAR(CURDATE())
+    `,
+    [req.session.userId],
+    (err, result) => {
+      if (err) {
+        console.error("Erro ao buscar total de despesas do mês:", err);
+        return res.json({ total: 0 });
+      }
+
+      res.json({ total: result[0]?.total || 0 });
+    }
+  );
+});
+
+// ÚLTIMA
+app.get("/despesas/ultima", auth, (req, res) => {
+  db.query(
+    `
+    SELECT *
+    FROM despesa
+    WHERE idusuario = ?
+    ORDER BY periodo DESC, ID DESC
+    LIMIT 1
+    `,
+    [req.session.userId],
+    (err, result) => {
+      if (err || !result.length) return res.json(null);
       res.json(result[0]);
     }
   );
 });
 
-// CADASTRAR
-app.post("/receitas", (req, res) => {
-  const { valor, periodo, categoria, banco, periodicidade, descricao } = req.body;
-
-  if (!valor || !periodo || !categoria || !banco) {
-    return res.status(400).json({ error: "Campos obrigatórios faltando" });
-  }
-
+// SEMANA (GRÁFICO)
+app.get("/despesas/semana", auth, (req, res) => {
   db.query(
-    `INSERT INTO receita
-     (valor, periodo, categoria, banco, periodicidade, descricao)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [valor, periodo, categoria, banco, periodicidade, descricao],
+    `
+    SELECT
+      DAYNAME(periodo) AS dia,
+      SUM(valor) AS total
+    FROM despesa
+    WHERE idusuario = ?
+      AND periodo >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+    GROUP BY DAYNAME(periodo)
+    `,
+    [req.session.userId],
     (err, result) => {
-      if (err) return res.status(500).json({ error: true });
-      res.json({ success: true, id: result.insertId });
+      if (err) return res.json([]);
+      res.json(result);
     }
   );
 });
 
-// ATUALIZAR
-app.put("/receitas/:id", (req, res) => {
-  const { valor, periodo, categoria, banco, periodicidade, descricao } = req.body;
+// RELATÓRIO DE DESPESAS POR PERÍODO
+app.get("/despesas/relatorio", auth, (req, res) => {
+  const { inicio, fim } = req.query;
+
+  if (!inicio || !fim) {
+    return res.status(400).json([]);
+  }
+
+  const sql = `
+    SELECT
+      periodo,
+      categoria,
+      SUM(valor) AS total
+    FROM despesa
+    WHERE idusuario = ?
+      AND periodo BETWEEN ? AND ?
+    GROUP BY periodo, categoria
+    ORDER BY periodo ASC
+  `;
 
   db.query(
-    `UPDATE receita SET
-     valor = ?, periodo = ?, categoria = ?, banco = ?, periodicidade = ?, descricao = ?
-     WHERE ID = ?`,
-    [valor, periodo, categoria, banco, periodicidade, descricao, req.params.id],
+    sql,
+    [req.session.userId, inicio, fim],
+    (err, result) => {
+      if (err) {
+        console.error("Erro relatório despesas:", err);
+        return res.json([]);
+      }
+      res.json(result);
+    }
+  );
+});
+
+
+// BUSCAR POR ID (SEMPRE DEPOIS DAS FIXAS)
+app.get("/despesas/:id", auth, (req, res) => {
+  db.query(
+    "SELECT * FROM despesa WHERE ID = ? AND idusuario = ? LIMIT 1",
+    [req.params.id, req.session.userId],
+    (err, result) => {
+      if (err || !result.length) return res.json(null);
+      res.json(result[0]);
+    }
+  );
+});
+
+// CRIAR
+app.post("/despesas", auth, (req, res) => {
+  const {
+    periodo,
+    hora,
+    valor,
+    parcelamento,
+    situacao,
+    periodicidade,
+    categoria,
+    banco,
+    descricao,
+    obs
+  } = req.body;
+
+  if (!periodo || !valor || !situacao || !periodicidade) {
+    return res.status(400).json({ error: "Campos obrigatórios faltando" });
+  }
+
+  db.query(
+    `
+    INSERT INTO despesa
+    (periodo, hora, valor, parcelamento, situacao, periodicidade, categoria, banco, descricao, obs, idusuario)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+      periodo,
+      hora || null,
+      valor,
+      parcelamento || false,
+      situacao,
+      periodicidade,
+      categoria || null,
+      banco || null,
+      descricao || null,
+      obs || null,
+      req.session.userId
+    ],
+    err => {
+      if (err) return res.status(500).json({ error: true });
+      res.json({ success: true });
+    }
+  );
+});
+
+// EDITAR
+app.put("/despesas/:id", auth, (req, res) => {
+  const {
+    periodo,
+    hora,
+    valor,
+    parcelamento,
+    situacao,
+    periodicidade,
+    categoria,
+    banco,
+    descricao,
+    obs
+  } = req.body;
+
+  if (!periodo || !valor || !situacao || !periodicidade) {
+    return res.status(400).json({ error: "Campos obrigatórios faltando" });
+  }
+
+  db.query(
+    `
+    UPDATE despesa SET
+      periodo = ?,
+      hora = ?,
+      valor = ?,
+      parcelamento = ?,
+      situacao = ?,
+      periodicidade = ?,
+      categoria = ?,
+      banco = ?,
+      descricao = ?,
+      obs = ?
+    WHERE ID = ? AND idusuario = ?
+    `,
+    [
+      periodo,
+      hora || null,
+      valor,
+      parcelamento || false,
+      situacao,
+      periodicidade,
+      categoria || null,
+      banco || null,
+      descricao || null,
+      obs || null,
+      req.params.id,
+      req.session.userId
+    ],
     err => {
       if (err) return res.status(500).json({ error: true });
       res.json({ success: true });
@@ -170,10 +565,10 @@ app.put("/receitas/:id", (req, res) => {
 });
 
 // EXCLUIR
-app.delete("/receitas/:id", (req, res) => {
+app.delete("/despesas/:id", auth, (req, res) => {
   db.query(
-    "DELETE FROM receita WHERE ID = ?",
-    [req.params.id],
+    "DELETE FROM despesa WHERE ID = ? AND idusuario = ?",
+    [req.params.id, req.session.userId],
     err => {
       if (err) return res.status(500).json({ error: true });
       res.json({ success: true });
@@ -181,384 +576,261 @@ app.delete("/receitas/:id", (req, res) => {
   );
 });
 
-/* =========================
-   RESUMOS DE RECEITAS
-========================= */
 
-// TOTAL GERAL
-app.get("/receitas/total", (req, res) => {
-  db.query(
-    "SELECT IFNULL(SUM(valor),0) AS total FROM receita",
-    (err, result) => {
-      if (err) return res.json({ total: 0 });
-      res.json({ total: result[0].total });
+
+
+app.get("/receitas/relatorio", auth, (req, res) => {
+  const { inicio, fim } = req.query;
+
+  if (!inicio || !fim) {
+    return res.status(400).json([]);
+  }
+
+  const sql = `
+    SELECT
+      periodo,
+      categoria,
+      valor
+    FROM receita
+    WHERE idusuario = ?
+      AND periodo BETWEEN ? AND ?
+    ORDER BY periodo ASC
+  `;
+
+  db.query(sql, [req.session.userId, inicio, fim], (err, result) => {
+    if (err) {
+      console.error("Erro relatório receitas:", err);
+      return res.json([]);
     }
-  );
+
+    res.json(result);
+  });
 });
 
-// TOTAL DO MÊS
-app.get("/receitas/total-mes", (req, res) => {
-  db.query(
-    `SELECT IFNULL(SUM(valor),0) AS total
-     FROM receita
-     WHERE MONTH(periodo) = MONTH(CURDATE())
-       AND YEAR(periodo) = YEAR(CURDATE())`,
-    (err, result) => {
-      if (err) return res.json({ total: 0 });
-      res.json({ total: result[0].total });
-    }
-  );
-});
 
-// ÚLTIMA RECEITA
-app.get("/receitas/ultima", (req, res) => {
+app.get("/agenda", auth, (req, res) => {
   db.query(
-    "SELECT * FROM receita ORDER BY periodo DESC, ID DESC LIMIT 1",
+    "SELECT * FROM agenda WHERE codusuario = ? ORDER BY data_inc DESC",
+    [req.session.userId],
     (err, result) => {
-      if (err) return res.json(null);
-      res.json(result[0] || null);
-    }
-  );
-});
-
-// SEMANA
-app.get("/receitas/semana", (req, res) => {
-  db.query(
-    `SELECT DAYNAME(periodo) AS dia, SUM(valor) AS total
-     FROM receita
-     WHERE periodo >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-     GROUP BY DAYNAME(periodo)`,
-    (err, result) => {
-      if (err) return res.json([]);
+      if (err) return res.status(500).json([]);
       res.json(result);
     }
   );
 });
 
 /* =========================
-   DESPESAS (placeholder)
+   AGENDA - CRIAR
 ========================= */
-app.get("/despesas/total", (req, res) => {
-  res.json({ total: 0 });
-});
-
-
-/* =========================
-   DESPESAS
-========================= */
-
-// LISTAR DESPESAS
-app.get("/despesas", (req, res) => {
-  const sql = `
-    SELECT
-      ID,
-      DATE_FORMAT(periodo, '%Y-%m-%d') AS periodo,
-      valor,
-      categoria,
-      banco,
-      descricao,
-      parcelamento,
-      situacao,
-      periodicidade
-    FROM despesa
-    ORDER BY periodo DESC, ID DESC
-  `;
-
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.error("🔥 ERRO MYSQL /despesas:", err);
-      return res.status(500).json({ error: err.message });
-    }
-
-    res.json(result);
-  });
-});
-
-// BUSCAR DESPESA POR ID
-app.get("/despesas/:id", (req, res) => {
-  db.query(
-    "SELECT * FROM despesa WHERE ID = ?",
-    [req.params.id],
-    (err, result) => {
-      if (err || result.length === 0) return res.json(null);
-      res.json(result[0]);
-    }
-  );
-});
-
-// CADASTRAR DESPESA
-app.post("/despesas", (req, res) => {
+app.post("/agenda", auth, (req, res) => {
   const {
-    valor,
-    periodo,
-    categoria,
-    banco,
-    parcelamento,
-    situacao,
-    periodicidade,
-    descricao
-  } = req.body;
-
-  if (!valor || !periodo || !categoria || !banco || !situacao || !periodicidade) {
-    return res.status(400).json({ error: "Campos obrigatórios faltando" });
-  }
-
-  db.query(
-    `INSERT INTO despesa
-     (valor, periodo, categoria, banco, parcelamento, situacao, periodicidade, descricao)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      valor,
-      periodo,
-      categoria,
-      banco,
-      parcelamento || false,
-      situacao,
-      periodicidade,
-      descricao || null
-    ],
-    err => {
-      if (err) {
-        console.error("Erro ao salvar despesa:", err);
-        return res.status(500).json({ error: true });
-      }
-      res.json({ success: true });
-    }
-  );
-});
-
-// ATUALIZAR DESPESA
-app.put("/despesas/:id", (req, res) => {
-  const {
-    periodo,
-    hora,
-    valor,
-    banco,
-    parcelamento,
-    situacao,
-    periodicidade,
-    descricao,
-    obs
-  } = req.body;
-
-  db.query(
-    `UPDATE despesa SET
-      periodo = ?,
-      hora = ?,
-      valor = ?,
-      banco = ?,
-      parcelamento = ?,
-      situacao = ?,
-      periodicidade = ?,
-      descricao = ?,
-      obs = ?
-     WHERE ID = ?`,
-    [
-      periodo,
-      hora || null,
-      valor,
-      banco,
-      parcelamento || false,
-      situacao,
-      periodicidade,
-      descricao || null,
-      obs || null,
-      req.params.id
-    ],
-    err => {
-      if (err) {
-        console.error("Erro ao atualizar despesa:", err);
-        return res.status(500).json({ error: true });
-      }
-      res.json({ success: true });
-    }
-  );
-});
-
-// EXCLUIR DESPESA
-app.delete("/despesas/:id", (req, res) => {
-  db.query(
-    "DELETE FROM despesa WHERE ID = ?",
-    [req.params.id],
-    err => {
-      if (err) {
-        console.error("Erro ao excluir despesa:", err);
-        return res.status(500).json({ error: true });
-      }
-      res.json({ success: true });
-    }
-  );
-});
-
-/* =========================
-   AGENDA / PLANEJAMENTOS
-========================= */
-
-// LISTAR PLANEJAMENTOS DO USUÁRIO
-app.get("/agenda/:usuarioId", (req, res) => {
-  const sql = `
-    SELECT
-      ID,
-      data_inc,
-      data_pvst,
-      valor_limite,
-      valor_gasto,
-      objetivo,
-      obs
-    FROM agenda
-    WHERE codusuario = ?
-    ORDER BY data_inc DESC
-  `;
-
-  db.query(sql, [req.params.usuarioId], (err, result) => {
-    if (err) {
-      console.error("Erro ao listar agenda:", err);
-      return res.status(500).json([]);
-    }
-    res.json(result);
-  });
-});
-
-
-// BUSCAR UM PLANEJAMENTO POR ID
-app.get("/agenda/item/:id", (req, res) => {
-  db.query(
-    "SELECT * FROM agenda WHERE ID = ?",
-    [req.params.id],
-    (err, result) => {
-      if (err || result.length === 0) return res.json(null);
-      res.json(result[0]);
-    }
-  );
-});
-
-
-// CRIAR PLANEJAMENTO
-app.post("/agenda", (req, res) => {
-  const {
+    objetivo,
     data_inc,
     data_pvst,
     valor_limite,
     valor_gasto,
-    objetivo,
-    obs,
-    codusuario
+    obs
   } = req.body;
 
-  if (!data_inc || !valor_limite || !objetivo || !codusuario) {
+  if (!objetivo || !data_inc || isNaN(valor_limite)) {
+
     return res.status(400).json({ error: "Campos obrigatórios faltando" });
   }
 
   const sql = `
     INSERT INTO agenda
-    (data_inc, data_pvst, valor_limite, valor_gasto, objetivo, obs, codusuario)
+    (objetivo, data_inc, data_pvst, valor_limite, valor_gasto, obs, codusuario)
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
     [
+      objetivo,
       data_inc,
       data_pvst || null,
-      valor_limite,
-      valor_gasto || 0,
-      objetivo,
+      Number (valor_limite),
+      Number (valor_gasto) || 0,
       obs || null,
-      codusuario
+      req.session.userId
     ],
     err => {
       if (err) {
-        console.error("Erro ao salvar planejamento:", err);
+        console.error("🔥 ERRO AO SALVAR AGENDA:", err);
         return res.status(500).json({ error: true });
       }
+
       res.json({ success: true });
     }
   );
 });
 
 
-// ATUALIZAR PLANEJAMENTO
-// ATUALIZAR PLANEJAMENTO
-app.put("/agenda/:id", (req, res) => {
+//salvar
+app.put("/agenda/:id", auth, (req, res) => {
   const {
+    objetivo,
     data_inc,
     data_pvst,
     valor_limite,
     valor_gasto,
-    objetivo,
     obs
   } = req.body;
 
-  if (!data_inc || !valor_limite || !objetivo) {
+  if (!objetivo || !data_inc || valor_limite === undefined) {
     return res.status(400).json({
-      error: "Campos obrigatórios faltando para edição"
+      error: "Campos obrigatórios faltando"
     });
   }
 
   const sql = `
     UPDATE agenda SET
+      objetivo = ?,
       data_inc = ?,
       data_pvst = ?,
       valor_limite = ?,
       valor_gasto = ?,
-      objetivo = ?,
       obs = ?
-    WHERE ID = ?
+    WHERE ID = ? AND codusuario = ?
   `;
 
   db.query(
     sql,
     [
+      objetivo,
       data_inc,
       data_pvst || null,
       valor_limite,
       valor_gasto || 0,
-      objetivo,
       obs || null,
-      req.params.id
+      req.params.id,
+      req.session.userId
     ],
-    (err) => {
+    err => {
       if (err) {
         console.error("🔥 ERRO AO ATUALIZAR AGENDA:", err);
         return res.status(500).json({ error: true });
       }
-
       res.json({ success: true });
     }
   );
 });
 
 
-// EXCLUIR PLANEJAMENTO
-app.delete("/agenda/:id", (req, res) => {
+
+
+app.delete("/agenda/:id", auth, (req, res) => {
   db.query(
-    "DELETE FROM agenda WHERE ID = ?",
-    [req.params.id],
+    "DELETE FROM agenda WHERE ID = ? AND codusuario = ?",
+    [req.params.id, req.session.userId],
     err => {
       if (err) {
-        console.error("Erro ao excluir planejamento:", err);
+        console.error("Erro ao excluir agenda:", err);
         return res.status(500).json({ error: true });
       }
+
       res.json({ success: true });
     }
   );
 });
 
+/* =========================
+   DASHBOARD
+========================= */
+app.get("/dashboard/resumo", auth, (req, res) => {
+  const userId = req.session.userId;
+
+  db.query(
+    "SELECT IFNULL(SUM(valor), 0) AS totalReceitas FROM receita WHERE idusuario = ?",
+    [userId],
+    (err, receitasResult) => {
+      if (err) {
+        console.error("Erro ao buscar total de receitas:", err);
+        return res.status(500).json({ error: true });
+      }
+
+      const totalReceitas = Number(receitasResult[0].totalReceitas || 0);
+
+      db.query(
+        "SELECT IFNULL(SUM(valor), 0) AS totalDespesas FROM despesa WHERE idusuario = ?",
+        [userId],
+        (err, despesasResult) => {
+          if (err) {
+            console.error("Erro ao buscar total de despesas:", err);
+            return res.status(500).json({ error: true });
+          }
+
+          const totalDespesas = Number(despesasResult[0].totalDespesas || 0);
+          const saldo = totalReceitas - totalDespesas;
+
+          db.query(
+            `
+            SELECT *
+            FROM receita
+            WHERE idusuario = ?
+            ORDER BY periodo DESC, ID DESC
+            LIMIT 1
+            `,
+            [userId],
+            (err, ultimaReceitaResult) => {
+              if (err) {
+                console.error("Erro ao buscar última receita:", err);
+                return res.status(500).json({ error: true });
+              }
+
+              db.query(
+                `
+                SELECT *
+                FROM despesa
+                WHERE idusuario = ?
+                ORDER BY periodo DESC, ID DESC
+                LIMIT 1
+                `,
+                [userId],
+                (err, ultimaDespesaResult) => {
+                  if (err) {
+                    console.error("Erro ao buscar última despesa:", err);
+                    return res.status(500).json({ error: true });
+                  }
+
+                  res.json({
+                    totalReceitas,
+                    totalDespesas,
+                    saldo,
+                    ultimaReceita: ultimaReceitaResult[0] || null,
+                    ultimaDespesa: ultimaDespesaResult[0] || null
+                  });
+                }
+              );
+            }
+          );
+        }
+      );
+    }
+  );
+});
 
 
+// LOGOUT
+app.post("/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.json({ success: true });
+  });
+});
 
-
-
-
-
-
-
-
-
-
-
-
-
+// EXCLUIR CONTA
+app.delete("/me", auth, (req, res) => {
+  db.query(
+    "DELETE FROM usuario WHERE ID = ?",
+    [req.session.userId],
+    err => {
+      if (err) return res.status(500).json({ error: true });
+      req.session.destroy(() => {
+        res.json({ success: true });
+      });
+    }
+  );
+});
 
 
 

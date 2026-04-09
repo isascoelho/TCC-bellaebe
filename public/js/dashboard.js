@@ -1,71 +1,103 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const userId = localStorage.getItem("userId");
-
-  if (!userId) {
-    window.location.href = "comece.html";
-    return;
-  }
-
-  atualizarTudo();
+  fetch("/me", { credentials: "include" })
+    .then(res => {
+      if (!res.ok) throw new Error("Não autenticado");
+      return res.json();
+    })
+    .then(() => {
+      atualizarTudo();
+      carregarAtividadesHome();
+    })
+    .catch(() => {
+      window.location.href = "comece.html";
+    });
 });
 
 /* =========================
    ATUALIZAÇÃO CENTRAL
 ========================= */
 function atualizarTudo() {
-  atualizarResumoReceitas();
-  atualizarSaldo();
+  atualizarResumoDashboard();
+
   if (typeof atualizarGraficoSemanal === "function") {
     atualizarGraficoSemanal();
   }
 }
 
-/* =========================
-   RESUMO RECEITAS
-========================= */
-function atualizarResumoReceitas() {
-  // TOTAL DO MÊS
-  fetch("/receitas/total-mes")
-    .then(res => res.json())
-    .then(dados => {
-      const el = document.getElementById("totalMes");
-      if (el) el.innerText = `R$ ${Number(dados.total).toFixed(2)}`;
-    });
+function atualizarResumoDashboard() {
+  fetch("/dashboard/resumo", { credentials: "include" })
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao buscar resumo do dashboard");
+      return res.json();
+    })
+    .then(data => {
+      const totalMesEl = document.getElementById("totalMes");
+      const ultimaReceitaEl = document.getElementById("ultimaReceita");
+      const ultimaDespesaEl = document.getElementById("ultimaDespesa");
+      const saldoEl = document.getElementById("saldoValor");
 
-  // ÚLTIMA RECEITA
-  fetch("/receitas/ultima")
-    .then(res => res.json())
-    .then(receita => {
-      const el = document.getElementById("ultimaReceita");
-      if (el) {
-        el.innerText = receita
-          ? `R$ ${Number(receita.valor).toFixed(2)}`
+      if (totalMesEl) {
+        totalMesEl.innerText = `R$ ${Number(data.totalMes || 0).toFixed(2)}`;
+      }
+
+      if (ultimaReceitaEl) {
+        ultimaReceitaEl.innerText = data.ultimaReceita
+          ? `R$ ${Number(data.ultimaReceita.valor).toFixed(2)}`
           : "—";
       }
+
+      if (ultimaDespesaEl) {
+        ultimaDespesaEl.innerText = data.ultimaDespesa
+          ? `R$ ${Number(data.ultimaDespesa.valor).toFixed(2)}`
+          : "—";
+      }
+
+      if (saldoEl) {
+        saldoEl.innerText = `R$ ${Number(data.saldo || 0).toFixed(2)}`;
+      }
+    })
+    .catch(err => {
+      console.error("Erro ao atualizar resumo do dashboard:", err);
     });
 }
 
 /* =========================
-   SALDO
+   ATIVIDADES / BOLHAS
 ========================= */
-function atualizarSaldo() {
+function carregarAtividadesHome() {
   Promise.all([
-    fetch("/receitas/total").then(r => r.json()),
-    fetch("/despesas/total").then(r => r.json())
+    fetch("/receitas", { credentials: "include" }).then(r => r.json()),
+    fetch("/despesas", { credentials: "include" }).then(r => r.json())
   ])
-  .then(([rec, desp]) => {
-    const totalReceitas =
-      rec && typeof rec.total === "number" ? rec.total : 0;
+    .then(([receitas, despesas]) => {
+      const atividades = [];
 
-    const totalDespesas =
-      desp && typeof desp.total === "number" ? desp.total : 0;
+      receitas.forEach(r => {
+        atividades.push({
+          tipo: "receita",
+          nome: r.categoria || "Receita",
+          valor: Number(r.valor),
+          data: r.periodo
+        });
+      });
 
-    const saldo = totalReceitas - totalDespesas;
+      despesas.forEach(d => {
+        atividades.push({
+          tipo: "despesa",
+          nome: d.descricao || "Despesa", // 🔥 AQUI ARRUMA O NOME
+          valor: Number(d.valor),
+          data: d.periodo
+        });
+      });
 
-    const el = document.getElementById("saldoValor");
-    if (el) el.innerText = `R$ ${saldo.toFixed(2)}`;
-  })
-  .catch(err => {
-    console.error("Erro ao atualizar saldo:", err);
-  });
+      // ordena por data (mais recente primeiro)
+      atividades.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+      if (typeof renderizarBolhas === "function") {
+        renderizarBolhas(atividades.slice(0, 3));
+      }
+    })
+    .catch(err => {
+      console.error("Erro ao carregar atividades:", err);
+    });
 }

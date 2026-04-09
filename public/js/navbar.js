@@ -1,40 +1,41 @@
-const userId = localStorage.getItem("userId");
-
-// proteção básica
-if (!userId) {
-  window.location.href = "comece.html";
-}
-
 // caminho absoluto da imagem padrão
 const fotoPadrao = "/imagens/avatar.png";
 
-fetch(`/me/${userId}`)
-  .then(res => res.json())
-  .then(user => {
-    if (!user) return;
-
-    document.getElementById("userNome").innerText =
-      user.nome || "Usuário";
-
-    document.getElementById("userEmail").innerText =
-      user.email || "";
-
-    const img = document.getElementById("userFoto");
-
-    // se a imagem falhar por qualquer motivo, usa a padrão
-    img.onerror = () => {
-      img.src = fotoPadrao;
-    };
-
-    // regra final
-    if (!user.foto || user.foto.trim() === "") {
-      img.src = fotoPadrao;
-    } else {
-      img.src = user.foto;
-    }
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("/me", {
+    credentials: "include" // 🔥 ESSENCIAL
   })
-  .catch(() => {
-    // fallback total
-    const img = document.getElementById("userFoto");
-    if (img) img.src = fotoPadrao;
-  });
+    .then(res => {
+      if (!res.ok) {
+        window.location.href = "comece.html";
+        throw new Error("Não autenticado");
+      }
+      return res.json();
+    })
+    .then(user => {
+      if (!user) return;
+
+      const nomeEl = document.getElementById("userNome");
+      const emailEl = document.getElementById("userEmail");
+      const img = document.getElementById("userFoto");
+
+      if (nomeEl) nomeEl.innerText = user.nome || "Usuário";
+      if (emailEl) emailEl.innerText = user.email || "";
+
+      if (img) {
+        img.onerror = () => {
+          img.src = fotoPadrao;
+        };
+
+        img.src =
+          user.foto && user.foto.trim() !== ""
+            ? user.foto
+            : fotoPadrao;
+      }
+    })
+    .catch(err => {
+      console.error("Erro ao carregar navbar:", err);
+      const img = document.getElementById("userFoto");
+      if (img) img.src = fotoPadrao;
+    });
+});

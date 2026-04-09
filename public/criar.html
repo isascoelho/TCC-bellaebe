@@ -47,7 +47,7 @@
             <div class="circle">2</div>
             <div class="label">
               <strong>Preencher senha</strong><br>
-              <small>Preencha e confirme senha</small>
+              <small>Preencha e confirme sua senha</small>
             </div>
           </div>
         </div>
@@ -56,38 +56,40 @@
       <form id="cadastroForm" class="row g-2">
 
         <div class="col-md-12">
-          <label for="nome" class="form-label">Nome completo</label>
+          <label for="nome" class="form-label">Nome completo<span class="obrigatorio">*</span></label>
           <input type="text" class="form-control" id="nome" placeholder="Isabella Sofia Machado Coelho" required>
         </div>
 
          <div class="col-md-6">
-          <label for="email" class="form-label">E-mail</label>
+          <label for="email" class="form-label">e-mail</label>
           <input type="email" class="form-control" id="email" placeholder="xxxxxxxxxxxxxxx@gmail.com" required>
         </div>
 
         <div class="col-md-6">
-          <label for="cpf" class="form-label">CPF</label>
+          <label for="cpf" class="form-label">CPF<span class="obrigatorio">*</span></label>
           <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" required>
         </div>
 
         <div class="col-md-6">
-          <label for="nascimento" class="form-label">Data de nascimento</label>
+          <label for="nascimento" class="form-label">Data de nascimento<span class="obrigatorio">*</span></label>
           <input type="date" class="form-control" id="data_nascimento">
         </div>
 
         
         <div class="col-md-6">
-          <label for="telefone" class="form-label">Telefone</label>
+          <label for="telefone" class="form-label">Telefone<span class="obrigatorio">*</span></label>
           <input type="tel" class="form-control" id="fone" placeholder="(00) 00000-0000">
         </div>
 
     <div class="col-12 text-center">
   <input type="submit" value="Próximo" class="btn btn-primary px-5" />
 </div>
-
-      </form>
+<p class="aviso">* Campos obrigatórios</p>
+      </form> 
     </div>
   </div>
+  
+
 </div>
 
   <!-- FOOTER -->
