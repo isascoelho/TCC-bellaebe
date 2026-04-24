@@ -21,6 +21,8 @@ function carregarPlanejamentos() {
 /* ================== RENDER ================== */
 function renderizarTabela(lista) {
   const tbody = document.getElementById("lista-planejamentos");
+  if (!tbody) return;
+
   tbody.innerHTML = "";
 
   if (!lista.length) {
@@ -56,36 +58,63 @@ function renderizarTabela(lista) {
 /* ================== CARDS ================== */
 function atualizarCards(lista) {
   let limite = 0;
-  let gasto = 0;
+  let gastoPlanejado = 0;
 
   lista.forEach(p => {
     limite += Number(p.valor_limite || 0);
-    gasto += Number(p.valor_gasto || 0);
+    gastoPlanejado += Number(p.valor_gasto || 0);
   });
 
-  document.getElementById("cardPlanejado").innerText =
-    `R$ ${limite.toFixed(2)}`;
+  const cardPlanejado = document.getElementById("cardPlanejado");
+  const cardGastoPlanejado = document.getElementById("cardGastoPlanejado");
+  const cardAtivos = document.getElementById("cardAtivos");
+  const cardSaldoAtual = document.getElementById("cardSaldoAtual");
 
-  document.getElementById("cardGastoPlanejado").innerText =
-    `R$ ${gasto.toFixed(2)}`;
+  if (cardPlanejado) {
+    cardPlanejado.innerText = `R$ ${limite.toFixed(2)}`;
+  }
 
-  document.getElementById("cardAtivos").innerText = lista.length;
+  if (cardGastoPlanejado) {
+    cardGastoPlanejado.innerText = `R$ ${gastoPlanejado.toFixed(2)}`;
+  }
+
+  if (cardAtivos) {
+    cardAtivos.innerText = lista.length;
+  }
+
+  if (cardSaldoAtual) {
+    Promise.all([
+      fetch("/receitas/total", { credentials: "include" }).then(r => r.json()),
+      fetch("/despesas/total", { credentials: "include" }).then(r => r.json())
+    ])
+      .then(([receitas, despesas]) => {
+        const totalReceitas = Number(receitas?.total || 0);
+        const totalDespesas = Number(despesas?.total || 0);
+        const saldoAtual = totalReceitas - totalDespesas;
+
+        cardSaldoAtual.innerText = `R$ ${saldoAtual.toFixed(2)}`;
+      })
+      .catch(err => {
+        console.error("Erro ao atualizar saldo atual da agenda:", err);
+        cardSaldoAtual.innerText = "R$ 0,00";
+      });
+  }
 }
 
 /* ================== SALVAR / EDITAR ================== */
-document.querySelector(".btnSalvarPlanejamento")
-  .addEventListener("click", () => {
+const btnSalvarPlanejamento = document.getElementById("btnSalvarPlanejamento");
 
+if (btnSalvarPlanejamento) {
+  btnSalvarPlanejamento.addEventListener("click", () => {
     const dados = {
-      objetivo: document.getElementById("objetivo").value,
-      data_inc: document.getElementById("dataInicial").value,
-      data_pvst: document.getElementById("dataFinal").value || null,
-      valor_limite: Number(document.getElementById("valorLimite").value),
-      valor_gasto: Number(document.getElementById("valorGasto").value || 0),
-      obs: document.getElementById("observacoes").value || null,
+      objetivo: document.getElementById("objetivo")?.value || "",
+      data_inc: document.getElementById("dataInicial")?.value || "",
+      data_pvst: document.getElementById("dataFinal")?.value || null,
+      valor_limite: Number(document.getElementById("valorLimite")?.value || 0),
+      valor_gasto: Number(document.getElementById("valorGasto")?.value || 0),
+      obs: document.getElementById("observacoes")?.value || null,
     };
 
-    // 🔥 DEBUG CORRETO
     console.log("DADOS ENVIADOS:", dados);
 
     const metodo = planejamentoEditando ? "PUT" : "POST";
@@ -95,6 +124,7 @@ document.querySelector(".btnSalvarPlanejamento")
 
     fetch(url, {
       method: metodo,
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dados)
     })
@@ -104,28 +134,38 @@ document.querySelector(".btnSalvarPlanejamento")
       })
       .then(() => {
         planejamentoEditando = null;
-         limparFormularioPlanejamento();
+        limparFormularioPlanejamento();
+
+        if (btnSalvarPlanejamento) {
+          btnSalvarPlanejamento.innerText = "Salvar planejamento";
+        }
+
         carregarPlanejamentos();
       })
       .catch(err => {
         console.error(err);
         alert("Erro ao salvar planejamento");
       });
-});
+  });
+}
 
 /* ================== EDITAR ================== */
 function editarPlanejamento(id) {
   const p = cachePlanejamentos.find(x => x.ID === id);
   if (!p) return;
 
-  document.getElementById("objetivo").value = p.objetivo;
-  document.getElementById("dataInicial").value = p.data_inc;
+  document.getElementById("objetivo").value = p.objetivo || "";
+  document.getElementById("dataInicial").value = p.data_inc || "";
   document.getElementById("dataFinal").value = p.data_pvst || "";
-  document.getElementById("valorLimite").value = p.valor_limite;
+  document.getElementById("valorLimite").value = p.valor_limite || "";
   document.getElementById("valorGasto").value = p.valor_gasto || "";
   document.getElementById("observacoes").value = p.obs || "";
 
   planejamentoEditando = id;
+
+  if (btnSalvarPlanejamento) {
+    btnSalvarPlanejamento.innerText = "Atualizar planejamento";
+  }
 }
 
 /* ================== EXCLUIR ================== */
@@ -135,33 +175,59 @@ function excluirPlanejamento(id) {
   fetch(`/agenda/${id}`, {
     method: "DELETE",
     credentials: "include"
-  }).then(() => carregarPlanejamentos());
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao excluir planejamento");
+      return res.json();
+    })
+    .then(() => {
+      carregarPlanejamentos();
+    })
+    .catch(err => {
+      console.error("Erro ao excluir planejamento:", err);
+    });
 }
 
 /* ================== BUSCAR ================== */
-document.getElementById("buscarPlanejamento")
-  .addEventListener("input", e => {
+const campoBusca = document.getElementById("buscarPlanejamento");
+
+if (campoBusca) {
+  campoBusca.addEventListener("input", e => {
     const termo = e.target.value.toLowerCase();
+
     renderizarTabela(
       cachePlanejamentos.filter(p =>
-        p.objetivo.toLowerCase().includes(termo)
+        (p.objetivo || "").toLowerCase().includes(termo)
       )
     );
-});
+  });
+}
 
 /* ================== UTIL ================== */
 function formatarData(data) {
-  return new Date(data).toLocaleDateString("pt-BR");
+  if (!data) return "-";
+
+  const dt = new Date(data);
+  if (isNaN(dt.getTime())) return data;
+
+  return dt.toLocaleDateString("pt-BR");
+}
+
+function limparFormularioPlanejamento() {
+  const ids = [
+    "objetivo",
+    "dataInicial",
+    "dataFinal",
+    "valorLimite",
+    "valorGasto",
+    "observacoes"
+  ];
+
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
 }
 
 /* ================== INIT ================== */
 carregarPlanejamentos();
-
-function limparFormularioPlanejamento() {
-  document.getElementById("objetivo").value = "";
-  document.getElementById("dataInicial").value = "";
-  document.getElementById("dataFinal").value = "";
-  document.getElementById("valorLimite").value = "";
-  document.getElementById("valorGasto").value = "";
-  document.getElementById("observacoes").value = "";
-}

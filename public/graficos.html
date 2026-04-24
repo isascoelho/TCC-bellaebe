@@ -16,163 +16,282 @@
 
 <body>
 
-<!-- =========================
-     NAVBAR LATERAL
-========================= -->
-<div class="offcanvas offcanvas-start show" id="offcanvasNavbar"
-     data-bs-backdrop="false" data-bs-scroll="true">
+  <!-- =========================
+       NAVBAR LATERAL
+  ========================= -->
+  <div class="offcanvas offcanvas-start show" id="offcanvasNavbar"
+       data-bs-backdrop="false" data-bs-scroll="true">
 
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title">
-      <img src="imagens/logo1.png" /> SmartCash
-    </h5>
-  </div>
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">
+        <img src="imagens/logo1.png" /> SmartCash
+      </h5>
+    </div>
 
-  <div class="offcanvas-body">
+    <div class="offcanvas-body">
+      <ul class="navbar-nav flex-grow-1">
+        <p>Menu</p>
 
-    <ul class="navbar-nav flex-grow-1">
-      <p>Menu</p>
+        <li class="nav-item">
+          <a class="nav-link" href="home.html">
+            <img src="imagens/logohome.png" class="icon-menu" /> Início
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link" href="home.html">
-          <img src="imagens/logohome.png" class="icon-menu" /> Início
-        </a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link" href="receitas.html">
+            <img src="imagens/logoreceita.png" class="icon-menu" /> Gerenciar receitas
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link" href="receitas.html">
-          <img src="imagens/logoreceita.png" class="icon-menu" /> Gerenciar receitas
-        </a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link" href="despesas.html">
+            <img src="imagens/logodespesa.png" class="icon-menu" /> Gerenciar despesas
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link" href="despesas.html">
-          <img src="imagens/logodespesa.png" class="icon-menu" /> Gerenciar despesas
-        </a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link" href="agenda.html">
+            <img src="imagens/logoagenda.png" class="icon-menu" /> Agenda
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link" href="agenda.html">
-          <img src="imagens/logoagenda.png" class="icon-menu" /> Agenda
-        </a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="graficos.html">
+            <img src="imagens/logografico.png" class="icon-menu" /> Gráficos
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link active" href="graficos.html">
-          <img src="imagens/logografico.png" class="icon-menu" /> Gráficos
-        </a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link" href="configuracoes.html">
+            <img src="imagens/logoconfig.png" class="icon-menu" /> Configurações
+          </a>
+        </li>
+      </ul>
 
-      <li class="nav-item">
-        <a class="nav-link" href="configuracoes.html">
-          <img src="imagens/logoconfig.png" class="icon-menu" /> Configurações
-        </a>
-      </li>
-    </ul>
-
-    <div class="user-box">
-      <img id="userFoto" src="imagens/avatar.png" />
-      <div class="user-info">
-        <strong id="userNome">Usuário</strong>
-        <small id="userEmail"></small>
+      <div class="user-box">
+        <img id="userFoto" src="imagens/avatar.png" />
+        <div class="user-info">
+          <strong id="userNome">Usuário</strong>
+          <small id="userEmail"></small>
+        </div>
       </div>
     </div>
-
-  </div>
-</div>
-
-<!--CARDS-->
-<div class="content">
-
-  <!-- CONTAINER DA PÁGINA (IGUAL AGENDA / RECEITAS) -->
-  <div class="pagina-graficos">
-
-    <!-- TÍTULO PADRÃO -->
-    <h2>Gráficos</h2>
-    <p class="agenda-tabela-subtitle">
-      Acompanhe e analise receitas e despesas do período
-    </p>
-
-    <!-- FILTRO DE PERÍODO -->
-<div class="filtro-graficos">
-<label for="periodo">Período:</label>
-<select id="periodo" name="periodo">
-  <option value="sem">Semana atual</option>
-  <option value="mes">Mês atual</option>
-  <option value="3">Últimos 3 meses</option>
-  <option value="6" selected>Últimos 6 meses</option>
-  <option value="12">Últimos 12 meses</option>
-  <option value="ano">Ano atual</option>
-</select>
-</div>
-
-    <!-- CARDS RESUMO -->
- <div class="graficos-cards">
-
-  <div class="grafico-card azul">
-    <span class="grafico-label">Total de Receitas</span>
-    <strong class="grafico-valor" id="totalReceitas">—</strong>
   </div>
 
-  <div class="grafico-card amarelo">
-    <span class="grafico-label">Total de Despesas</span>
-    <strong class="grafico-valor" id="totalDespesas">—</strong>
-  </div>
+  <!-- =========================
+       CONTEÚDO
+  ========================= -->
+  <div class="content">
+    <div class="pagina-graficos-v2">
 
-  <div class="grafico-card claro" id="cardResultado">
-    <span class="grafico-label">Resultado do Período</span>
-    <strong class="grafico-valor" id="resultadoPeriodo">—</strong>
-  </div>
+      <div class="graficos-topbar">
+        <div>
+          <h2>Gráficos</h2>
+          <p class="graficos-topbar-subtitle">
+            Acompanhe e analise receitas e despesas do período.
+          </p>
+        </div>
 
-</div>
+        <div class="graficos-topbar-actions">
+          <div class="toolbar-select">
+            <div class="kpi-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar4-event" viewBox="0 0 16 16">
+                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v1h14V3a1 1 0 0 0-1-1zm13 3H1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/>
+                <path d="M11 7.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z"/>
+              </svg>
+            </div>
 
- <p class="sem-dados" id="semDados" style="display:none;">
-    Não há registros para o período selecionado.
-  </p>
+            <select id="periodo">
+              <option value="sem">Semana atual</option>
+              <option value="mes">Mês atual</option>
+              <option value="3">Últimos 3 meses</option>
+              <option value="6" selected>Últimos 6 meses</option>
+              <option value="12">Últimos 12 meses</option>
+              <option value="ano">Ano atual</option>
+            </select>
+          </div>
 
-    <!-- GRÁFICOS -->
-<div class="graficos-wrapper">
+          <button class="toolbar-btn" id="btnAtualizar" type="button">Atualizar</button>
+          <button class="toolbar-btn" id="btnExportar" type="button">Exportar</button>
+        </div>
+      </div>
 
-  <!-- LINHA 1 -->
-  <div class="graficos-linha">
+      <div class="graficos-kpis">
+        <div class="kpi-card kpi-receitas">
+          <div class="kpi-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16">
+              <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1z"/>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <span>Total de Receitas</span>
+            <strong id="totalReceitas">R$ 0,00</strong>
+            <small id="variacaoReceitas">—</small>
+          </div>
+          <div class="kpi-bar"></div>
+        </div>
 
-    <div class="grafico-box">
-      <h3>Receitas por Período</h3>
-      <canvas id="graficoReceitas"></canvas>
-    </div>
+        <div class="kpi-card kpi-despesas">
+          <div class="kpi-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-crosshair" viewBox="0 0 16 16">
+              <path d="M8.5.5a.5.5 0 0 0-1 0v.518A7 7 0 0 0 1.018 7.5H.5a.5.5 0 0 0 0 1h.518A7 7 0 0 0 7.5 14.982v.518a.5.5 0 0 0 1 0v-.518A7 7 0 0 0 14.982 8.5h.518a.5.5 0 0 0 0-1h-.518A7 7 0 0 0 8.5 1.018zm-6.48 7A6 6 0 0 1 7.5 2.02v.48a.5.5 0 0 0 1 0v-.48a6 6 0 0 1 5.48 5.48h-.48a.5.5 0 0 0 0 1h.48a6 6 0 0 1-5.48 5.48v-.48a.5.5 0 0 0-1 0v.48A6 6 0 0 1 2.02 8.5h.48a.5.5 0 0 0 0-1zM8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <span>Total de Despesas</span>
+            <strong id="totalDespesas">R$ 0,00</strong>
+            <small id="variacaoDespesas">—</small>
+          </div>
+          <div class="kpi-bar"></div>
+        </div>
 
-    <div class="grafico-box">
-      <h3>Despesas por Período</h3>
-      <canvas id="graficoDespesas"></canvas>
-    </div>
+        <div class="kpi-card kpi-resultado">
+          <div class="kpi-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-briefcase-fill" viewBox="0 0 16 16">
+              <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v1.384l7.614 2.03a1.5 1.5 0 0 0 .772 0L16 5.884V4.5A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5"/>
+              <path d="M0 12.5A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5V6.85L8.129 8.947a.5.5 0 0 1-.258 0L0 6.85z"/>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <span>Resultado do Período</span>
+            <strong id="resultadoPeriodo">R$ 0,00</strong>
+            <small id="statusResultado">—</small>
+          </div>
+          <div class="kpi-bar"></div>
+        </div>
+      </div>
 
-  </div>
-
-  <!-- LINHA 2 -->
-  <div class="grafico-box grafico-full">
-    <h3>Receitas x Despesas</h3>
-    <canvas id="graficoComparativo"></canvas>
-<!-- LEGENDA -->
-<div class="grafico-legenda">
-  <span><i class="legenda receita"></i> Receitas</span>
-  <span><i class="legenda despesa"></i> Despesas</span>
-   <p class="grafico-analise" id="graficoAnalise">
-        Selecione um período para visualizar os dados.
+      <p class="graficos-sem-dados" id="semDados" style="display:none;">
+        Não há registros para o período selecionado.
       </p>
-</div>
 
+      <div class="graficos-grid">
+        <section class="graficos-panel panel-grande">
+          <div class="panel-header">
+            <div>
+              <h3>Evolução de receitas e despesas</h3>
+              <p>Comparativo por período</p>
+            </div>
+
+            <div class="panel-actions">
+              <select id="granularidade">
+  
+  <option value="mensal">Mensal</option>
+  <option value="semanal">Semanal</option>
+</select>
+            </div>
+          </div>
+
+          <div class="panel-chart">
+            <canvas id="graficoEvolucao"></canvas>
+          </div>
+
+          <div class="panel-footer-info" id="rodapeEvolucao">
+            Receitas médias mensais: R$ 0,00 • Despesas médias mensais: R$ 0,00
+          </div>
+        </section>
+
+        <section class="graficos-panel panel-categoria">
+          <div class="panel-header">
+            <div>
+              <h3>Despesas por categoria</h3>
+              <p>Distribuição do período</p>
+            </div>
+          </div>
+
+          <div class="categoria-layout">
+            <div class="panel-donut">
+              <canvas id="graficoDespesasCategoria"></canvas>
+            </div>
+
+            <div class="categoria-legenda" id="legendaDespesas"></div>
+          </div>
+
+          <button class="panel-link-btn" type="button" id="btnVerDetalhesDespesas">
+            Ver detalhes
+          </button>
+        </section>
+
+        <section class="graficos-panel panel-receitas">
+          <div class="panel-header">
+            <div>
+              <h3>Receitas por categoria</h3>
+              <p>Distribuição acumulada</p>
+            </div>
+
+            <div class="panel-actions">
+              <select id="modoReceitas">
+  <option value="valor" selected>Valor (R$)</option>
+  <option value="percentual">Percentual (%)</option>
+</select>
+            </div>
+          </div>
+
+          <div class="panel-chart panel-chart-horizontal">
+            <canvas id="graficoReceitasCategoria"></canvas>
+          </div>
+
+          <div class="panel-footer-total">
+            <span>Total de receitas</span>
+            <strong id="totalReceitasRodape">R$ 0,00</strong>
+          </div>
+        </section>
+
+        <section class="graficos-panel panel-resumo">
+          <div class="panel-header">
+            <div>
+              <h3>Resumo inteligente</h3>
+              <p>Leitura rápida do período</p>
+            </div>
+          </div>
+
+          <div class="resumo-lista-v2" id="resumoInteligente"></div>
+        </section>
+      </div>
+    </div>
   </div>
 
-</div>
+  <!-- =========================
+       MODAL — DETALHES DESPESAS
+  ========================= -->
+  <div class="modal fade" id="modalDetalhesDespesas" tabindex="-1" aria-labelledby="modalDetalhesDespesasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content modal-despesas-detalhes">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title" id="modalDetalhesDespesasLabel">Detalhamento das despesas</h5>
+            <p class="modal-subtitle">Categorias e lançamentos do período selecionado</p>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
 
+        <div class="modal-body">
+          <div class="detalhes-resumo-topo" id="detalhesResumoTopo"></div>
 
+          <div class="detalhes-grid">
+            <div class="detalhes-card">
+              <h6>Resumo por categoria</h6>
+              <div id="listaCategoriasDespesas"></div>
+            </div>
+
+            <div class="detalhes-card">
+              <h6>Lançamentos do período</h6>
+              <div id="listaLancamentosDespesas"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="toolbar-btn" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/navbar.js"></script>
-<script src="js/graficos.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/graficos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

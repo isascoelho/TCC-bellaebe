@@ -1,167 +1,208 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
-    <title>Página principal</title>
-     <link rel="stylesheet" href="css/estilos3.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+  <title>Página principal</title>
+  <link rel="stylesheet" href="css/estilos3.css">
 </head>
 
 <body>
-<!-- Menu lateral fixo -->
-<div class="offcanvas offcanvas-start show" id="offcanvasNavbar" style="visibility: visible; position: fixed; top: 0; bottom: 0; transform: none;">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasNavbarLabel"> <img src="imagens/logo1.png">SmartCash</h5>
-    <!-- Se quiser pode remover o botão de fechar -->
-    <!-- <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
+  <!-- Menu lateral fixo -->
+  <div class="offcanvas offcanvas-start show" id="offcanvasNavbar" style="visibility: visible; position: fixed; top: 0; bottom: 0; transform: none;">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasNavbarLabel">
+        <img src="imagens/logo1.png" alt="Logo SmartCash">SmartCash
+      </h5>
+    </div>
+
+    <div class="offcanvas-body">
+      <ul class="navbar-nav flex-grow-1">
+        <p>Menu</p>
+
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="home.html">
+            <img src="imagens/logohome.png" class="icon-menu" alt=""> Início
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="receitas.html">
+            <img src="imagens/logoreceita.png" class="icon-menu" alt=""> Gerenciar receitas
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="despesas.html">
+            <img src="imagens/logodespesa.png" class="icon-menu" alt=""> Gerenciar despesas
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="agenda.html">
+            <img src="imagens/logoagenda.png" class="icon-menu" alt=""> Agenda
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="graficos.html">
+            <img src="imagens/logografico.png" class="icon-menu" alt=""> Gráficos
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="configuracoes.html">
+            <img src="imagens/logoconfig.png" class="icon-menu" alt=""> Configurações
+          </a>
+        </li>
+      </ul>
+
+      <div class="user-box">
+        <img id="userFoto" src="imagens/card4.png" alt="Usuário">
+        <div class="user-info">
+          <strong id="userNome"></strong>
+          <small id="userEmail"></small>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="offcanvas-body">
- <ul class="navbar-nav flex-grow-1">
-  <p>Menu</p>
 
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="home.html">
-      <img src="imagens/logohome.png" class="icon-menu"> Início
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="receitas.html">
-      <img src="imagens/logoreceita.png" class="icon-menu"> Gerenciar receitas
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="despesas.html">
-      <img src="imagens/logodespesa.png" class="icon-menu"> Gerenciar despesas
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="agenda.html">
-      <img src="imagens/logoagenda.png" class="icon-menu"> Agenda
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="graficos.html">
-      <img src="imagens/logografico.png" class="icon-menu"> Gráficos
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="configuracoes.html">
-      <img src="imagens/logoconfig.png" class="icon-menu"> Configurações
-    </a>
-  </li>
-</ul>
+  <div class="content pagina-home">
+    <div class="home-header">
+      <h2>Olá, <span id="homeNome">usuário</span>!</h2>
+      <p class="home-subtitle">
+        Acompanhe seu saldo, receitas, despesas e atividades mais recentes.
+      </p>
+    </div>
 
- <div class="user-box">
-  <img id="userFoto" src="imagens/card4.png" alt="Usuário">
-  <div class="user-info">
-    <strong id="userNome">Isabella</strong>
-    <small id="userEmail">Isascoelhok@gmail.com</small>
+   <div class="home-layout">
+  <div class="home-main">
+    <div class="dashboard-cards">
+      <!-- Card Saldo -->
+      <div class="card-dashboard card-saldo">
+        <div class="icon-circle home-icon-saldo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
+            <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5z"/>
+          </svg>
+        </div>
+
+        <div class="card-content">
+          <span class="card-label">Saldo</span>
+          <strong class="card-value" id="saldoValor">R$ 0,00</strong>
+        </div>
+      </div>
+
+      <!-- Card Última Receita -->
+      <div class="card-dashboard card-light">
+        <div class="icon-circle icon-saldo2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/>
+          </svg>
+        </div>
+
+        <div class="card-content">
+          <span class="card-label">Última receita</span>
+          <strong class="card-value dark" id="ultimaReceita">—</strong>
+        </div>
+      </div>
+
+      <!-- Card Última Despesa -->
+      <div class="card-dashboard card-light">
+        <div class="icon-circle icon-saldo2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-down-arrow" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 11.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-1 0v2.6l-3.613-4.417a.5.5 0 0 0-.74-.037L7.06 8.233 3.404 3.206a.5.5 0 0 0-.808.588l4 5.5a.5.5 0 0 0 .758.06l2.609-2.61L13.445 11H10.5a.5.5 0 0 0-.5.5"/>
+          </svg>
+        </div>
+
+        <div class="card-content">
+          <span class="card-label">Última despesa</span>
+          <strong class="card-value dark" id="ultimaDespesa">—</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="grafico-card-home">
+      <h3>Gráfico semanal</h3>
+      <div class="grafico-canvas-wrap">
+        <canvas id="graficoSemanal"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-direita">
+    <aside class="atividades-card">
+      <h4>Atividades recentes</h4>
+      <small class="atividades-subtitulo">
+        Últimos lançamentos registrados
+      </small>
+
+      <small class="sem-atividades" id="semAtividades">
+        Nenhuma atividade recente
+      </small>
+
+      <div class="bolhas-container" id="bolhasContainer">
+        <!-- bolhas entram aqui via JS -->
+      </div>
+    </aside>
+
+    <div class="resumo-inteligente-card resumo-lateral">
+      <h4>Resumo inteligente</h4>
+      <small class="resumo-subtitulo">Insights rápidos sobre sua semana financeira</small>
+
+      <div class="resumo-lista">
+        <div class="resumo-item">
+          <span class="resumo-icone resumo-verde">✓</span>
+          <div class="resumo-texto">
+            <strong id="insightSaldo">Carregando saldo...</strong>
+            <small id="insightSaldoDesc">Aguarde a atualização dos dados.</small>
+          </div>
+        </div>
+
+        <div class="resumo-item">
+          <span class="resumo-icone resumo-amarelo">!</span>
+          <div class="resumo-texto">
+            <strong id="insightMaiorGasto">Carregando despesa...</strong>
+            <small id="insightMaiorGastoDesc">Aguarde a atualização dos dados.</small>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
   </div>
-</div>
-
- <div class="content">
-  <h2 class="mb-4">Início</h2>
-  <div class="dashboard-cards">
   
-  <!-- Card Saldo -->
- <div class="card-dashboard card-saldo">
-  <div class="icon-circle icon-saldo">
-   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
-  <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5z"/>
-</svg>
-  </div>
-
-  <div class="card-content">
-    <span class="card-label">Saldo</span>
-    <strong class="card-value" id="saldoValor">R$ 0,00</strong>
-  </div>
-</div>
-
-  <!-- Card Última Receita -->
-  <div class="card-dashboard card-light">
-    <div class="icon-circle icon-saldo2">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16">
-  <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/>
-</svg>
-    </div>
-
-    <div class="card-content">
-      <span class="card-label">Última receita</span>
-   <strong class="card-value dark" id="ultimaReceita">—</strong>
-    </div>
-  </div>
-
-  <!-- Card Última Despesa -->
-  <div class="card-dashboard card-light">
-    <div class="icon-circle icon-saldo2">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-graph-down-arrow" viewBox="0 0 16 16">
-  <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 11.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-1 0v2.6l-3.613-4.417a.5.5 0 0 0-.74-.037L7.06 8.233 3.404 3.206a.5.5 0 0 0-.808.588l4 5.5a.5.5 0 0 0 .758.06l2.609-2.61L13.445 11H10.5a.5.5 0 0 0-.5.5"/>
-</svg>
-    </div>
-    <div class="card-content">
-      <span class="card-label">Última despesa</span>
-   <strong class="card-value dark" id="ultimaDespesa">—</strong>
-    </div>
-  </div>
-</div>
 
 
- 
-<div class="grafico-wrapper">
-
-  <!-- GRÁFICO -->
-  <div class="grafico-container">
-    <h3>Gráfico semanal</h3>
-    <canvas id="graficoSemanal"></canvas>
-  </div>
-
-  <!-- LEGENDA (AO LADO DIREITO) -->
-  <div class="grafico-legenda">
-    <div class="legenda-item">
-      <span class="legenda-cor alto"></span>
-      <span>Maiores gastos</span>
-    </div>
-
-    <div class="legenda-item">
-      <span class="legenda-cor moderado"></span>
-      <span>Gastos moderados</span>
-    </div>
-
-    <div class="legenda-item">
-      <span class="legenda-cor baixo"></span>
-      <span>Gastos baixos</span>
-    </div>
-  </div>
-
-</div>
-
-<div class="atividades-card">
-  <h4>Atividades recentes</h4>
-  <small class="atividades-subtitulo">
-  Últimos lançamentos registrados
-</small>
-
-  <!-- UX extra (estado vazio) -->
-  <small class="sem-atividades" id="semAtividades">
-    Nenhuma atividade recente
-  </small>
-
-  <div class="bolhas-container" id="bolhasContainer">
-    <!-- bolhas entram aqui via JS -->
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/grafico.js"></script>
-<script src="js/atividade.js"></script>
-<script src="js/navbar.js"></script>
-<script src="js/dashboard.js"></script>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>     
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/grafico.js"></script>
+  <script src="js/atividade.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/resumohome.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const userNome = document.getElementById("userNome");
+      const homeNome = document.getElementById("homeNome");
+
+      function sincronizarNome() {
+        if (userNome && homeNome && userNome.textContent.trim() !== "") {
+          homeNome.textContent = userNome.textContent.trim();
+        }
+      }
+
+      sincronizarNome();
+
+      const observer = new MutationObserver(sincronizarNome);
+      if (userNome) {
+        observer.observe(userNome, { childList: true, subtree: true, characterData: true });
+      }
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>
 </body>
+</html>

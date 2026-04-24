@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btnSalvar.addEventListener("click", salvarDespesa);
   }
 });
-
 /* =========================
    PERÍODO DO RESUMO
 ========================= */
@@ -121,7 +120,7 @@ function carregarDespesas() {
       despesas.forEach(d => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${d.periodo || "-"}</td>
+          <td>${formatarData(d.periodo)}</td>
           <td>${d.categoria || "-"}</td>
           <td>${d.banco || "-"}</td>
           <td>${d.descricao || "-"}</td>
@@ -136,6 +135,16 @@ function carregarDespesas() {
       });
     })
     .catch(err => console.error("Erro ao listar despesas:", err));
+}
+
+function formatarData(data) {
+  if (!data) return "-";
+
+  const dt = new Date(data);
+
+  if (isNaN(dt.getTime())) return data;
+
+  return dt.toLocaleDateString("pt-BR");
 }
 
 /* =========================
@@ -243,10 +252,13 @@ function atualizarCardsDespesas() {
 function carregarResumoDespesas() {
   const hoje = new Date();
   const ano = hoje.getFullYear();
-  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+  const mes = hoje.getMonth();
 
-  const inicio = `${ano}-${mes}-01`;
-  const fim = `${ano}-${mes}-31`;
+  const primeiroDia = new Date(ano, mes, 1);
+  const ultimoDia = new Date(ano, mes + 1, 0);
+
+  const inicio = primeiroDia.toISOString().split("T")[0];
+  const fim = ultimoDia.toISOString().split("T")[0];
 
   fetch(`/despesas/relatorio?inicio=${inicio}&fim=${fim}`, {
     credentials: "include"
@@ -256,6 +268,8 @@ function carregarResumoDespesas() {
       return res.json();
     })
     .then(dados => {
+      console.log("RESUMO DESPESAS:", dados);
+
       const resumoTotal = document.getElementById("resumoTotal");
       const resumoMedia = document.getElementById("resumoMedia");
       const resumoMaior = document.getElementById("resumoMaior");
@@ -281,24 +295,5 @@ function carregarResumoDespesas() {
     })
     .catch(err => {
       console.error("Erro ao carregar resumo de despesas:", err);
-    });
-}
-
-/* =========================
-   RELATÓRIO POR PERÍODO
-========================= */
-function carregarRelatorioDespesas(inicio, fim) {
-  fetch(`/despesas/relatorio?inicio=${inicio}&fim=${fim}`, {
-    credentials: "include"
-  })
-    .then(res => {
-      if (!res.ok) throw new Error("Erro ao carregar relatório");
-      return res.json();
-    })
-    .then(dados => {
-      console.log("RELATÓRIO:", dados);
-    })
-    .catch(err => {
-      console.error("Erro ao carregar relatório de despesas:", err);
     });
 }

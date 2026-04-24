@@ -12,66 +12,61 @@
 
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-    <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center" style="gap: 0; padding: 0;">
-        <img src="imagens/logo1.png" alt="Logo" width="100" height="80"
-          style="margin: 0; padding: 0; display: block;">
-        <span class="fw-bold" style="margin: 0; padding: 0;">SmartCash</span>
-      </a>
+ <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="index.html">
+      <img src="imagens/logo1.png" alt="Logo SmartCash" width="100" height="80">
+      <span>SmartCash</span>
+    </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-label="Abrir menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" href="#como-funciona">Como funciona</a>
-          </li>
-        </ul>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" href="#como-funciona">Como funciona</a>
+        </li>
+      </ul>
 
-        <div class="cta-wrap">
-          <a href="comece.html" class="btn btn-ghost">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M10 6l-1.4 1.4 3.6 3.6H3v2h9.2l-3.6 3.6L10 18l6-6-6-6z" />
-            </svg>
-            <span>Acessar sua conta</span>
-          </a>
+      <div class="cta-wrap">
+        <a href="comece.html" class="btn btn-ghost">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 6l-1.4 1.4 3.6 3.6H3v2h9.2l-3.6 3.6L10 18l6-6-6-6z"></path>
+          </svg>
+          <span>Acessar sua conta</span>
+        </a>
 
-          <a href="criar.html" class="btn btn-solid">
-            Cadastrar-se
-          </a>
-        </div>
-
+        <a href="criar.html" class="btn btn-solid">Cadastrar-se</a>
       </div>
     </div>
-  </nav>
+  </div>
+</nav>
 
   <!-- HERO -->
   <section class="hero hero-full">
     <div class="container hero-grid">
       <div class="hero-left">
         <div class="badge-custom d-inline-flex align-items-center mb-4 px-3 py-2">
-          <img src="imagens/globo.png" alt="Ícone" width="40" height="40" class="me-2">
+          <img src="imagens/globo.png" alt="Ícone de globo" width="40" height="40" class="me-2">
           <span class="text-white">FEITO PARA TODOS!</span>
         </div>
 
-        <h1 class="display-5 fw-bold mb-4 estilo1-h1">
+        <h1 class="display-5 fw-bold mb-3 estilo1-h1">
           Controle seu dinheiro <br class="d-none d-md-block"> sem complicação
         </h1>
 
-        <p class="lead mb-5 hero-lead">
-         Tenha clareza sobre gastos, metas e resultados em tempo real!
+        <p class="lead hero-lead mb-4">
+          Tenha clareza sobre gastos, metas e resultados em tempo real com uma plataforma simples, segura e visual.
         </p>
 
-        <!-- CTA pequeno no HERO -->
         <div class="hero-actions">
           <a href="criar.html" class="hero-cta-primary">Começar agora</a>
           <a href="comece.html" class="hero-cta-ghost">Já sou usuário</a>
         </div>
 
-        <div class="hero-note mb-3">
+        <div class="hero-note">
           <span>Sem custo</span>
           <span class="dot">•</span>
           <span>Sem cartão de crédito</span>
@@ -81,105 +76,124 @@
       </div>
     </div>
 
-    <!-- IMAGEM fora do container, encostada na direita -->
     <div class="hero-right">
-      <img src="imagens/Bv.png" alt="Mockup" class="hero-right-img">
+      <img src="imagens/notebook.png" alt="Dashboard SmartCash em notebook" class="hero-right-img">
     </div>
   </section>
 
-  <!-- FEATURES -->
+  <!-- BENEFÍCIOS -->
   <section class="features section-pad bg-light">
     <div class="container">
-      <h2 class="display-6 fw-bold mb-3 estilo1-h2">Por que usar o SmartCash?</h2>
+      <h2 class="display-6 fw-bold mb-2 estilo1-h2">Por que usar o SmartCash?</h2>
+      <p class="section-subtitle">
+        Uma plataforma completa para transformar sua vida financeira.
+      </p>
 
       <div class="row justify-content-center g-4">
         <div class="col-md-4">
-          <div class="card h-100 text-center card-highlight">
+          <div class="card h-100 feature-card card-highlight">
             <div class="card-body">
-              <img src="imagens/card1.png" alt="card1" class="img-left-small">
+              <div class="feature-icon-wrap">
+                <img src="imagens/card1.png" alt="Gerencie em tempo real">
+              </div>
               <h5 class="card-title">Gerencie em tempo real</h5>
-              <p class="card-text">Veja para onde seu dinheiro vai e quanto você está economizando de verdade!</p>
+              <p class="card-text">Veja para onde seu dinheiro vai e quanto você está economizando de verdade.</p>
             </div>
           </div>
         </div>
 
         <div class="col-md-4">
-          <div class="card h-100 text-center">
+          <div class="card h-100 feature-card">
             <div class="card-body">
-              <img src="imagens/card2.png" alt="card2" class="img-left-small">
+              <div class="feature-icon-wrap">
+                <img src="imagens/card2.png" alt="Planejamento financeiro">
+              </div>
               <h5 class="card-title">Planeje um futuro mais tranquilo</h5>
-              <p class="card-text">Defina metas e objetivos financeiros que você realmente consegue alcançar!</p>
+              <p class="card-text">Defina metas e objetivos financeiros que você realmente consegue alcançar.</p>
             </div>
           </div>
         </div>
 
         <div class="col-md-4">
-          <div class="card h-100 text-center">
+          <div class="card h-100 feature-card">
             <div class="card-body">
-              <img src="imagens/card3.png" alt="card3" class="img-left-small">
+              <div class="feature-icon-wrap">
+                <img src="imagens/card3.png" alt="Decisões mais inteligentes">
+              </div>
               <h5 class="card-title">Decisões mais inteligentes</h5>
-              <p class="card-text">Deixe de improvisar e passe a decidir com base no que realmente importa!</p>
+              <p class="card-text">Deixe de improvisar e passe a decidir com base no que realmente importa.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- CTA menor e mais integrado -->
       <div class="cta-box-soft">
         <div class="cta-box-soft__inner">
           <p class="cta-box-soft__title">Comece a controlar seu dinheiro hoje</p>
           <p class="cta-box-soft__subtitle">Simples • Seguro • Educativo</p>
 
-         
+          <div class="cta-soft-actions">
+            <a href="criar.html" class="cta-soft-btn cta-soft-btn--primary">Criar conta grátis</a>
+            <a href="comece.html" class="cta-soft-btn cta-soft-btn--ghost">Entrar agora</a>
+          </div>
         </div>
       </div>
 
-      <!-- Funcionalidades -->
-      <div class="row mt-5">
-        <h2 class="display-6 fw-bold mb-3 estilo1-h2">Funcionalidades principais:</h2>
+      <div class="mt-5">
+        <h2 class="display-6 fw-bold mb-2 estilo1-h2">Funcionalidades principais</h2>
+        <p class="section-subtitle">
+          Tudo o que você precisa para ter controle e tranquilidade.
+        </p>
 
-        <div class="col-md-4">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <img src="imagens/card4.png" alt="card4" class="img-left-small">
-              <h5 class="card-title">Receitas e despesas</h5>
-              <p class="card-text">Tudo em um só lugar!</p>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card h-100 feature-card">
+              <div class="card-body">
+                <div class="feature-icon-wrap">
+                  <img src="imagens/card4.png" alt="Receitas e despesas">
+                </div>
+                <h5 class="card-title">Receitas e despesas</h5>
+                <p class="card-text">Tudo em um só lugar para registrar e acompanhar seus lançamentos.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card h-100 feature-card">
+              <div class="card-body">
+                <div class="feature-icon-wrap">
+                  <img src="imagens/card5.png" alt="Planejamento financeiro">
+                </div>
+                <h5 class="card-title">Planejamento financeiro</h5>
+                <p class="card-text">Menos improviso, mais clareza para organizar seus objetivos.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="card h-100 feature-card">
+              <div class="card-body">
+                <div class="feature-icon-wrap">
+                  <img src="imagens/card6.png" alt="Gráficos dinâmicos">
+                </div>
+                <h5 class="card-title">Gráficos dinâmicos</h5>
+                <p class="card-text">Decisões baseadas em dados atuais e resultados visuais.</p>
+              </div>
             </div>
           </div>
         </div>
-
-        <div class="col-md-4">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <img src="imagens/card5.png" alt="card5" class="img-left-small">
-              <h5 class="card-title">Planejamento financeiro</h5>
-              <p class="card-text">Menos improviso, mais clareza!</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <img src="imagens/card6.png" alt="card6" class="img-left-small">
-              <h5 class="card-title">Gráficos dinâmicos</h5>
-              <p class="card-text">Decisões baseadas em dados atuais!</p>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
 
-  <!-- HISTÓRIA (corrigida) -->
+  <!-- HISTÓRIA -->
   <section class="sobre section-pad">
     <div class="container">
       <h2 class="display-6 fw-bold mb-4 estilo2-h2">Descubra a história do SmartCash</h2>
 
       <div class="sobre-grid">
         <div class="sobre-texto">
-          <p class="lead mb-4">
+          <p class="lead mb-4 sobre-lead">
             O SmartCash foi idealizado para ajudar pessoas a terem mais clareza e tranquilidade com o dinheiro,
             por meio de uma organização financeira segura, simples, prática e acessível.
             <br><br>
@@ -189,104 +203,92 @@
         </div>
 
         <div class="sobre-imagem">
-          <img src="imagens/dispositivos.png" class="dispositivos" alt="Mockup de celular e notebook">
+          <div class="dispositivos">
+            <img src="imagens/telag.png" alt="Tela do SmartCash">
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- COMO FUNCIONA -->
-<section id="como-funciona" class="how-it-works section-pad">
-  <div class="container">
-    <div class="how-head">
-      <div>
-        <h2 class="how-title">Como funciona o SmartCash</h2>
-        <p class="how-subtitle">Pronto para mudar sua vida financeira?</p>
-      </div>
-
-      <!-- opcional: mantém sua ilustração do lado direito (se quiser) -->
-      <div class="how-illustration">
-        <img src="imagens/funciona.png" alt="Pessoa usando notebook" />
-      </div>
-    </div>
-<p class="how-eyebrow">Em poucos passos você assume o controle do seu dinheiro</p>
-    <div class="how-steps">
-      <!-- Step 1 -->
-      <div class="how-step">
-        <div class="how-step-badge">1</div>
-        <div class="how-step-icon">
-          <img src="icons/check.svg" alt="Criar conta" />
+  <section id="como-funciona" class="how-it-works section-pad">
+    <div class="container">
+      <div class="how-head">
+        <div>
+          <h2 class="how-title">Como funciona o SmartCash</h2>
+          <p class="how-subtitle">Pronto para mudar sua vida financeira?</p>
         </div>
-        <h3 class="how-step-title">Crie sua conta</h3>
-        <p class="how-step-text">Cadastre-se em poucos minutos e comece do zero com clareza.</p>
-        <div class="how-step-check">✔ Mais clareza</div>
       </div>
 
-      <div class="how-arrow" aria-hidden="true">➜</div>
+      <p class="how-eyebrow">Em poucos passos você assume o controle do seu dinheiro</p>
 
-      <!-- Step 2 -->
-      <div class="how-step">
-        <div class="how-step-badge">2</div>
-        <div class="how-step-icon">
-          <img src="icons/cash.svg" alt="Organizar finanças" />
-        </div>
-        <h3 class="how-step-title">Organize sua vida financeira</h3>
-        <p class="how-step-text">Registre receitas e despesas e acompanhe tudo em um só lugar.</p>
-        <div class="how-step-check">✔ Mais controle</div>
-      </div>
-
-      <div class="how-arrow" aria-hidden="true">➜</div>
-
-      <!-- Step 3 -->
-      <div class="how-step">
-        <div class="how-step-badge">3</div>
-        <div class="how-step-icon">
-          <img src="icons/alvo.svg" alt="Planejar metas" />
-        </div>
-        <h3 class="how-step-title">Planeje e defina metas</h3>
-        <p class="how-step-text">Crie objetivos e planeje seu mês com base no que cabe no seu bolso.</p>
-        <div class="how-step-check">✔ Mais planejamento</div>
-      </div>
-
-      <div class="how-arrow" aria-hidden="true">➜</div>
-
-      <!-- Step 4 -->
-
-      <div class="how-step how-step--wide">
-        <div class="how-step-badge">4</div>
-        <div class="how-step-icon">
-          <img src="icons/grafico.svg" alt="Acompanhar evolução" />
-        </div>
-        <h3 class="how-step-title">Acompanhe sua evolução</h3>
-        <p class="how-step-text">
-          Visualize gráficos e resultados para entender sua planilha financeira ao longo do tempo.
-        </p>
-
-        <!-- mock simples (sem precisar de imagem real) -->
-        <div class="how-mini-mock">
-          <div class="how-mini-top">
-            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-step-badge">1</div>
+          <div class="how-step-icon">
+            <img src="icons/check.svg" alt="Criar conta">
           </div>
-          <div class="how-mini-row">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
+          <h3 class="how-step-title">Crie sua conta</h3>
+          <p class="how-step-text">Cadastre-se em poucos minutos e comece do zero com mais clareza financeira.</p>
+          <div class="how-step-check">✔ Mais clareza</div>
+        </div>
+
+        <div class="how-arrow" aria-hidden="true">➜</div>
+
+        <div class="how-step">
+          <div class="how-step-badge">2</div>
+          <div class="how-step-icon">
+            <img src="icons/cash.svg" alt="Organizar finanças">
           </div>
-          <div class="how-mini-row">
-            <div class="line"></div>
+          <h3 class="how-step-title">Organize sua vida financeira</h3>
+          <p class="how-step-text">Registre receitas e despesas e acompanhe tudo em um só lugar.</p>
+          <div class="how-step-check">✔ Mais controle</div>
+        </div>
+
+        <div class="how-arrow" aria-hidden="true">➜</div>
+
+        <div class="how-step">
+          <div class="how-step-badge">3</div>
+          <div class="how-step-icon">
+            <img src="icons/alvo.svg" alt="Planejar metas">
+          </div>
+          <h3 class="how-step-title">Planeje e defina metas</h3>
+          <p class="how-step-text">Crie objetivos e planeje seu mês com base no que realmente cabe no seu bolso.</p>
+          <div class="how-step-check">✔ Mais planejamento</div>
+        </div>
+
+        <div class="how-arrow" aria-hidden="true">➜</div>
+
+        <div class="how-step how-step--wide">
+          <div class="how-step-badge">4</div>
+          <div class="how-step-icon">
+            <img src="icons/grafico.svg" alt="Acompanhar evolução">
+          </div>
+          <h3 class="how-step-title">Acompanhe sua evolução</h3>
+          <p class="how-step-text">
+            Visualize gráficos e resultados para entender sua evolução financeira ao longo do tempo.
+          </p>
+
+          <div class="how-mini-mock">
+            <div class="how-mini-top">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <div class="how-mini-row">
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+            </div>
+            <div class="how-mini-row">
+              <div class="line"></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- linha de confiança -->
-    <div class="how-trust">
-      <div class="how-trust-item">🔒 Seus dados protegidos</div>
-      <div class="how-trust-item">⚡ Atualização em tempo real</div>
-      <div class="how-trust-item">📊 Relatórios simples e interativos</div>
-    </div>
-  </div>
-</section>
+  </section>
 
   <!-- FOOTER -->
   <footer class="site-footer">
@@ -313,8 +315,5 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu"
     crossorigin="anonymous"></script>
-
-
-
 </body>
 </html>

@@ -216,16 +216,24 @@ function atualizarCardsReceitas() {
 function carregarResumoReceitas() {
   const hoje = new Date();
   const ano = hoje.getFullYear();
-  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+  const mes = hoje.getMonth();
 
-  const inicio = `${ano}-${mes}-01`;
-  const fim = `${ano}-${mes}-31`;
+  const primeiroDia = new Date(ano, mes, 1);
+  const ultimoDia = new Date(ano, mes + 1, 0);
+
+  const inicio = primeiroDia.toISOString().split("T")[0];
+  const fim = ultimoDia.toISOString().split("T")[0];
 
   fetch(`/receitas/relatorio?inicio=${inicio}&fim=${fim}`, {
     credentials: "include"
   })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao carregar relatório de receitas");
+      return res.json();
+    })
     .then(dados => {
+      console.log("RESUMO RECEITAS:", dados);
+
       const resumoTotal = document.getElementById("resumoTotal");
       const resumoMedia = document.getElementById("resumoMedia");
       const resumoMaior = document.getElementById("resumoMaior");
@@ -241,50 +249,6 @@ function carregarResumoReceitas() {
 
       const valores = dados.map(item => Number(item.valor || 0));
       const total = valores.reduce((acc, v) => acc + v, 0);
-      const media = total / valores.length;
-      const maior = Math.max(...valores);
-
-      if (resumoTotal) resumoTotal.innerText = `R$ ${total.toFixed(2)}`;
-      if (resumoMedia) resumoMedia.innerText = `R$ ${media.toFixed(2)}`;
-      if (resumoMaior) resumoMaior.innerText = `R$ ${maior.toFixed(2)}`;
-      if (resumoEstado) resumoEstado.hidden = true;
-    })
-    .catch(err => {
-      console.error("Erro ao carregar resumo de receitas:", err);
-    });
-}
-
-function carregarResumoReceitas() {
-  const hoje = new Date();
-  const ano = hoje.getFullYear();
-  const mes = String(hoje.getMonth() + 1).padStart(2, "0");
-
-  const inicio = `${ano}-${mes}-01`;
-  const fim = `${ano}-${mes}-31`;
-
-  fetch(`/receitas/relatorio?inicio=${inicio}&fim=${fim}`, {
-    credentials: "include"
-  })
-    .then(res => {
-      if (!res.ok) throw new Error("Erro ao carregar relatório de receitas");
-      return res.json();
-    })
-    .then(dados => {
-      const resumoTotal = document.getElementById("resumoTotal");
-      const resumoMedia = document.getElementById("resumoMedia");
-      const resumoMaior = document.getElementById("resumoMaior");
-      const resumoEstado = document.getElementById("resumoEstado");
-
-      if (!Array.isArray(dados) || !dados.length) {
-        if (resumoTotal) resumoTotal.innerText = "R$ 0,00";
-        if (resumoMedia) resumoMedia.innerText = "R$ 0,00";
-        if (resumoMaior) resumoMaior.innerText = "R$ 0,00";
-        if (resumoEstado) resumoEstado.hidden = false;
-        return;
-      }
-
-      const valores = dados.map(item => Number(item.valor || 0));
-      const total = valores.reduce((acc, valor) => acc + valor, 0);
       const media = total / valores.length;
       const maior = Math.max(...valores);
 

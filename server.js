@@ -2,8 +2,38 @@ const express = require("express");
 const session = require("express-session");
 const path = require("path");
 const db = require("./db");
+const fs = require("fs");
+const multer = require("multer");
+
 
 const app = express();
+
+const uploadDir = path.join(__dirname, "public", "uploads");
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `user_${req.session.userId}_${Date.now()}${ext}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Arquivo inválido"));
+    }
+  }
+});
 
 /* =========================
    CONFIG
@@ -100,7 +130,7 @@ app.post("/login", (req, res) => {
 ========================= */
 app.get("/me", auth, (req, res) => {
   db.query(
-    "SELECT ID, nome, email, cpf, data_nascimento, fone FROM usuario WHERE ID = ?",
+    "SELECT ID, nome, email, cpf, data_nascimento, fone, sexo, endereco, vinculo, foto FROM usuario WHERE ID = ?",
     [req.session.userId],
     (err, result) => {
       if (err || !result.length) return res.status(500).json(null);
@@ -111,7 +141,15 @@ app.get("/me", auth, (req, res) => {
 
 app.put("/me", auth, (req, res) => {
   const { field, value } = req.body;
-  const permitidos = ["cpf", "data_nascimento", "fone", "email"];
+  const permitidos = [
+    "cpf",
+    "data_nascimento",
+    "fone",
+    "email",
+    "sexo",
+    "endereco",
+    "vinculo"
+  ];
 
   if (!permitidos.includes(field)) {
     return res.status(400).json({ error: "Campo inválido" });
@@ -121,12 +159,14 @@ app.put("/me", auth, (req, res) => {
     `UPDATE usuario SET ${field} = ? WHERE ID = ?`,
     [value, req.session.userId],
     err => {
-      if (err) return res.status(500).json({ error: true });
+      if (err) {
+        console.error("Erro ao atualizar usuário:", err);
+        return res.status(500).json({ error: true });
+      }
       res.json({ success: true });
     }
   );
 });
-
 /* =========================
    RECEITAS
 ========================= */
@@ -806,6 +846,27 @@ app.get("/dashboard/resumo", auth, (req, res) => {
           );
         }
       );
+    }
+  );
+});
+
+app.post("/me/foto", auth, upload.single("foto"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "Nenhuma imagem enviada" });
+  }
+
+  const caminhoFoto = `/uploads/${req.file.filename}`;
+
+  db.query(
+    "UPDATE usuario SET foto = ? WHERE ID = ?",
+    [caminhoFoto, req.session.userId],
+    err => {
+      if (err) {
+        console.error("Erro ao salvar foto:", err);
+        return res.status(500).json({ error: true });
+      }
+
+      res.json({ success: true, foto: caminhoFoto });
     }
   );
 });

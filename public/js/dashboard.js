@@ -14,6 +14,16 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================
+   UTIL
+========================= */
+function formatarMoedaBR(valor) {
+  return `R$ ${Number(valor || 0).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })}`;
+}
+
+/* =========================
    ATUALIZAÇÃO CENTRAL
 ========================= */
 function atualizarTudo() {
@@ -36,25 +46,39 @@ function atualizarResumoDashboard() {
       const ultimaDespesaEl = document.getElementById("ultimaDespesa");
       const saldoEl = document.getElementById("saldoValor");
 
+      const totalMes = Number(data.totalMes || 0);
+      const saldo = Number(data.saldo || 0);
+      const ultimaReceita = data.ultimaReceita ? Number(data.ultimaReceita.valor) : 0;
+      const ultimaDespesa = data.ultimaDespesa ? Number(data.ultimaDespesa.valor) : 0;
+
       if (totalMesEl) {
-        totalMesEl.innerText = `R$ ${Number(data.totalMes || 0).toFixed(2)}`;
+        totalMesEl.innerText = formatarMoedaBR(totalMes);
       }
 
       if (ultimaReceitaEl) {
         ultimaReceitaEl.innerText = data.ultimaReceita
-          ? `R$ ${Number(data.ultimaReceita.valor).toFixed(2)}`
+          ? formatarMoedaBR(ultimaReceita)
           : "—";
       }
 
       if (ultimaDespesaEl) {
         ultimaDespesaEl.innerText = data.ultimaDespesa
-          ? `R$ ${Number(data.ultimaDespesa.valor).toFixed(2)}`
+          ? formatarMoedaBR(ultimaDespesa)
           : "—";
       }
 
       if (saldoEl) {
-        saldoEl.innerText = `R$ ${Number(data.saldo || 0).toFixed(2)}`;
+        saldoEl.innerText = formatarMoedaBR(saldo);
       }
+
+      // avisa o resumo inteligente que os dados chegaram
+      document.dispatchEvent(new CustomEvent("dashboardResumoAtualizado", {
+        detail: {
+          saldo,
+          ultimaReceita,
+          ultimaDespesa
+        }
+      }));
     })
     .catch(err => {
       console.error("Erro ao atualizar resumo do dashboard:", err);
@@ -84,13 +108,12 @@ function carregarAtividadesHome() {
       despesas.forEach(d => {
         atividades.push({
           tipo: "despesa",
-          nome: d.descricao || "Despesa", // 🔥 AQUI ARRUMA O NOME
+          nome: d.descricao || "Despesa",
           valor: Number(d.valor),
           data: d.periodo
         });
       });
 
-      // ordena por data (mais recente primeiro)
       atividades.sort((a, b) => new Date(b.data) - new Date(a.data));
 
       if (typeof renderizarBolhas === "function") {
