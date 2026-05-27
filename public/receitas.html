@@ -4,235 +4,297 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Gerenciar receitas</title>
-     <link rel="stylesheet" href="css/estilos3.css">
-
+    <link rel="stylesheet" href="css/estilos3.css">
 </head>
 
 <body>
-<!-- Menu lateral fixo -->
-<div class="offcanvas offcanvas-start show" id="offcanvasNavbar"  data-bs-backdrop="false"
-  data-bs-scroll="true">
+
+<div class="offcanvas offcanvas-start show" id="offcanvasNavbar" data-bs-backdrop="false" data-bs-scroll="true">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasNavbarLabel"> <img src="imagens/logo1.png">SmartCash</h5>
-    <!-- Se quiser pode remover o botão de fechar -->
-    <!-- <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
+    <h5 class="offcanvas-title" id="offcanvasNavbarLabel"><img src="imagens/logo1.png">SmartCash</h5>
   </div>
   <div class="offcanvas-body">
- <ul class="navbar-nav flex-grow-1">
-  <p>Menu</p>
-
-  <li class="nav-item">
-    <a class="nav-link" aria-current="page" href="home.html">
-      <img src="imagens/logohome.png" class="icon-menu"> Início
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" href="#">
-      <img src="imagens/logoreceita.png" class="icon-menu"> Gerenciar receitas
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="despesas.html">
-      <img src="imagens/logodespesa.png" class="icon-menu"> Gerenciar despesas
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="agenda.html">
-      <img src="imagens/logoagenda.png" class="icon-menu"> Agenda
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="graficos.html">
-      <img src="imagens/logografico.png" class="icon-menu"> Gráficos
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="configuracoes.html">
-      <img src="imagens/logoconfig.png" class="icon-menu"> Configurações
-    </a>
-  </li>
-</ul>
-
- <div class="user-box">
-  <img id="userFoto" src="imagens/avatar.png" alt="Foto do usuário">
-  <div class="user-info">
-    <strong id="userNome">Usuário</strong>
-<small id="userEmail"></small>
-  </div>
-</div>
-
-  </div>
-</div>
-    <div class="content pagina-receitas"> 
-
-
-       <h2 class="mb-4">Gerenciar receitas</h2>
-     <p class="subtitle">Acompanhe e registre todas as entradas de dinheiro</p>
-     
-<div class="receita-resumo">
-  <div class="receita-card amarelo">
-    <span>Total no mês</span>
-    <strong id="totalMes">R$ 0,00</strong>
-  </div>
-
-  <div class="receita-card azul">
-    <span>Última receita</span>
-    <strong id="ultimaReceita">R$ 0,00</strong>
-  </div>
-</div>
-
-  <!-- ===== FORMULÁRIO ===== -->
- 
-<div class="receitas-form">
-  <h3>Nova receita</h3>
-
-  <div class="grid">
-
-    <div class="campo">
-      <label for="valor">Valor</label>
-      <input
-        type="number"
-        step="0.01"
-        id="valor"
-        placeholder="Ex: 1500,00"
-        required
-      />
+    <ul class="navbar-nav flex-grow-1">
+      <p>Menu</p>
+      <li class="nav-item">
+        <a class="nav-link" href="home.html"><img src="imagens/logohome.png" class="icon-menu"> Início</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="#"><img src="imagens/logoreceita.png" class="icon-menu"> Gerenciar receitas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="despesas.html"><img src="imagens/logodespesa.png" class="icon-menu"> Gerenciar despesas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="agenda.html"><img src="imagens/logoagenda.png" class="icon-menu"> Agenda</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="graficos.html"><img src="imagens/logografico.png" class="icon-menu"> Gráficos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="configuracoes.html"><img src="imagens/logoconfig.png" class="icon-menu"> Configurações</a>
+      </li>
+    </ul>
+    <div class="user-box">
+      <img id="userFoto" src="imagens/avatar.png" alt="Foto do usuário">
+      <div class="user-info">
+        <strong id="userNome">Usuário</strong>
+        <small id="userEmail"></small>
+      </div>
     </div>
+  </div>
+</div>
 
-    <div class="campo">
-      <label for="data">Data</label>
-      <input
-        type="date"
-        id="data"
-        required
-      />
+<div class="content pagina-receitas">
+
+  <!-- ===== HEADER ===== -->
+  <div class="despesas-header">
+    <div>
+      <h2>Gerenciar receitas</h2>
+      <p class="subtitle">Acompanhe, registre e analise todas as entradas de dinheiro.</p>
     </div>
-
-    <div class="campo">
-      <label for="categoria">Categoria</label>
-       <select id="categoria" required>
-       <option value="">Selecione</option>
-        <option>Benefícios</option>
-<option>Investimentos</option>
-<option>Salário</option>
-<option>Transferências/PIX</option>
-<option>Outro</option>
+    <div class="despesas-header-actions">
+      <select id="filtro-periodo" class="filtro-periodo">
+        <option>Abril / 2026</option>
       </select>
+      <button class="btn-nova-despesa" id="btnNovaModal">
+        <i class="fas fa-plus"></i> Nova receita
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== 4 KPI CARDS ===== -->
+  <div class="despesas-kpis">
+    <div class="kpi-despesa">
+      <div class="kpi-icon icon-wallet">
+        <i class="fas fa-wallet"></i>
+      </div>
+      <div class="kpi-content">
+        <span>Total no mês</span>
+        <strong id="totalMes">R$ 0,00</strong>
+      </div>
     </div>
 
-    <div class="campo">
-      <label for="banco">Banco</label>
-      <select id="banco" required>
-        <option value="">Selecione</option>
-     <option>Banco do Brasil</option>
-      <option>Bradesco</option>
-      <option>Caixa</option>
-      <option>Itaú</option>
-      <option>Nubank</option>
-      <option>Santander</option>
-      <option>Sicoob</option>
+    <div class="kpi-despesa">
+      <div class="kpi-icon icon-trending">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="kpi-content">
+        <span>Maior receita</span>
+        <strong id="maiorReceita">R$ 0,00</strong>
+        <small id="maiorReceitaInfo">—</small>
+      </div>
+    </div>
+
+    <div class="kpi-despesa">
+      <div class="kpi-icon icon-clock">
+        <i class="fas fa-sync-alt"></i>
+      </div>
+      <div class="kpi-content">
+        <span>Última receita</span>
+        <strong id="ultimaReceita">R$ 0,00</strong>
+        <small id="ultimaReceitaData">—</small>
+      </div>
+    </div>
+
+    <div class="kpi-despesa">
+      <div class="kpi-icon icon-average">
+        <i class="fas fa-calculator"></i>
+      </div>
+      <div class="kpi-content">
+        <span>Média por receita</span>
+        <strong id="mediaReceita">R$ 0,00</strong>
+        <small id="totalRegistrosReceita">0 receitas registradas</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOOLBAR ===== -->
+  <div class="despesas-toolbar">
+    <div class="despesas-busca-wrapper">
+      <i class="fas fa-search"></i>
+      <input type="text" id="busca-receita" placeholder="Pesquisar por descrição, categoria ou banco..." class="despesas-busca">
+    </div>
+
+    <select id="filtro-categoria" class="despesas-filtro">
+      <option value="">Categoria: Todas</option>
+      <option>Benefícios</option>
+      <option>Investimentos</option>
+      <option>Salário</option>
+      <option>Transferências/PIX</option>
       <option>Outro</option>
-      </select>
-    </div>
+    </select>
 
-    <div class="campo">
-      <label for="descricao">Descrição</label>
-      <input
-        type="text"
-        id="descricao"
-        placeholder="Opcional"
-      />
-    </div>
+    <select id="filtro-periodicidade" class="despesas-filtro">
+      <option value="">Periodicidade: Todas</option>
+      <option>Única</option>
+      <option>Semanal</option>
+      <option>Mensal</option>
+      <option>Anual</option>
+    </select>
 
-    <div class="campo">
-      <label for="periodicidade">Periodicidade</label>
-      <select id="periodicidade" required>
-        <option value="">Selecione</option>
-        <option>Única</option>
-        <option>Semanal</option>
-        <option>Mensal</option>
-        <option>Anual</option>
-      </select>
-    </div>
-
-    <button
-      id="btnSalvarReceita"
-      class="btnSalvarReceita"
-      type="button">
-      Salvar receita
-    </button>
-
+    <select id="filtro-ordem" class="despesas-filtro">
+      <option>Mais recentes</option>
+      <option>Mais antigos</option>
+      <option>Maior valor</option>
+      <option>Menor valor</option>
+    </select>
   </div>
-</div>
+
+  <!-- ===== TABELA ===== -->
+  <div class="receitas-tabela">
+    <div class="tabela-header">
+      <h3>Receitas cadastradas</h3>
+      <span class="tabela-subtitle">Visualize, filtre e acompanhe o histórico das entradas registradas</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Categoria</th>
+          <th>Banco</th>
+          <th>Descrição</th>
+          <th>Periodicidade</th>
+          <th>Valor</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="lista-receitas"></tbody>
+    </table>
+  </div>
+
+  <!-- ===== FORMULÁRIO + RESUMO ===== -->
+  <div class="despesas-bottom-layout receitas-bottom-layout">
+
+    <!-- FORMULÁRIO -->
+    <div class="receitas-form">
+      <h3><i class="fas fa-plus-circle"></i> Nova receita</h3>
+      <div class="grid">
+
+        <div class="campo">
+          <label for="valor"><i class="fas fa-dollar-sign"></i> Valor</label>
+          <input type="number" step="0.01" id="valor" required placeholder="R$ 0,00" />
+        </div>
+
+        <div class="campo">
+          <label for="data"><i class="fas fa-calendar"></i> Data</label>
+          <input type="date" id="data" required />
+        </div>
+
+        <div class="campo">
+          <label for="categoria"><i class="fas fa-tag"></i> Categoria</label>
+          <select id="categoria" required>
+            <option value="">Selecione</option>
+            <option>Benefícios</option>
+            <option>Investimentos</option>
+            <option>Salário</option>
+            <option>Transferências/PIX</option>
+            <option>Outro</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="banco"><i class="fas fa-university"></i> Banco</label>
+          <select id="banco" required>
+            <option value="">Selecione</option>
+            <option>Banco do Brasil</option>
+            <option>Bradesco</option>
+            <option>Caixa</option>
+            <option>Itaú</option>
+            <option>Nubank</option>
+            <option>Santander</option>
+            <option>Sicoob</option>
+            <option>Outro</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="descricao"><i class="fas fa-pencil"></i> Descrição</label>
+          <input type="text" id="descricao" placeholder="(opcional)" />
+        </div>
+
+        <div class="campo">
+          <label for="periodicidade"><i class="fas fa-redo"></i> Periodicidade</label>
+          <select id="periodicidade" required>
+            <option value="">Selecione</option>
+            <option>Única</option>
+            <option>Semanal</option>
+            <option>Mensal</option>
+            <option>Anual</option>
+          </select>
+        </div>
+
+        <button id="btnSalvarReceita" class="btnSalvarReceita" type="button">
+          <i class="fas fa-save"></i> Salvar receita
+        </button>
+
+      </div>
+    </div>
+
+    <!-- RESUMO FINANCEIRO -->
+    <div class="tabela-resumo-mes">
+      <div class="tabela-resumo-header">
+        <h3><i class="fas fa-chart-pie"></i> Resumo financeiro do período</h3>
+        <span class="periodo-info" id="periodoResumo"></span>
+      </div>
+
+      <div class="resumo-cards">
+        <div class="resumo-card">
+          <div class="resumo-icon"><i class="fas fa-wallet"></i></div>
+          <div class="resumo-info-content">
+            <small>Total do período</small>
+            <strong id="resumoTotal">R$ 0,00</strong>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-icon"><i class="fas fa-chart-bar"></i></div>
+          <div class="resumo-info-content">
+            <small>Média por entrada</small>
+            <strong id="resumoMedia">R$ 0,00</strong>
+          </div>
+        </div>
+        <div class="resumo-card">
+          <div class="resumo-icon"><i class="fas fa-arrow-up"></i></div>
+          <div class="resumo-info-content">
+            <small>Maior entrada</small>
+            <strong id="resumoMaior">R$ 0,00</strong>
+          </div>
+        </div>
+      </div>
+
   
+        <div class="resumo-detalhes">
+          <div class="resumo-item">
+            <span><i class="fas fa-tag"></i> Categoria com maior entrada</span>
+            <strong id="categoriaMaiorReceita">—</strong>
+          </div>
+        </div>
 
+        <div class="resumo-alerts">
+          <p id="resumoEstado" class="resumo-info" hidden>
+            <i class="fas fa-info-circle"></i> Nenhuma receita registrada no período selecionado.
+          </p>
+          <div id="alertaCategoria" class="alert-categoria" hidden>
+            <span><i class="fas fa-lightbulb"></i></span>
+            <p id="alertaCategoriaTexto">Sua maior receita do período foi em Salário.</p>
+          </div>
+        </div>
 
-<!-- ===== TABELA ===== -->
-<!-- ===== TABELA ===== -->
-<div class="receitas-tabela">
-  <div class="tabela-header">
-    <h3>Receitas cadastradas</h3>
-    <span class="tabela-subtitle">Histórico das entradas registradas</span>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Data</th>
-        <th>Categoria</th>
-        <th>Banco</th>
-        <th>Descrição</th>
-        <th>Período</th>
-        <th>Valor</th>
-        <th></th>
-      </tr>
-    </thead>
-
-      <tbody id="lista-receitas">
-      <!-- JS VAI INJETAR AQUI -->
-    </tbody>
-
-   
-  </table>
-
-</div>
-<div class="tabela-resumo-mes">
-  <div class="tabela-resumo-header">
-    <h3>Resumo financeiro do período</h3>
-    <span class="periodo-info" id="periodoResumo"></span>
-  </div>
-
-  <table class="tabela-resumo">
-    <thead>
-      <tr>
-        <th>Total do período</th>
-        <th>Média por entrada</th>
-        <th>Maior entrada</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td id="resumoTotal">R$ 0,00</td>
-        <td id="resumoMedia">R$ 0,00</td>
-        <td id="resumoMaior">R$ 0,00</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <p id="resumoEstado" class="resumo-info" hidden>
-    Nenhuma receita registrada no período selecionado.
-  </p>
-
+      
+    
   <p class="resumo-update">
-    Valores atualizados automaticamente.
-  </p>
-</div>
+          <i class="fas fa-sync-alt"></i> Valores atualizados automaticamente.
+        </p>
+    </div>
 
-</div>
+  </div>
+
 </div>
 
 <script src="/js/receitas.js"></script>
 <script src="/js/navbar.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script> 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>
 </body>
+</html>

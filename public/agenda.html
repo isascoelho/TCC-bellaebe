@@ -3,221 +3,180 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Agenda | SmartCash</title>
-
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
-
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/estilos3.css" />
 </head>
-
 <body>
 
-<!-- =========================
-     NAVBAR LATERAL
-========================= -->
-<div class="offcanvas offcanvas-start show" id="offcanvasNavbar"
-     data-bs-backdrop="false" data-bs-scroll="true">
-
+<div class="offcanvas offcanvas-start show" id="offcanvasNavbar" data-bs-backdrop="false" data-bs-scroll="true">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title">
-      <img src="imagens/logo1.png" /> SmartCash
-    </h5>
+    <h5 class="offcanvas-title"><img src="imagens/logo1.png" /> SmartCash</h5>
   </div>
-
   <div class="offcanvas-body">
-
     <ul class="navbar-nav flex-grow-1">
       <p>Menu</p>
-
-      <li class="nav-item">
-        <a class="nav-link" href="home.html">
-          <img src="imagens/logohome.png" class="icon-menu" /> Início
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="receitas.html">
-          <img src="imagens/logoreceita.png" class="icon-menu" /> Gerenciar receitas
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="despesas.html">
-          <img src="imagens/logodespesa.png" class="icon-menu" /> Gerenciar despesas
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link active" href="agenda.html">
-          <img src="imagens/logoagenda.png" class="icon-menu" /> Agenda
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="graficos.html">
-          <img src="imagens/logografico.png" class="icon-menu" /> Gráficos
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="configuracoes.html">
-          <img src="imagens/logoconfig.png" class="icon-menu" /> Configurações
-        </a>
-      </li>
+      <li class="nav-item"><a class="nav-link" href="home.html"><img src="imagens/logohome.png" class="icon-menu" /> Início</a></li>
+      <li class="nav-item"><a class="nav-link" href="receitas.html"><img src="imagens/logoreceita.png" class="icon-menu" /> Gerenciar receitas</a></li>
+      <li class="nav-item"><a class="nav-link" href="despesas.html"><img src="imagens/logodespesa.png" class="icon-menu" /> Gerenciar despesas</a></li>
+      <li class="nav-item"><a class="nav-link active" href="agenda.html"><img src="imagens/logoagenda.png" class="icon-menu" /> Agenda</a></li>
+      <li class="nav-item"><a class="nav-link" href="graficos.html"><img src="imagens/logografico.png" class="icon-menu" /> Gráficos</a></li>
+      <li class="nav-item"><a class="nav-link" href="configuracoes.html"><img src="imagens/logoconfig.png" class="icon-menu" /> Configurações</a></li>
     </ul>
-
     <div class="user-box">
-      <img id="userFoto" src="imagens/avatar.png" />
+      <img id="userFoto" src="imagens/avatar.png" alt="Foto do usuário">
       <div class="user-info">
         <strong id="userNome">Usuário</strong>
         <small id="userEmail"></small>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- =========================
-     CONTEÚDO PRINCIPAL
-========================= -->
 <div class="content pagina-agenda">
 
-  <h2>Agenda</h2>
-  <p class="subtitle">
-    Planeje seus objetivos financeiros e acompanhe sua evolução
-  </p>
-
-  <!-- ===== CARDS ===== -->
-<div class="agenda-cards">
-
-  <!-- 1. Orçamento do mês -->
-  <div class="agenda-card limite">
-    <span class="card-label">Saldo disponível do mês</span>
-    <strong class="card-valor" id="cardSaldoAtual">—</strong>
+  <!-- ===== HEADER ===== -->
+  <div class="despesas-header">
+    <div>
+      <h2>Agenda</h2>
+      <p class="subtitle">Planeje seus objetivos financeiros e acompanhe sua evolução.</p>
+    </div>
+    <div class="despesas-header-actions">
+      <button class="btn-nova-despesa" id="btnNovoPlanejamento">
+        <i class="fas fa-plus"></i> Novo planejamento
+      </button>
+    </div>
   </div>
 
-  <!-- 2. Valor planejado -->
-  <div class="agenda-card planejado">
-    <span class="card-label">Valor planejado</span>
-
-    <strong class="card-valor" id="cardPlanejado">—</strong>
-
-    <input
-      type="number"
-      step="0.01"
-      id="inputPlanejado"
-      placeholder="Definir valor"
-      class="agenda-input"
-    />
+  <!-- ===== KPI CARDS ===== -->
+  <div class="despesas-kpis">
+    <div class="kpi-despesa">
+      <div class="kpi-icon icon-wallet"><i class="fas fa-wallet"></i></div>
+      <div class="kpi-content">
+        <span>Saldo do mês</span>
+        <strong id="cardSaldoAtual">R$ 0,00</strong>
+        <small>receitas − despesas</small>
+      </div>
+    </div>
+    <div class="kpi-despesa">
+      <div class="kpi-icon icon-trending"><i class="fas fa-bullseye"></i></div>
+      <div class="kpi-content">
+        <span>Valor planejado</span>
+        <strong id="cardPlanejado">R$ 0,00</strong>
+        <small id="cardPlanejadoSub">soma dos limites</small>
+      </div>
+    </div>
+    <div class="kpi-despesa">
+      <div class="kpi-icon icon-clock"><i class="fas fa-chart-bar"></i></div>
+      <div class="kpi-content">
+        <span>Total gasto</span>
+        <strong id="cardGastoPlanejado">R$ 0,00</strong>
+        <small>nos planejamentos</small>
+      </div>
+    </div>
+    <div class="kpi-despesa">
+      <div class="kpi-icon icon-average"><i class="fas fa-list-check"></i></div>
+      <div class="kpi-content">
+        <span>Planejamentos</span>
+        <strong id="cardAtivos">0</strong>
+        <small id="cardAtivosSub">0 ativos</small>
+      </div>
+    </div>
   </div>
 
-  <!-- 3. Total gasto planejado -->
-  <div class="agenda-card gasto">
-    <span class="card-label">Somátorio dos planejamentos</span>
-    <strong class="card-valor" id="cardGastoPlanejado">—</strong>
+  <!-- ===== TOOLBAR ===== -->
+  <div class="despesas-toolbar">
+    <div class="despesas-busca-wrapper">
+      <i class="fas fa-search"></i>
+      <input type="text" id="buscarPlanejamento" placeholder="Pesquisar por objetivo..." class="despesas-busca">
+    </div>
+    <select id="filtro-status-agenda" class="despesas-filtro">
+      <option value="">Status: Todos</option>
+      <option value="ativo">Ativo</option>
+      <option value="estourado">Estourado</option>
+    </select>
+    <select id="filtro-ordem-agenda" class="despesas-filtro">
+      <option>Mais recentes</option>
+      <option>Mais antigos</option>
+      <option>Maior limite</option>
+      <option>Maior gasto</option>
+    </select>
   </div>
 
-  <!-- 4. Planejamentos ativos -->
-  <div class="agenda-card ativos">
-    <span class="card-label">Planejamentos ativos</span>
-    <strong class="card-valor" id="cardAtivos">—</strong>
+  <!-- ===== TABELA ===== -->
+  <div class="receitas-tabela">
+    <div class="tabela-header">
+      <h3>Planejamentos ativos</h3>
+      <span class="tabela-subtitle">Acompanhe seus objetivos e o progresso de cada um</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Objetivo</th>
+          <th>Início</th>
+          <th>Previsão</th>
+          <th>Limite</th>
+          <th>Gasto</th>
+          <th>Progresso</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="lista-planejamentos">
+        <tr><td colspan="8" style="text-align:center;padding:20px;color:#999">Nenhum planejamento cadastrado</td></tr>
+      </tbody>
+    </table>
   </div>
 
-</div>
+  <!-- ===== FORMULÁRIO ===== -->
+  <div class="despesas-bottom-layout agenda-bottom-layout">
+    <div class="receitas-form">
+      <h3><i class="fas fa-plus-circle"></i> Novo planejamento</h3>
+      <div class="grid">
 
-<input
-  type="text"
-  id="buscarPlanejamento"
-  placeholder="Pesquisar por objetivo..."
-  class="agenda-busca"
-/>
+        <div class="campo">
+          <label for="objetivo"><i class="fas fa-bullseye"></i> Objetivo</label>
+          <input type="text" id="objetivo" placeholder="ex: comprar um celular" />
+        </div>
 
-  <!-- ===== TABELA DE PLANEJAMENTOS ===== -->
-  <div class="agenda-tabela">
+        <div class="campo">
+          <label for="dataInicial"><i class="fas fa-calendar"></i> Data inicial</label>
+          <input type="date" id="dataInicial" />
+        </div>
 
-  <h3>Planejamentos ativos</h3>
-  <p class="subtitulo">Acompanhe seus objetivos em andamento</p>
+        <div class="campo">
+          <label for="dataFinal"><i class="fas fa-calendar-check"></i> Data prevista</label>
+          <input type="date" id="dataFinal" />
+        </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Objetivo</th>
-        <th>Início</th>
-        <th>Previsão</th>
-        <th>Limite</th>
-        <th>Gasto</th>
-        <th>Status</th>
-        <th>Ações</th>
-        
-      </tr>
-    </thead>
+        <div class="campo">
+          <label for="valorLimite"><i class="fas fa-dollar-sign"></i> Valor limite</label>
+          <input type="number" step="0.01" id="valorLimite" placeholder="R$ 0,00" />
+        </div>
 
-    <tbody id="lista-planejamentos">
-      <tr>
-        <td colspan="6">Nenhum planejamento cadastrado</td>
-      </tr>
-    </tbody>
-  </table>
+        <div class="campo">
+          <label for="valorGasto"><i class="fas fa-chart-line"></i> Gasto até agora</label>
+          <input type="number" step="0.01" id="valorGasto" placeholder="R$ 0,00 (opcional)" />
+        </div>
 
-</div>
-<br>
+        <div class="campo campo-full">
+          <label for="observacoes"><i class="fas fa-notes-medical"></i> Observações</label>
+          <input type="text" id="observacoes" placeholder="(opcional)" />
+        </div>
 
-  <!-- ===== NOVO PLANEJAMENTO ===== -->
-<div class="receitas-form agenda-form">
+        <button class="btnSalvarPlanejamento" id="btnSalvarPlanejamento" type="button">
+          <i class="fas fa-save"></i> Salvar planejamento
+        </button>
 
-  <h3>Novo planejamento</h3>
-
-  <div class="grid">
-
-    <div class="campo">
-      <label for="objetivo">Objetivo</label>
-      <input type="text" id="objetivo" placeholder="(ex: comprar um celular)" />
+      </div>
     </div>
-
-    <div class="campo">
-      <label for="dataInicial">Data inicial</label>
-      <input type="date" id="dataInicial" />
-    </div>
-
-    <div class="campo">
-      <label for="dataFinal">Data prevista para o final</label>
-      <input type="date" id="dataFinal" />
-    </div>
-
-    <div class="campo">
-      <label for="valorLimite">Valor limite</label>
-      <input type="number" step="0.01" id="valorLimite" placeholder="(ex: R$1500,00)"/>
-    </div>
-
-<div class="campo">
-  <label for="valorGasto">
-    Valor gasto até agora <small>(opcional)</small>
-  </label>
-  <input type="number" step="0.01" id="valorGasto"  placeholder="(ex: R$1400,00)" />
-</div>
-
-    <div class="campo campo-full">
-      <label for="observacoes">Observações</label>
-      <input type="text" id="observacoes" placeholder="(ex: comprar até segunda)" />
-    </div>
-
- <button class="btnSalvarPlanejamento" id="btnSalvarPlanejamento" type="button">
-  Salvar planejamento
-</button>
-
   </div>
-
-</div>
 
 </div>
 
 <script src="js/navbar.js"></script>
 <script src="js/agenda.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>
 </body>
 </html>

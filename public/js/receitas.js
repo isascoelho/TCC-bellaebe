@@ -1,14 +1,115 @@
 let receitaEditandoId = null;
+let todasReceitas = [];
 
 document.addEventListener("DOMContentLoaded", () => {
+  popularFiltroPeriodo();
   definirPeriodoResumoReceitas();
   carregarReceitas();
   atualizarCardsReceitas();
   carregarResumoReceitas();
 
-  const btn = document.getElementById("btnSalvarReceita");
-  if (btn) btn.addEventListener("click", salvarReceita);
+  document.getElementById("btnSalvarReceita")?.addEventListener("click", salvarReceita);
+
+  document.getElementById("btnNovaModal")?.addEventListener("click", () => {
+    const form = document.querySelector(".receitas-bottom-layout");
+    if (form) form.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => document.getElementById("valor")?.focus(), 400);
+  });
+
+  document.getElementById("filtro-periodo")?.addEventListener("change", () => {
+    definirPeriodoResumoReceitas();
+    aplicarFiltros();
+    atualizarCardsReceitas();
+    carregarResumoReceitas();
+  });
+
+  document.getElementById("busca-receita")?.addEventListener("input", aplicarFiltros);
+  document.getElementById("filtro-categoria")?.addEventListener("change", aplicarFiltros);
+  document.getElementById("filtro-periodicidade")?.addEventListener("change", aplicarFiltros);
+  document.getElementById("filtro-ordem")?.addEventListener("change", aplicarFiltros);
 });
+
+/* =========================
+   UTIL
+========================= */
+function formatarValor(valor) {
+  return Number(valor).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function formatarData(data) {
+  return new Date(data).toLocaleDateString("pt-BR");
+}
+
+function limparFormulario() {
+  ["valor", "data", "categoria", "banco", "descricao", "periodicidade"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+}
+
+/* =========================
+   PERÍODO
+========================= */
+function popularFiltroPeriodo() {
+  const select = document.getElementById("filtro-periodo");
+  if (!select) return;
+
+  const meses = [
+    "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+    "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
+  ];
+
+  select.innerHTML = "";
+  const agora = new Date();
+
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(agora.getFullYear(), agora.getMonth() - i, 1);
+    const label = `${meses[d.getMonth()]} / ${d.getFullYear()}`;
+    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const opt = document.createElement("option");
+    opt.value = value;
+    opt.textContent = label;
+    if (i === 0) opt.selected = true;
+    select.appendChild(opt);
+  }
+}
+
+function getPeriodoSelecionado() {
+  const value = document.getElementById("filtro-periodo")?.value;
+  const agora = new Date();
+
+  if (!value) {
+    const ano = agora.getFullYear();
+    const mes = agora.getMonth();
+    return {
+      inicio: new Date(ano, mes, 1).toISOString().split("T")[0],
+      fim: new Date(ano, mes + 1, 0).toISOString().split("T")[0],
+      mes, ano
+    };
+  }
+
+  const [ano, mesStr] = value.split("-");
+  const mes = Number(mesStr) - 1;
+  return {
+    inicio: new Date(Number(ano), mes, 1).toISOString().split("T")[0],
+    fim: new Date(Number(ano), mes + 1, 0).toISOString().split("T")[0],
+    mes,
+    ano: Number(ano)
+  };
+}
+
+function definirPeriodoResumoReceitas() {
+  const meses = [
+    "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+    "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
+  ];
+  const { mes, ano } = getPeriodoSelecionado();
+  const periodoEl = document.getElementById("periodoResumo");
+  if (periodoEl) periodoEl.innerText = `Período: ${meses[mes]} / ${ano}`;
+}
 
 /* =========================
    SALVAR / EDITAR
@@ -24,13 +125,11 @@ function salvarReceita() {
   };
 
   const metodo = receitaEditandoId ? "PUT" : "POST";
-  const url = receitaEditandoId
-    ? `/receitas/${receitaEditandoId}`
-    : "/receitas";
+  const url = receitaEditandoId ? `/receitas/${receitaEditandoId}` : "/receitas";
 
   fetch(url, {
     method: metodo,
-    credentials: "include", // 🔥 ESSENCIAL
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(dados)
   })
@@ -38,20 +137,20 @@ function salvarReceita() {
       if (!res.ok) throw new Error("Erro ao salvar receita");
       return res.json();
     })
-  .then(() => {
-  limparFormulario();
-  receitaEditandoId = null;
+    .then(() => {
+      limparFormulario();
+      receitaEditandoId = null;
 
-  const btn = document.getElementById("btnSalvarReceita");
-  if (btn) btn.innerText = "Salvar";
+      const btn = document.getElementById("btnSalvarReceita");
+      if (btn) btn.innerHTML = '<i class="fas fa-save"></i> Salvar receita';
 
-  carregarReceitas();
-  atualizarCardsReceitas();
-  carregarResumoReceitas();
+      carregarReceitas();
+      atualizarCardsReceitas();
+      carregarResumoReceitas();
 
-  if (typeof atualizarTudo === "function") atualizarTudo();
-  if (typeof carregarAtividadesHome === "function") carregarAtividadesHome();
-})
+      if (typeof atualizarTudo === "function") atualizarTudo();
+      if (typeof carregarAtividadesHome === "function") carregarAtividadesHome();
+    })
     .catch(err => {
       console.error(err);
       alert("Erro ao salvar receita");
@@ -62,70 +161,98 @@ function salvarReceita() {
    LISTAR
 ========================= */
 function carregarReceitas() {
-  fetch("/receitas", {
-    credentials: "include" // 🔥 ESSENCIAL
-  })
+  fetch("/receitas", { credentials: "include" })
     .then(res => {
       if (!res.ok) throw new Error("Erro ao carregar receitas");
       return res.json();
     })
     .then(receitas => {
-      const tbody = document.getElementById("lista-receitas");
-      if (!tbody) return;
-
-      tbody.innerHTML = "";
-
-      if (!Array.isArray(receitas) || receitas.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="7" class="estado-vazio">
-              Nenhuma receita cadastrada ainda
-            </td>
-          </tr>`;
-        return;
-      }
-
-      receitas.forEach(r => {
-        const descricao =
-          r.descricao && r.descricao !== "null" ? r.descricao : "-";
-        const periodicidade =
-          r.periodicidade && r.periodicidade !== "null"
-            ? r.periodicidade
-            : "Única";
-
-        tbody.innerHTML += `
-          <tr>
-            <td>${formatarData(r.periodo)}</td>
-            <td>${r.categoria}</td>
-            <td>${r.banco}</td>
-            <td>${descricao}</td>
-            <td>${periodicidade}</td>
-            <td><strong>R$ ${Number(r.valor).toFixed(2)}</strong></td>
-            <td>
-              <button onclick="editarReceita(${r.ID})">✏️</button>
-              <button onclick="excluirReceita(${r.ID})">🗑️</button>
-            </td>
-          </tr>`;
-      });
+      todasReceitas = Array.isArray(receitas) ? receitas : [];
+      aplicarFiltros();
     })
-    .catch(err => {
-      console.error("Erro ao listar receitas:", err);
-    });
+    .catch(err => console.error("Erro ao listar receitas:", err));
+}
+
+function renderizarReceitas(receitas) {
+  const tbody = document.getElementById("lista-receitas");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  if (!Array.isArray(receitas) || receitas.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="estado-vazio">
+          Nenhuma receita cadastrada ainda
+        </td>
+      </tr>`;
+    return;
+  }
+
+  receitas.forEach(r => {
+    const descricao = r.descricao && r.descricao !== "null" ? r.descricao : "-";
+    const periodicidade = r.periodicidade && r.periodicidade !== "null" ? r.periodicidade : "Única";
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${formatarData(r.periodo)}</td>
+        <td><span class="tag categoria">${r.categoria}</span></td>
+        <td>${r.banco}</td>
+        <td class="descricao">${descricao}</td>
+        <td>${periodicidade}</td>
+        <td><strong class="valor positivo">R$ ${formatarValor(r.valor)}</strong></td>
+        <td class="acoes">
+          <button class="acao editar" onclick="editarReceita(${r.ID})"><i class="fas fa-pencil"></i></button>
+          <button class="acao excluir" onclick="excluirReceita(${r.ID})"><i class="fas fa-trash"></i></button>
+        </td>
+      </tr>`;
+  });
+}
+
+/* =========================
+   FILTROS
+========================= */
+function aplicarFiltros() {
+  let filtradas = [...todasReceitas];
+
+  const { inicio, fim } = getPeriodoSelecionado();
+  filtradas = filtradas.filter(r => {
+    const data = r.periodo?.split("T")[0];
+    return data >= inicio && data <= fim;
+  });
+
+  const busca = document.getElementById("busca-receita")?.value?.toLowerCase() || "";
+  const categoria = document.getElementById("filtro-categoria")?.value || "";
+  const periodicidade = document.getElementById("filtro-periodicidade")?.value || "";
+  const ordem = document.getElementById("filtro-ordem")?.value || "Mais recentes";
+
+  if (busca) {
+    filtradas = filtradas.filter(r =>
+      (r.descricao || "").toLowerCase().includes(busca) ||
+      (r.categoria || "").toLowerCase().includes(busca) ||
+      (r.banco || "").toLowerCase().includes(busca)
+    );
+  }
+
+  if (categoria) filtradas = filtradas.filter(r => r.categoria === categoria);
+  if (periodicidade) filtradas = filtradas.filter(r => (r.periodicidade || "Única") === periodicidade);
+
+  if (ordem === "Mais recentes") filtradas.sort((a, b) => new Date(b.periodo) - new Date(a.periodo));
+  if (ordem === "Mais antigos")  filtradas.sort((a, b) => new Date(a.periodo) - new Date(b.periodo));
+  if (ordem === "Maior valor")   filtradas.sort((a, b) => Number(b.valor) - Number(a.valor));
+  if (ordem === "Menor valor")   filtradas.sort((a, b) => Number(a.valor) - Number(b.valor));
+
+  renderizarReceitas(filtradas);
 }
 
 /* =========================
    EDITAR
 ========================= */
 function editarReceita(id) {
-  fetch(`/receitas/${id}`, {
-    credentials: "include" // 🔥 ESSENCIAL
-  })
+  fetch(`/receitas/${id}`, { credentials: "include" })
     .then(res => res.json())
     .then(r => {
-      if (!r) {
-        alert("Receita não encontrada.");
-        return;
-      }
+      if (!r) { alert("Receita não encontrada."); return; }
 
       document.getElementById("valor").value = r.valor;
       document.getElementById("data").value = r.periodo.split("T")[0];
@@ -136,7 +263,11 @@ function editarReceita(id) {
         r.descricao && r.descricao !== "null" ? r.descricao : "";
 
       receitaEditandoId = id;
-      document.getElementById("btnSalvarReceita").innerText = "Atualizar";
+
+      const btn = document.getElementById("btnSalvarReceita");
+      if (btn) btn.innerHTML = '<i class="fas fa-save"></i> Atualizar receita';
+
+      document.querySelector(".receitas-bottom-layout")?.scrollIntoView({ behavior: "smooth" });
     });
 }
 
@@ -146,118 +277,99 @@ function editarReceita(id) {
 function excluirReceita(id) {
   if (!confirm("Deseja excluir esta receita?")) return;
 
-  fetch(`/receitas/${id}`, {
-    method: "DELETE",
-    credentials: "include" // 🔥 ESSENCIAL
-  })
-   .then(() => {
-  carregarReceitas();
-  atualizarCardsReceitas();
-  carregarResumoReceitas();
-
-  if (typeof atualizarTudo === "function") atualizarTudo();
-});
+  fetch(`/receitas/${id}`, { method: "DELETE", credentials: "include" })
+    .then(() => {
+      carregarReceitas();
+      atualizarCardsReceitas();
+      carregarResumoReceitas();
+      if (typeof atualizarTudo === "function") atualizarTudo();
+    });
 }
 
 /* =========================
-   UTIL
+   CARDS KPI
 ========================= */
-function limparFormulario() {
-  ["valor", "data", "categoria", "banco", "descricao"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = "";
-  });
-}
-
-function formatarData(data) {
-  return new Date(data).toLocaleDateString("pt-BR");
-}
-
-function definirPeriodoResumoReceitas() {
-  const agora = new Date();
-  const meses = [
-    "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
-    "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
-  ];
-
-  const periodoEl = document.getElementById("periodoResumo");
-  if (periodoEl) {
-    periodoEl.innerText = `Período: ${meses[agora.getMonth()]} / ${agora.getFullYear()}`;
-  }
-}
-
 function atualizarCardsReceitas() {
   Promise.all([
     fetch("/receitas/total-mes", { credentials: "include" }).then(r => r.json()),
     fetch("/receitas/ultima", { credentials: "include" }).then(r => r.json())
   ])
     .then(([totalMes, ultimaReceita]) => {
-      const totalMesEl = document.getElementById("totalMes");
-      const ultimaReceitaEl = document.getElementById("ultimaReceita");
-
       const totalValor = Number(totalMes?.total || 0);
       const ultimaValor = Number(ultimaReceita?.valor || 0);
 
-      if (totalMesEl) {
-        totalMesEl.innerText = `R$ ${totalValor.toFixed(2)}`;
-      }
+      const totalMesEl   = document.getElementById("totalMes");
+      const ultimaEl     = document.getElementById("ultimaReceita");
+      const ultimaDataEl = document.getElementById("ultimaReceitaData");
 
-      if (ultimaReceitaEl) {
-        ultimaReceitaEl.innerText = ultimaReceita
-          ? `R$ ${ultimaValor.toFixed(2)}`
-          : "—";
+      if (totalMesEl) totalMesEl.innerText = `R$ ${formatarValor(totalValor)}`;
+      if (ultimaEl) ultimaEl.innerText = ultimaReceita ? `R$ ${formatarValor(ultimaValor)}` : "—";
+      if (ultimaDataEl && ultimaReceita?.periodo) {
+        ultimaDataEl.innerText = new Date(ultimaReceita.periodo).toLocaleDateString("pt-BR");
       }
     })
-    .catch(err => {
-      console.error("Erro ao atualizar cards de receitas:", err);
-    });
+    .catch(err => console.error("Erro ao atualizar cards:", err));
 }
 
+/* =========================
+   RESUMO
+========================= */
 function carregarResumoReceitas() {
-  const hoje = new Date();
-  const ano = hoje.getFullYear();
-  const mes = hoje.getMonth();
+  const { inicio, fim } = getPeriodoSelecionado();
 
-  const primeiroDia = new Date(ano, mes, 1);
-  const ultimoDia = new Date(ano, mes + 1, 0);
-
-  const inicio = primeiroDia.toISOString().split("T")[0];
-  const fim = ultimoDia.toISOString().split("T")[0];
-
-  fetch(`/receitas/relatorio?inicio=${inicio}&fim=${fim}`, {
-    credentials: "include"
-  })
+  fetch(`/receitas/relatorio?inicio=${inicio}&fim=${fim}`, { credentials: "include" })
     .then(res => {
-      if (!res.ok) throw new Error("Erro ao carregar relatório de receitas");
+      if (!res.ok) throw new Error("Erro ao carregar relatório");
       return res.json();
     })
     .then(dados => {
-      console.log("RESUMO RECEITAS:", dados);
-
-      const resumoTotal = document.getElementById("resumoTotal");
-      const resumoMedia = document.getElementById("resumoMedia");
-      const resumoMaior = document.getElementById("resumoMaior");
+      const resumoTotal  = document.getElementById("resumoTotal");
+      const resumoMedia  = document.getElementById("resumoMedia");
+      const resumoMaior  = document.getElementById("resumoMaior");
       const resumoEstado = document.getElementById("resumoEstado");
+      const maiorEl      = document.getElementById("maiorReceita");
+      const mediaEl      = document.getElementById("mediaReceita");
+      const totalRegEl   = document.getElementById("totalRegistrosReceita");
+      const catMaiorEl   = document.getElementById("categoriaMaiorReceita");
+      const maiorInfoEl  = document.getElementById("maiorReceitaInfo");
 
       if (!Array.isArray(dados) || !dados.length) {
-        if (resumoTotal) resumoTotal.innerText = "R$ 0,00";
-        if (resumoMedia) resumoMedia.innerText = "R$ 0,00";
-        if (resumoMaior) resumoMaior.innerText = "R$ 0,00";
-        if (resumoEstado) resumoEstado.hidden = false;
+        if (resumoTotal)  resumoTotal.innerText  = "R$ 0,00";
+        if (resumoMedia)  resumoMedia.innerText  = "R$ 0,00";
+        if (resumoMaior)  resumoMaior.innerText  = "R$ 0,00";
+        if (maiorEl)      maiorEl.innerText      = "R$ 0,00";
+        if (mediaEl)      mediaEl.innerText      = "R$ 0,00";
+        if (totalRegEl)   totalRegEl.innerText   = "0 receitas registradas";
+        if (resumoEstado) resumoEstado.hidden     = false;
         return;
       }
 
       const valores = dados.map(item => Number(item.valor || 0));
-      const total = valores.reduce((acc, v) => acc + v, 0);
-      const media = total / valores.length;
-      const maior = Math.max(...valores);
+      const total   = valores.reduce((acc, v) => acc + v, 0);
+      const media   = total / valores.length;
+      const maior   = Math.max(...valores);
 
-      if (resumoTotal) resumoTotal.innerText = `R$ ${total.toFixed(2)}`;
-      if (resumoMedia) resumoMedia.innerText = `R$ ${media.toFixed(2)}`;
-      if (resumoMaior) resumoMaior.innerText = `R$ ${maior.toFixed(2)}`;
-      if (resumoEstado) resumoEstado.hidden = true;
+      if (resumoTotal)  resumoTotal.innerText  = `R$ ${formatarValor(total)}`;
+      if (resumoMedia)  resumoMedia.innerText  = `R$ ${formatarValor(media)}`;
+      if (resumoMaior)  resumoMaior.innerText  = `R$ ${formatarValor(maior)}`;
+      if (maiorEl)      maiorEl.innerText      = `R$ ${formatarValor(maior)}`;
+      if (mediaEl)      mediaEl.innerText      = `R$ ${formatarValor(media)}`;
+      if (resumoEstado) resumoEstado.hidden     = true;
+
+      const qtd = dados.length;
+      if (totalRegEl) totalRegEl.innerText = `${qtd} ${qtd === 1 ? "receita registrada" : "receitas registradas"}`;
+
+      const itemMaior = dados.find(item => Number(item.valor) === maior);
+      if (maiorInfoEl && itemMaior) {
+        maiorInfoEl.innerText = `${itemMaior.categoria} · ${formatarData(itemMaior.periodo)}`;
+      }
+
+      const categorias = {};
+      dados.forEach(item => {
+        categorias[item.categoria] = (categorias[item.categoria] || 0) + Number(item.valor);
+      });
+      const catMaior = Object.entries(categorias).sort((a, b) => b[1] - a[1])[0];
+      if (catMaiorEl && catMaior) catMaiorEl.innerText = catMaior[0];
     })
-    .catch(err => {
-      console.error("Erro ao carregar resumo de receitas:", err);
-    });
+    .catch(err => console.error("Erro ao carregar resumo:", err));
 }

@@ -1,26 +1,115 @@
 let despesaEditando = null;
+let despesasOriginais = [];
+let periodoSelecionado = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+  preencherSelectPeriodo();
   definirPeriodoResumo();
   carregarDespesas();
   atualizarCardsDespesas();
   carregarResumoDespesas();
 
   const btnSalvar = document.getElementById("btnSalvarReceita");
-  if (btnSalvar) {
-    btnSalvar.addEventListener("click", salvarDespesa);
-  }
+  if (btnSalvar) btnSalvar.addEventListener("click", salvarDespesa);
+
+  const buscaInput = document.getElementById("busca-despesa");
+  const filtroCategoria = document.getElementById("filtro-categoria");
+  const filtroStatus = document.getElementById("filtro-status");
+  const filtroOrdem = document.getElementById("filtro-ordem");
+  const filtroPeriodo = document.getElementById("filtro-periodo");
+
+  if (buscaInput) buscaInput.addEventListener("keyup", aplicarFiltros);
+  if (filtroCategoria) filtroCategoria.addEventListener("change", aplicarFiltros);
+  if (filtroStatus) filtroStatus.addEventListener("change", aplicarFiltros);
+  if (filtroOrdem) filtroOrdem.addEventListener("change", aplicarFiltros);
+  if (filtroPeriodo) filtroPeriodo.addEventListener("change", filtrarPorPeriodo);
+
+  const btnNovaModal = document.getElementById("btnNovaModal");
+  if (btnNovaModal) btnNovaModal.addEventListener("click", novaDepesaClick);
 });
+
 /* =========================
-   PERÍODO DO RESUMO
+   UTIL
 ========================= */
+function formatarValor(valor) {
+  return Number(valor).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function formatarData(data) {
+  if (!data) return "-";
+  const dt = new Date(data);
+  if (isNaN(dt.getTime())) return data;
+  return dt.toLocaleDateString("pt-BR");
+}
+
+/* =========================
+   PERÍODO
+========================= */
+function preencherSelectPeriodo() {
+  const hoje = new Date();
+  const selectPeriodo = document.getElementById("filtro-periodo");
+  if (!selectPeriodo) return;
+
+  selectPeriodo.innerHTML = "";
+
+  const meses = [
+    "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+    "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
+  ];
+
+  for (let i = 0; i < 12; i++) {
+    const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+    const mes = data.getMonth();
+    const ano = data.getFullYear();
+    const opcao = document.createElement("option");
+    opcao.value = `${ano}-${String(mes + 1).padStart(2, "0")}`;
+    opcao.innerText = `${meses[mes]} / ${ano}`;
+    if (i === 0) {
+      opcao.selected = true;
+      periodoSelecionado = opcao.value;
+    }
+    selectPeriodo.appendChild(opcao);
+  }
+}
+
+function filtrarPorPeriodo() {
+  const selectPeriodo = document.getElementById("filtro-periodo");
+  if (!selectPeriodo) return;
+
+  periodoSelecionado = selectPeriodo.value;
+
+  document.getElementById("busca-despesa").value = "";
+  document.getElementById("filtro-categoria").value = "";
+  document.getElementById("filtro-status").value = "";
+  document.getElementById("filtro-ordem").value = "Mais recentes";
+
+  aplicarFiltros();
+  atualizarCardsDespesas();
+  carregarResumoDespesas();
+}
+
+function novaDepesaClick() {
+  limparFormulario();
+  despesaEditando = null;
+
+  document.getElementById("busca-despesa").value = "";
+  document.getElementById("filtro-categoria").value = "";
+  document.getElementById("filtro-status").value = "";
+  document.getElementById("filtro-ordem").value = "Mais recentes";
+
+  aplicarFiltros();
+  document.querySelector(".receitas-form")?.scrollIntoView({ behavior: "smooth" });
+}
+
 function definirPeriodoResumo() {
   const agora = new Date();
   const meses = [
-    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+    "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
   ];
-
   const periodoEl = document.getElementById("periodoResumo");
   if (periodoEl) {
     periodoEl.innerText = `Período: ${meses[agora.getMonth()]} / ${agora.getFullYear()}`;
@@ -38,29 +127,18 @@ function salvarDespesa() {
   const descricao = document.getElementById("descricao").value;
   const situacao = document.getElementById("situacao").value;
   const periodicidade = document.getElementById("periodicidade").value;
-  const parcelamento =
-    document.getElementById("parcelamento").value === "Parcelada";
+  const parcelamento = document.getElementById("parcelamento").value === "Parcelada";
 
   if (!periodo || isNaN(valor) || valor <= 0 || !situacao || !periodicidade) {
     alert("Preencha corretamente todos os campos obrigatórios");
     return;
   }
 
-  const despesa = {
-    periodo,
-    valor,
-    categoria: categoria || null,
-    banco: banco || null,
-    descricao: descricao || null,
-    situacao,
-    periodicidade,
-    parcelamento
-  };
+  const despesa = { periodo, valor, categoria: categoria || null, banco: banco || null,
+    descricao: descricao || null, situacao, periodicidade, parcelamento };
 
   const metodo = despesaEditando ? "PUT" : "POST";
-  const url = despesaEditando
-    ? `/despesas/${despesaEditando}`
-    : "/despesas";
+  const url = despesaEditando ? `/despesas/${despesaEditando}` : "/despesas";
 
   fetch(url, {
     method: metodo,
@@ -69,22 +147,26 @@ function salvarDespesa() {
     body: JSON.stringify(despesa)
   })
     .then(res => {
-      if (!res.ok) {
-        return res.json().then(err => {
-          throw err;
-        });
-      }
+      if (!res.ok) return res.json().then(err => { throw err; });
       return res.json();
     })
     .then(() => {
       despesaEditando = null;
       limparFormulario();
+
+      document.getElementById("busca-despesa").value = "";
+      document.getElementById("filtro-categoria").value = "";
+      document.getElementById("filtro-status").value = "";
+      document.getElementById("filtro-ordem").value = "Mais recentes";
+
       carregarDespesas();
       atualizarCardsDespesas();
       carregarResumoDespesas();
 
       if (typeof atualizarTudo === "function") atualizarTudo();
       if (typeof carregarAtividadesHome === "function") carregarAtividadesHome();
+
+      alert("Despesa salva com sucesso!");
     })
     .catch(err => {
       console.error("Erro ao salvar despesa:", err);
@@ -96,64 +178,60 @@ function salvarDespesa() {
    LISTAR
 ========================= */
 function carregarDespesas() {
-  fetch("/despesas", {
-    credentials: "include"
-  })
+  fetch("/despesas", { credentials: "include" })
     .then(res => {
       if (!res.ok) throw new Error("Erro ao buscar despesas");
       return res.json();
     })
     .then(despesas => {
-      const tbody = document.getElementById("lista-despesas");
-      if (!tbody) return;
-
-      tbody.innerHTML = "";
-
-      if (!Array.isArray(despesas) || !despesas.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="7">Nenhuma despesa cadastrada</td>
-          </tr>`;
-        return;
-      }
-
-      despesas.forEach(d => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${formatarData(d.periodo)}</td>
-          <td>${d.categoria || "-"}</td>
-          <td>${d.banco || "-"}</td>
-          <td>${d.descricao || "-"}</td>
-          <td>${d.parcelamento ? "Parcelada" : "À vista"}</td>
-          <td>R$ ${Number(d.valor || 0).toFixed(2)}</td>
-          <td class="acoes">
-            <button onclick="editarDespesa(${d.ID})">✏️</button>
-            <button onclick="excluirDespesa(${d.ID})">🗑</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+      despesasOriginais = despesas || [];
+      aplicarFiltros();
     })
     .catch(err => console.error("Erro ao listar despesas:", err));
 }
 
-function formatarData(data) {
-  if (!data) return "-";
+function renderizarTabela(despesas) {
+  const tbody = document.getElementById("lista-despesas");
+  if (!tbody) return;
 
-  const dt = new Date(data);
+  tbody.innerHTML = "";
 
-  if (isNaN(dt.getTime())) return data;
+  if (!Array.isArray(despesas) || !despesas.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align: center; padding: 20px; color: #999;">
+          Nenhuma despesa encontrada
+        </td>
+      </tr>`;
+    return;
+  }
 
-  return dt.toLocaleDateString("pt-BR");
+  despesas.forEach(d => {
+    const tr = document.createElement("tr");
+    const statusBadge = d.situacao == 1 ? "✓ Pago" : "⏳ Pendente";
+    const tipoParcelamento = d.parcelamento ? "Parcelada" : "À vista";
+
+    tr.innerHTML = `
+      <td>${formatarData(d.periodo)}</td>
+      <td><span class="tag categoria">${d.categoria || "-"}</span></td>
+      <td>${d.banco || "-"}</td>
+      <td class="descricao">${d.descricao || "-"}</td>
+      <td><span style="background: ${d.situacao == 1 ? "rgba(25,135,84,0.2)" : "rgba(220,53,69,0.2)"}; padding: 4px 10px; border-radius: 8px; font-weight: 600; color: ${d.situacao == 1 ? "#198754" : "#dc3545"};">${statusBadge}</span></td>
+      <td>${tipoParcelamento}</td>
+      <td><strong class="valor positivo">R$ ${formatarValor(d.valor || 0)}</strong></td>
+      <td class="acoes">
+        <button class="acao editar" onclick="editarDespesa(${d.ID})"><i class="fas fa-pencil"></i></button>
+        <button class="acao excluir" onclick="excluirDespesa(${d.ID})"><i class="fas fa-trash"></i></button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
 }
 
 /* =========================
    EDITAR
 ========================= */
 function editarDespesa(id) {
-  fetch(`/despesas/${id}`, {
-    credentials: "include"
-  })
+  fetch(`/despesas/${id}`, { credentials: "include" })
     .then(res => res.json())
     .then(d => {
       if (!d) return;
@@ -165,14 +243,12 @@ function editarDespesa(id) {
       document.getElementById("descricao").value = d.descricao || "";
       document.getElementById("situacao").value = d.situacao || "";
       document.getElementById("periodicidade").value = d.periodicidade || "";
-      document.getElementById("parcelamento").value =
-        d.parcelamento ? "Parcelada" : "À vista";
+      document.getElementById("parcelamento").value = d.parcelamento ? "Parcelada" : "À vista";
 
       despesaEditando = id;
+      document.querySelector(".receitas-form")?.scrollIntoView({ behavior: "smooth" });
     })
-    .catch(err => {
-      console.error("Erro ao carregar despesa para edição:", err);
-    });
+    .catch(err => console.error("Erro ao carregar despesa para edição:", err));
 }
 
 /* =========================
@@ -181,15 +257,17 @@ function editarDespesa(id) {
 function excluirDespesa(id) {
   if (!confirm("Excluir esta despesa?")) return;
 
-  fetch(`/despesas/${id}`, {
-    method: "DELETE",
-    credentials: "include"
-  })
+  fetch(`/despesas/${id}`, { method: "DELETE", credentials: "include" })
     .then(res => {
       if (!res.ok) throw new Error("Erro ao excluir despesa");
       return res.json();
     })
     .then(() => {
+      document.getElementById("busca-despesa").value = "";
+      document.getElementById("filtro-categoria").value = "";
+      document.getElementById("filtro-status").value = "";
+      document.getElementById("filtro-ordem").value = "Mais recentes";
+
       carregarDespesas();
       atualizarCardsDespesas();
       carregarResumoDespesas();
@@ -197,9 +275,7 @@ function excluirDespesa(id) {
       if (typeof atualizarTudo === "function") atualizarTudo();
       if (typeof carregarAtividadesHome === "function") carregarAtividadesHome();
     })
-    .catch(err => {
-      console.error("Erro ao excluir despesa:", err);
-    });
+    .catch(err => console.error("Erro ao excluir despesa:", err));
 }
 
 /* =========================
@@ -214,86 +290,158 @@ function limparFormulario() {
   document.getElementById("situacao").value = "";
   document.getElementById("periodicidade").value = "";
   document.getElementById("parcelamento").value = "À vista";
+  despesaEditando = null;
 }
 
 /* =========================
-   CARDS DO TOPO
+   CARDS KPI
 ========================= */
 function atualizarCardsDespesas() {
-  Promise.all([
-    fetch("/despesas/total-mes", { credentials: "include" }).then(r => r.json()),
-    fetch("/despesas/ultima", { credentials: "include" }).then(r => r.json())
-  ])
-    .then(([totalMes, ultimaDespesa]) => {
-      const totalMesEl = document.getElementById("totalMesDespesa");
-      const ultimaDespesaEl = document.getElementById("ultimaDespesaCard");
-
-      const totalValor = Number(totalMes?.total || 0);
-      const ultimaValor = Number(ultimaDespesa?.valor || 0);
-
-      if (totalMesEl) {
-        totalMesEl.innerText = `R$ ${totalValor.toFixed(2)}`;
+  fetch("/despesas", { credentials: "include" })
+    .then(res => res.json())
+    .then(despesas => {
+      let filtradas = despesas || [];
+      if (periodoSelecionado) {
+        filtradas = filtradas.filter(d => {
+          const dt = new Date(d.periodo);
+          const mesAno = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+          return mesAno === periodoSelecionado;
+        });
       }
 
-      if (ultimaDespesaEl) {
-        ultimaDespesaEl.innerText = ultimaDespesa
-          ? `R$ ${ultimaValor.toFixed(2)}`
-          : "—";
+      if (!filtradas.length) {
+        document.getElementById("totalMesDespesa").innerText = "R$ 0,00";
+        document.getElementById("ultimaDespesaCard").innerText = "R$ 0,00";
+        document.getElementById("mediaDispesa").innerText = "R$ 0,00";
+        document.getElementById("despesasPendentes").innerText = "0";
+        document.getElementById("totalRegistros").innerText = "0 despesas registradas";
+        document.getElementById("maiorDespesaData").innerText = "Nenhuma despesa";
+        document.getElementById("valorPendente").innerText = "R$ 0,00 para vencer";
+        return;
       }
+
+      const total = filtradas.reduce((acc, d) => acc + Number(d.valor || 0), 0);
+      document.getElementById("totalMesDespesa").innerText = `R$ ${formatarValor(total)}`;
+
+      const maiorDespesa = filtradas.reduce((max, d) =>
+        Number(d.valor || 0) > Number(max.valor || 0) ? d : max);
+      document.getElementById("ultimaDespesaCard").innerText = `R$ ${formatarValor(maiorDespesa.valor || 0)}`;
+      document.getElementById("maiorDespesaData").innerText =
+        `${maiorDespesa.categoria || "Sem categoria"} · ${formatarData(maiorDespesa.periodo)}`;
+
+      const pendentes = filtradas.filter(d => d.situacao == 2);
+      document.getElementById("despesasPendentes").innerText = pendentes.length;
+      const totalPendente = pendentes.reduce((acc, d) => acc + Number(d.valor || 0), 0);
+      document.getElementById("valorPendente").innerText = `R$ ${formatarValor(totalPendente)} para vencer`;
+
+      const media = total / filtradas.length;
+      document.getElementById("mediaDispesa").innerText = `R$ ${formatarValor(media)}`;
+
+      const qtd = filtradas.length;
+      document.getElementById("totalRegistros").innerText =
+        `${qtd} despesa${qtd > 1 ? "s" : ""} registrada${qtd > 1 ? "s" : ""}`;
     })
-    .catch(err => {
-      console.error("Erro ao atualizar cards de despesas:", err);
-    });
+    .catch(err => console.error("Erro ao atualizar cards:", err));
 }
 
 /* =========================
    RESUMO FINANCEIRO
 ========================= */
 function carregarResumoDespesas() {
-  const hoje = new Date();
-  const ano = hoje.getFullYear();
-  const mes = hoje.getMonth();
+  fetch("/despesas", { credentials: "include" })
+    .then(res => res.json())
+    .then(despesas => {
+      let filtradas = despesas || [];
 
-  const primeiroDia = new Date(ano, mes, 1);
-  const ultimoDia = new Date(ano, mes + 1, 0);
+      if (periodoSelecionado) {
+        filtradas = filtradas.filter(d => {
+          const dt = new Date(d.periodo);
+          const mesAno = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+          return mesAno === periodoSelecionado;
+        });
+      }
 
-  const inicio = primeiroDia.toISOString().split("T")[0];
-  const fim = ultimoDia.toISOString().split("T")[0];
+      const resumoTotal     = document.getElementById("resumoTotal");
+      const resumoMedia     = document.getElementById("resumoMedia");
+      const resumoMaior     = document.getElementById("resumoMaior");
+      const resumoEstado    = document.getElementById("resumoEstado");
+      const categoriaMaior  = document.getElementById("categoriaMaiorGasto");
+      const periodoResumo   = document.getElementById("periodoResumo");
 
-  fetch(`/despesas/relatorio?inicio=${inicio}&fim=${fim}`, {
-    credentials: "include"
-  })
-    .then(res => {
-      if (!res.ok) throw new Error("Erro ao carregar relatório de despesas");
-      return res.json();
-    })
-    .then(dados => {
-      console.log("RESUMO DESPESAS:", dados);
-
-      const resumoTotal = document.getElementById("resumoTotal");
-      const resumoMedia = document.getElementById("resumoMedia");
-      const resumoMaior = document.getElementById("resumoMaior");
-      const resumoEstado = document.getElementById("resumoEstado");
-
-      if (!Array.isArray(dados) || !dados.length) {
-        if (resumoTotal) resumoTotal.innerText = "R$ 0,00";
-        if (resumoMedia) resumoMedia.innerText = "R$ 0,00";
-        if (resumoMaior) resumoMaior.innerText = "R$ 0,00";
-        if (resumoEstado) resumoEstado.hidden = false;
+      if (!filtradas.length) {
+        if (resumoTotal)  resumoTotal.innerText  = "R$ 0,00";
+        if (resumoMedia)  resumoMedia.innerText  = "R$ 0,00";
+        if (resumoMaior)  resumoMaior.innerText  = "R$ 0,00";
+        if (resumoEstado) resumoEstado.hidden     = false;
         return;
       }
 
-      const valores = dados.map(item => Number(item.total || 0));
-      const total = valores.reduce((acc, valor) => acc + valor, 0);
-      const media = total / valores.length;
-      const maior = Math.max(...valores);
+      const valores = filtradas.map(d => Number(d.valor || 0));
+      const total   = valores.reduce((acc, v) => acc + v, 0);
+      const media   = total / valores.length;
+      const maior   = Math.max(...valores);
 
-      if (resumoTotal) resumoTotal.innerText = `R$ ${total.toFixed(2)}`;
-      if (resumoMedia) resumoMedia.innerText = `R$ ${media.toFixed(2)}`;
-      if (resumoMaior) resumoMaior.innerText = `R$ ${maior.toFixed(2)}`;
-      if (resumoEstado) resumoEstado.hidden = true;
+      if (resumoTotal)  resumoTotal.innerText  = `R$ ${formatarValor(total)}`;
+      if (resumoMedia)  resumoMedia.innerText  = `R$ ${formatarValor(media)}`;
+      if (resumoMaior)  resumoMaior.innerText  = `R$ ${formatarValor(maior)}`;
+      if (resumoEstado) resumoEstado.hidden     = true;
+
+      if (periodoResumo && periodoSelecionado) {
+        const [ano, mes] = periodoSelecionado.split("-");
+        const meses = ["","Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+                       "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+        periodoResumo.innerText = `Período: ${meses[parseInt(mes)]} / ${ano}`;
+      }
+
+      if (categoriaMaior && filtradas.length > 0) {
+        const maiorCat = filtradas.reduce((max, d) =>
+          Number(d.valor || 0) > Number(max.valor || 0) ? d : max);
+        categoriaMaior.innerText = maiorCat.categoria || "Sem categoria";
+      }
     })
-    .catch(err => {
-      console.error("Erro ao carregar resumo de despesas:", err);
+    .catch(err => console.error("Erro ao carregar resumo:", err));
+}
+
+/* =========================
+   FILTROS
+========================= */
+function aplicarFiltros() {
+  const busca     = document.getElementById("busca-despesa").value.toLowerCase();
+  const categoria = document.getElementById("filtro-categoria").value.toLowerCase();
+  const status    = document.getElementById("filtro-status").value;
+  const ordem     = document.getElementById("filtro-ordem").value;
+
+  let filtradas = JSON.parse(JSON.stringify(despesasOriginais));
+
+  if (periodoSelecionado) {
+    filtradas = filtradas.filter(d => {
+      const dt = new Date(d.periodo);
+      const mesAno = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+      return mesAno === periodoSelecionado;
     });
+  }
+
+  if (busca) {
+    filtradas = filtradas.filter(d =>
+      ((d.descricao || "") + (d.categoria || "") + (d.banco || "")).toLowerCase().includes(busca)
+    );
+  }
+
+  if (categoria) {
+    filtradas = filtradas.filter(d => (d.categoria || "").toLowerCase().includes(categoria));
+  }
+
+  if (status) {
+    filtradas = filtradas.filter(d => d.situacao == status);
+  }
+
+  switch (ordem) {
+    case "Mais recentes": filtradas.sort((a, b) => new Date(b.periodo) - new Date(a.periodo)); break;
+    case "Mais antigos":  filtradas.sort((a, b) => new Date(a.periodo) - new Date(b.periodo)); break;
+    case "Maior valor":   filtradas.sort((a, b) => Number(b.valor) - Number(a.valor)); break;
+    case "Menor valor":   filtradas.sort((a, b) => Number(a.valor) - Number(b.valor)); break;
+    default:              filtradas.sort((a, b) => new Date(b.periodo) - new Date(a.periodo));
+  }
+
+  renderizarTabela(filtradas);
 }
