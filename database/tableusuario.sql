@@ -1,0 +1,20 @@
+use smartcash;
+create table usuario (
+ID integer not null auto_increment,
+nome varchar (50),
+data_nasc date,
+fone integer,
+email varchar (60),
+senha varchar (8),
+genero integer,
+endereco integer,
+est_civil integer,
+docs integer,
+vinc_emprego integer,
+primary key (ID),
+foreign key (fone) references fone (ID),
+foreign key (genero) references genero (ID),
+foreign key (endereco) references endereco (ID),
+foreign key (est_civil) references est_civil (ID),
+foreign key (docs) references docs (ID),
+foreign key (vinc_emprego) references cargo (ID));
