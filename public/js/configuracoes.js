@@ -19,6 +19,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnRemoverFoto = document.getElementById("btnRemoverFoto");
 
   /* =========================
+     MÁSCARA CPF
+  ========================= */
+  function mascaraCPF(valor) {
+    return valor
+      .replace(/\D/g, "")
+      .slice(0, 11)
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  }
+
+  /* =========================
      BUSCAR USUÁRIO LOGADO
   ========================= */
   fetch("/me", { credentials: "include" })
@@ -57,6 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (value && String(value).trim() !== "") {
         if (field === "data_nascimento") {
           valueEl.textContent = new Date(value).toLocaleDateString("pt-BR");
+        } else if (field === "cpf") {
+          valueEl.textContent = mascaraCPF(String(value));
         } else {
           valueEl.textContent = value;
         }
@@ -71,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* =========================
-     ABRIR MODAL — CAMPOS DE PERFIL
+     ABRIR MODAL — CAMPOS INDIVIDUAIS
   ========================= */
   document.querySelectorAll(".btn-completar").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -82,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const is2fa = btn.closest(".config-item")?.querySelector(".label")?.textContent?.includes("2 etapas");
 
         if (isAlterarSenha) { abrirModalSenha(); return; }
-        if (is2fa) { abrirModal2FA(); return; }
+
         return;
       }
 
@@ -125,6 +139,9 @@ document.addEventListener("DOMContentLoaded", () => {
           <option value="Desempregado">Desempregado</option>
           <option value="Outro">Outro</option>
         </select>`;
+    } else if (field === "cpf") {
+      modalFieldContainer.innerHTML = `
+        <input type="text" id="modalInput" placeholder="000.000.000-00" maxlength="14" />`;
     } else {
       const tipo = field === "data_nascimento" ? "date" : "text";
       modalFieldContainer.innerHTML = `
@@ -132,9 +149,101 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const input = document.getElementById("modalInput");
-    input.value = user?.[field] || "";
+    if (field === "cpf" && user?.cpf) {
+      input.value = mascaraCPF(String(user.cpf));
+    } else {
+      input.value = user?.[field] || "";
+    }
+
+    // aplica máscara em tempo real no CPF
+    if (field === "cpf") {
+      input.addEventListener("input", () => {
+        input.value = mascaraCPF(input.value);
+      });
+    }
+
     modal.style.display = "flex";
     setTimeout(() => input.focus(), 50);
+  }
+
+  /* =========================
+     ABRIR MODAL — EDITAR TODOS OS DADOS
+  ========================= */
+  if (btnEditarDados) {
+    btnEditarDados.addEventListener("click", () => {
+      currentField = null;
+      modalTitle.textContent = "Editar dados";
+      modalFieldContainer.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:12px">
+
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.4px">CPF</label>
+            <input type="text" id="edit_cpf" placeholder="000.000.000-00" maxlength="14"
+              value="${user?.cpf ? mascaraCPF(String(user.cpf)) : ""}"
+              style="width:100%;height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:14px;margin-top:4px" />
+          </div>
+
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.4px">Data de nascimento</label>
+            <input type="date" id="edit_data_nascimento"
+              value="${user?.data_nascimento ? user.data_nascimento.split("T")[0] : ""}"
+              style="width:100%;height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:14px;margin-top:4px" />
+          </div>
+
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.4px">Sexo</label>
+            <select id="edit_sexo"
+              style="width:100%;height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:14px;margin-top:4px">
+              <option value="">Selecione</option>
+              <option value="Feminino" ${user?.sexo === "Feminino" ? "selected" : ""}>Feminino</option>
+              <option value="Masculino" ${user?.sexo === "Masculino" ? "selected" : ""}>Masculino</option>
+              <option value="Não binário" ${user?.sexo === "Não binário" ? "selected" : ""}>Não binário</option>
+              <option value="Prefiro não informar" ${user?.sexo === "Prefiro não informar" ? "selected" : ""}>Prefiro não informar</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.4px">Telefone</label>
+            <input type="text" id="edit_fone" placeholder="(00) 00000-0000"
+              value="${user?.fone || ""}"
+              style="width:100%;height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:14px;margin-top:4px" />
+          </div>
+
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.4px">Endereço</label>
+            <input type="text" id="edit_endereco" placeholder="Rua, número, cidade"
+              value="${user?.endereco || ""}"
+              style="width:100%;height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:14px;margin-top:4px" />
+          </div>
+
+          <div>
+            <label style="font-size:12px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.4px">Vínculo empregatício</label>
+            <select id="edit_vinculo"
+              style="width:100%;height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #e5e7eb;font-size:14px;margin-top:4px">
+              <option value="">Selecione</option>
+              <option value="CLT" ${user?.vinculo === "CLT" ? "selected" : ""}>CLT</option>
+              <option value="Autônomo" ${user?.vinculo === "Autônomo" ? "selected" : ""}>Autônomo</option>
+              <option value="PJ" ${user?.vinculo === "PJ" ? "selected" : ""}>PJ</option>
+              <option value="Servidor público" ${user?.vinculo === "Servidor público" ? "selected" : ""}>Servidor público</option>
+              <option value="Estudante" ${user?.vinculo === "Estudante" ? "selected" : ""}>Estudante</option>
+              <option value="Desempregado" ${user?.vinculo === "Desempregado" ? "selected" : ""}>Desempregado</option>
+              <option value="Outro" ${user?.vinculo === "Outro" ? "selected" : ""}>Outro</option>
+            </select>
+          </div>
+
+        </div>
+      `;
+
+      // máscara CPF no modal de editar todos
+      const editCpfInput = document.getElementById("edit_cpf");
+      if (editCpfInput) {
+        editCpfInput.addEventListener("input", () => {
+          editCpfInput.value = mascaraCPF(editCpfInput.value);
+        });
+      }
+
+      modal.style.display = "flex";
+    });
   }
 
   /* =========================
@@ -144,34 +253,14 @@ document.addEventListener("DOMContentLoaded", () => {
     currentField = null;
     modalTitle.textContent = "Alterar senha";
     modalFieldContainer.innerHTML = `
-      <input type="password" id="senhaAtual"    placeholder="Senha atual"          style="margin-bottom:10px;display:block;width:100%" />
-      <input type="password" id="senhaNova"     placeholder="Nova senha"           style="margin-bottom:10px;display:block;width:100%" />
-      <input type="password" id="senhaConfirmar" placeholder="Confirmar nova senha" style="display:block;width:100%" />
+      <input type="password" id="senhaAtual"     placeholder="Senha atual"           style="margin-bottom:10px;display:block;width:100%" />
+      <input type="password" id="senhaNova"      placeholder="Nova senha"            style="margin-bottom:10px;display:block;width:100%" />
+      <input type="password" id="senhaConfirmar" placeholder="Confirmar nova senha"  style="display:block;width:100%" />
     `;
     modal.style.display = "flex";
     setTimeout(() => document.getElementById("senhaAtual")?.focus(), 50);
   }
 
-  /* =========================
-     ABRIR MODAL — 2 ETAPAS
-  ========================= */
-  function abrirModal2FA() {
-    currentField = null;
-    const ativo = user?.twofa_ativo;
-    modalTitle.textContent = ativo ? "Desativar verificação em 2 etapas" : "Ativar verificação em 2 etapas";
-    modalFieldContainer.innerHTML = ativo
-      ? `<p style="font-size:14px;color:#6b7280;margin-bottom:12px">
-           Confirme sua senha para desativar a verificação em 2 etapas.
-         </p>
-         <input type="password" id="senha2fa" placeholder="Sua senha atual" style="display:block;width:100%" />`
-      : `<p style="font-size:14px;color:#6b7280;margin-bottom:12px">
-           Ao ativar, um código será enviado para o seu e-mail 
-           <strong>${user?.email || ""}</strong> a cada login.
-         </p>
-         <input type="password" id="senha2fa" placeholder="Confirme sua senha para ativar" style="display:block;width:100%" />`;
-    modal.style.display = "flex";
-    setTimeout(() => document.getElementById("senha2fa")?.focus(), 50);
-  }
 
   /* =========================
      FECHAR MODAL
@@ -199,11 +288,44 @@ document.addEventListener("DOMContentLoaded", () => {
   if (modalSave) {
     modalSave.onclick = () => {
 
+      /* --- Editar todos os dados --- */
+      const editCpf = document.getElementById("edit_cpf");
+      if (editCpf) {
+        const campos = [
+          { id: "edit_cpf",             field: "cpf" },
+          { id: "edit_data_nascimento", field: "data_nascimento" },
+          { id: "edit_sexo",            field: "sexo" },
+          { id: "edit_fone",            field: "fone" },
+          { id: "edit_endereco",        field: "endereco" },
+          { id: "edit_vinculo",         field: "vinculo" }
+        ];
+
+        const promessas = campos
+          .filter(c => {
+            const el = document.getElementById(c.id);
+            return el && el.value.trim() !== "";
+          })
+          .map(c => {
+            const value = document.getElementById(c.id).value.trim();
+            return fetch("/me", {
+              method: "PUT",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ field: c.field, value })
+            }).then(() => { user[c.field] = value; });
+          });
+
+        Promise.all(promessas)
+          .then(() => { fecharModal(); render(); })
+          .catch(() => alert("Erro ao salvar dados"));
+        return;
+      }
+
       /* --- Alterar senha --- */
       const senhaAtualEl = document.getElementById("senhaAtual");
       if (senhaAtualEl) {
-        const atual    = senhaAtualEl.value.trim();
-        const nova     = document.getElementById("senhaNova")?.value.trim();
+        const atual     = senhaAtualEl.value.trim();
+        const nova      = document.getElementById("senhaNova")?.value.trim();
         const confirmar = document.getElementById("senhaConfirmar")?.value.trim();
 
         if (!atual || !nova || !confirmar) { alert("Preencha todos os campos."); return; }
@@ -225,51 +347,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      /* --- 2 etapas --- */
-      const senha2faEl = document.getElementById("senha2fa");
-      if (senha2faEl) {
-        const senha = senha2faEl.value.trim();
-        if (!senha) { alert("Informe sua senha."); return; }
-
-        const ativando = !user?.twofa_ativo;
-
-        fetch("/me/2fa", {
-          method: "PUT",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ senha, ativo: ativando })
-        })
-          .then(res => {
-            if (!res.ok) throw new Error();
-            return res.json();
-          })
-          .then(() => {
-            user.twofa_ativo = ativando;
-            fecharModal();
-            render();
-            alert(ativando
-              ? "Verificação em 2 etapas ativada! Você receberá um código por e-mail a cada login."
-              : "Verificação em 2 etapas desativada."
-            );
-
-            // Atualiza o texto do botão de 2FA
-            const itens = document.querySelectorAll(".config-item");
-            itens.forEach(item => {
-              const label = item.querySelector(".label");
-              const value = item.querySelector(".value");
-              const btnItem = item.querySelector(".btn-completar");
-              if (label?.textContent?.includes("2 etapas") && value && btnItem) {
-                value.textContent = ativando ? "Ativo" : "Não configurado";
-                value.classList.toggle("vazio", !ativando);
-                btnItem.textContent = ativando ? "Desativar" : "Ativar";
-              }
-            });
-          })
-          .catch(() => alert("Senha incorreta ou erro ao alterar configuração."));
-        return;
-      }
-
-      /* --- Campos de perfil (fluxo normal) --- */
+      
+      /* --- Campo individual --- */
       if (!currentField) return;
 
       const modalInputAtual = document.getElementById("modalInput");
@@ -295,17 +374,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(() => alert("Erro ao salvar informação"));
     };
-  }
-
-  /* =========================
-     BOTÃO EDITAR DADOS
-  ========================= */
-  if (btnEditarDados) {
-    btnEditarDados.addEventListener("click", () => {
-      const primeiroItemEditavel = document.querySelector(".config-item[data-field]");
-      if (!primeiroItemEditavel) { alert("Nenhum campo disponível para edição."); return; }
-      abrirModal(primeiroItemEditavel.dataset.field);
-    });
   }
 
   /* =========================

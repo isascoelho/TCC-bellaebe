@@ -8,7 +8,6 @@ window.renderizarBolhas = function (atividades) {
 
   container.innerHTML = '';
 
-  // estado vazio
   if (!atividades || atividades.length === 0) {
     textoVazio.style.display = 'block';
     return;
@@ -18,21 +17,26 @@ window.renderizarBolhas = function (atividades) {
 
   const ultimas = atividades.slice(0, 3);
 
-  
-   const positions = [
-    // FARMÁCIA – mais pra cima e direita
-  { top: '20px', left: '80px' },
+  const positions = [
+    { top: '40px',  left: '90px' },
+    { top: '140px', left: '75px' },
+    { top: '80px',  left: '10px' }
+  ];
 
-  // PIX – abaixo da farmácia e mais à direita
-  { top: '110px', left: '75px' },
+  function formatarValor(valor) {
+    return Number(valor).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
 
-  // UBER – abaixo do pix e mais à esquerda
-  { top: '60px', left: '10px' }
-];
+  function truncarNome(nome) {
+    return nome.length > 10 ? nome.substring(0, 10) + '…' : nome;
+  }
 
   ultimas.forEach((atividade, index) => {
     const bolha = document.createElement('div');
-    bolha.classList.add('bolha' , `bolha-${index + 1}`);
+    bolha.classList.add('bolha', `bolha-${index + 1}`);
 
     if (index === 0) bolha.classList.add('bolha-grande');
     if (index === 1) bolha.classList.add('bolha-media');
@@ -43,12 +47,12 @@ window.renderizarBolhas = function (atividades) {
     );
 
     bolha.innerHTML = `
-      <span>${atividade.nome}</span>
-      <strong>R$ ${Number(atividade.valor).toFixed(2)}</strong>
+      <span>${truncarNome(atividade.nome)}</span>
+      <strong>R$ ${formatarValor(atividade.valor)}</strong>
     `;
 
-    bolha.style.top = positions[index].top;
-    bolha.style.left = positions[index].left;
+    bolha.style.top          = positions[index].top;
+    bolha.style.left         = positions[index].left;
     bolha.style.animationDelay = `${index * 0.12}s`;
 
     container.appendChild(bolha);

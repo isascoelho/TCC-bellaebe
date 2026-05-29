@@ -108,7 +108,7 @@ function carregarAtividadesHome() {
       despesas.forEach(d => {
         atividades.push({
           tipo: "despesa",
-          nome: d.descricao || "Despesa",
+          nome: d.categoria || "Despesa",
           valor: Number(d.valor),
           data: d.periodo
         });

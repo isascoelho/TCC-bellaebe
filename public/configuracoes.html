@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+   <link rel="icon" type="image/png" href="imagens/logo1.png">
   <link rel="stylesheet" href="css/estilos3.css" />
 </head>
 <body>
@@ -42,9 +43,7 @@
       <h2>Configurações</h2>
       <p class="config-subtitle">Gerencie seus dados pessoais, informações de contato e segurança da conta</p>
     </div>
-    <button class="btn-editar">
-      <i class="fas fa-pencil"></i> Editar dados
-    </button>
+   
   </div>
 
   <div class="config-perfil">
@@ -91,10 +90,11 @@
         <span class="value vazio">Não informado</span>
         <button class="btn-completar" data-field="fone">Completar</button>
       </div>
-      <div class="config-item" data-field="email">
-        <span class="label"><i class="fas fa-envelope"></i> E-mail</span>
-        <span class="value vazio">Não informado</span>
-      </div>
+    <div class="config-item" data-field="email">
+  <span class="label"><i class="fas fa-envelope"></i> E-mail</span>
+  <span class="value vazio">Não informado</span>
+  <button class="btn-completar" data-field="email">Editar</button>
+</div>
       <div class="config-item" data-field="endereco">
         <span class="label"><i class="fas fa-map-pin"></i> Endereço</span>
         <span class="value vazio">Não informado</span>
@@ -117,11 +117,6 @@
         <span class="label"><i class="fas fa-lock"></i> Senha</span>
         <span class="value config-senha-dots">••••••••</span>
         <button class="btn-completar">Alterar</button>
-      </div>
-      <div class="config-item">
-        <span class="label"><i class="fas fa-shield"></i> Verificação em 2 etapas</span>
-        <span class="value vazio">Não configurado</span>
-        <button class="btn-completar">Ativar</button>
       </div>
     </div>
 

@@ -4,10 +4,6 @@ let periodoSelecionado = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   preencherSelectPeriodo();
-  definirPeriodoResumo();
-  carregarDespesas();
-  atualizarCardsDespesas();
-  carregarResumoDespesas();
 
   const btnSalvar = document.getElementById("btnSalvarReceita");
   if (btnSalvar) btnSalvar.addEventListener("click", salvarDespesa);
@@ -49,30 +45,66 @@ function formatarData(data) {
    PERÍODO
 ========================= */
 function preencherSelectPeriodo() {
-  const hoje = new Date();
   const selectPeriodo = document.getElementById("filtro-periodo");
   if (!selectPeriodo) return;
-
-  selectPeriodo.innerHTML = "";
 
   const meses = [
     "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
     "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
   ];
 
-  for (let i = 0; i < 12; i++) {
-    const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-    const mes = data.getMonth();
-    const ano = data.getFullYear();
-    const opcao = document.createElement("option");
-    opcao.value = `${ano}-${String(mes + 1).padStart(2, "0")}`;
-    opcao.innerText = `${meses[mes]} / ${ano}`;
-    if (i === 0) {
-      opcao.selected = true;
-      periodoSelecionado = opcao.value;
-    }
-    selectPeriodo.appendChild(opcao);
-  }
+  fetch("/despesas/meses", { credentials: "include" })
+    .then(res => res.json())
+    .then(mesesDisponiveis => {
+      selectPeriodo.innerHTML = "";
+
+      // sempre inclui o mês atual mesmo sem dados
+      const agora = new Date();
+      const mesAtual = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, "0")}`;
+      if (!mesesDisponiveis.includes(mesAtual)) {
+        mesesDisponiveis.unshift(mesAtual);
+      }
+
+      mesesDisponiveis.forEach((mesAno, i) => {
+        const [ano, mes] = mesAno.split("-");
+        const opcao = document.createElement("option");
+        opcao.value = mesAno;
+        opcao.innerText = `${meses[Number(mes) - 1]} / ${ano}`;
+        if (i === 0) {
+          opcao.selected = true;
+          periodoSelecionado = mesAno;
+        }
+        selectPeriodo.appendChild(opcao);
+      });
+
+      definirPeriodoResumo();
+      carregarDespesas();
+      atualizarCardsDespesas();
+      carregarResumoDespesas();
+    })
+    .catch(() => {
+      // fallback: gera 24 meses se a rota falhar
+      selectPeriodo.innerHTML = "";
+      const agora = new Date();
+      for (let i = 0; i < 24; i++) {
+        const d = new Date(agora.getFullYear(), agora.getMonth() - i, 1);
+        const mes = d.getMonth();
+        const ano = d.getFullYear();
+        const opcao = document.createElement("option");
+        opcao.value = `${ano}-${String(mes + 1).padStart(2, "0")}`;
+        opcao.innerText = `${meses[mes]} / ${ano}`;
+        if (i === 0) {
+          opcao.selected = true;
+          periodoSelecionado = opcao.value;
+        }
+        selectPeriodo.appendChild(opcao);
+      }
+
+      definirPeriodoResumo();
+      carregarDespesas();
+      atualizarCardsDespesas();
+      carregarResumoDespesas();
+    });
 }
 
 function filtrarPorPeriodo() {
@@ -105,14 +137,23 @@ function novaDepesaClick() {
 }
 
 function definirPeriodoResumo() {
-  const agora = new Date();
   const meses = [
     "Janeiro","Fevereiro","Março","Abril","Maio","Junho",
     "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
   ];
-  const periodoEl = document.getElementById("periodoResumo");
-  if (periodoEl) {
-    periodoEl.innerText = `Período: ${meses[agora.getMonth()]} / ${agora.getFullYear()}`;
+
+  if (periodoSelecionado) {
+    const [ano, mes] = periodoSelecionado.split("-");
+    const periodoEl = document.getElementById("periodoResumo");
+    if (periodoEl) {
+      periodoEl.innerText = `Período: ${meses[parseInt(mes) - 1]} / ${ano}`;
+    }
+  } else {
+    const agora = new Date();
+    const periodoEl = document.getElementById("periodoResumo");
+    if (periodoEl) {
+      periodoEl.innerText = `Período: ${meses[agora.getMonth()]} / ${agora.getFullYear()}`;
+    }
   }
 }
 
@@ -159,9 +200,7 @@ function salvarDespesa() {
       document.getElementById("filtro-status").value = "";
       document.getElementById("filtro-ordem").value = "Mais recentes";
 
-      carregarDespesas();
-      atualizarCardsDespesas();
-      carregarResumoDespesas();
+      preencherSelectPeriodo();
 
       if (typeof atualizarTudo === "function") atualizarTudo();
       if (typeof carregarAtividadesHome === "function") carregarAtividadesHome();
@@ -237,7 +276,7 @@ function editarDespesa(id) {
       if (!d) return;
 
       document.getElementById("valor").value = d.valor || "";
-      document.getElementById("data").value = d.periodo || "";
+      document.getElementById("data").value = (d.periodo || "").slice(0, 10);
       document.getElementById("categoria").value = d.categoria || "";
       document.getElementById("banco").value = d.banco || "";
       document.getElementById("descricao").value = d.descricao || "";
@@ -268,9 +307,7 @@ function excluirDespesa(id) {
       document.getElementById("filtro-status").value = "";
       document.getElementById("filtro-ordem").value = "Mais recentes";
 
-      carregarDespesas();
-      atualizarCardsDespesas();
-      carregarResumoDespesas();
+      preencherSelectPeriodo();
 
       if (typeof atualizarTudo === "function") atualizarTudo();
       if (typeof carregarAtividadesHome === "function") carregarAtividadesHome();
@@ -303,8 +340,7 @@ function atualizarCardsDespesas() {
       let filtradas = despesas || [];
       if (periodoSelecionado) {
         filtradas = filtradas.filter(d => {
-          const dt = new Date(d.periodo);
-          const mesAno = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+          const mesAno = (d.periodo || "").slice(0, 7);
           return mesAno === periodoSelecionado;
         });
       }
@@ -355,8 +391,7 @@ function carregarResumoDespesas() {
 
       if (periodoSelecionado) {
         filtradas = filtradas.filter(d => {
-          const dt = new Date(d.periodo);
-          const mesAno = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+          const mesAno = (d.periodo || "").slice(0, 7);
           return mesAno === periodoSelecionado;
         });
       }
@@ -415,8 +450,7 @@ function aplicarFiltros() {
 
   if (periodoSelecionado) {
     filtradas = filtradas.filter(d => {
-      const dt = new Date(d.periodo);
-      const mesAno = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`;
+      const mesAno = (d.periodo || "").slice(0, 7);
       return mesAno === periodoSelecionado;
     });
   }

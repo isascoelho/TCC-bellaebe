@@ -3,10 +3,6 @@ let todasReceitas = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   popularFiltroPeriodo();
-  definirPeriodoResumoReceitas();
-  carregarReceitas();
-  atualizarCardsReceitas();
-  carregarResumoReceitas();
 
   document.getElementById("btnSalvarReceita")?.addEventListener("click", salvarReceita);
 
@@ -62,19 +58,50 @@ function popularFiltroPeriodo() {
     "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
   ];
 
-  select.innerHTML = "";
-  const agora = new Date();
+  fetch("/receitas/meses", { credentials: "include" })
+    .then(res => res.json())
+    .then(mesesDisponiveis => {
+      select.innerHTML = "";
 
-  for (let i = 0; i < 12; i++) {
-    const d = new Date(agora.getFullYear(), agora.getMonth() - i, 1);
-    const label = `${meses[d.getMonth()]} / ${d.getFullYear()}`;
-    const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    const opt = document.createElement("option");
-    opt.value = value;
-    opt.textContent = label;
-    if (i === 0) opt.selected = true;
-    select.appendChild(opt);
-  }
+      // sempre inclui o mês atual mesmo sem dados
+      const agora = new Date();
+      const mesAtual = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, "0")}`;
+      if (!mesesDisponiveis.includes(mesAtual)) {
+        mesesDisponiveis.unshift(mesAtual);
+      }
+
+      mesesDisponiveis.forEach((mesAno, i) => {
+        const [ano, mes] = mesAno.split("-");
+        const opt = document.createElement("option");
+        opt.value = mesAno;
+        opt.textContent = `${meses[Number(mes) - 1]} / ${ano}`;
+        if (i === 0) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      definirPeriodoResumoReceitas();
+      carregarReceitas();
+      atualizarCardsReceitas();
+      carregarResumoReceitas();
+    })
+    .catch(() => {
+      // fallback: gera 24 meses se a rota falhar
+      select.innerHTML = "";
+      const agora = new Date();
+      for (let i = 0; i < 24; i++) {
+        const d = new Date(agora.getFullYear(), agora.getMonth() - i, 1);
+        const opt = document.createElement("option");
+        opt.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        opt.textContent = `${meses[d.getMonth()]} / ${d.getFullYear()}`;
+        if (i === 0) opt.selected = true;
+        select.appendChild(opt);
+      }
+
+      definirPeriodoResumoReceitas();
+      carregarReceitas();
+      atualizarCardsReceitas();
+      carregarResumoReceitas();
+    });
 }
 
 function getPeriodoSelecionado() {
@@ -144,9 +171,7 @@ function salvarReceita() {
       const btn = document.getElementById("btnSalvarReceita");
       if (btn) btn.innerHTML = '<i class="fas fa-save"></i> Salvar receita';
 
-      carregarReceitas();
-      atualizarCardsReceitas();
-      carregarResumoReceitas();
+      popularFiltroPeriodo();
 
       if (typeof atualizarTudo === "function") atualizarTudo();
       if (typeof carregarAtividadesHome === "function") carregarAtividadesHome();
@@ -217,7 +242,7 @@ function aplicarFiltros() {
 
   const { inicio, fim } = getPeriodoSelecionado();
   filtradas = filtradas.filter(r => {
-    const data = r.periodo?.split("T")[0];
+    const data = (r.periodo || "").slice(0, 10);
     return data >= inicio && data <= fim;
   });
 
@@ -279,9 +304,7 @@ function excluirReceita(id) {
 
   fetch(`/receitas/${id}`, { method: "DELETE", credentials: "include" })
     .then(() => {
-      carregarReceitas();
-      atualizarCardsReceitas();
-      carregarResumoReceitas();
+      popularFiltroPeriodo();
       if (typeof atualizarTudo === "function") atualizarTudo();
     });
 }
