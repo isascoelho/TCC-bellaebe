@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esqueci minha senha | UpFinances</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="imagens/logo1.png">
+  <link rel="stylesheet" href="css/estilos1.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" style="gap:0;padding:0;">
+      <img src="imagens/logo1.png" alt="Logo" width="100" height="80" style="margin:0;padding:0;display:block;">
+      <span class="fw-bold" style="margin:0;padding:0;">UpFinances</span>
+    </a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" href="index.html">Página principal</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container login-container">
+  <div class="card" style="max-width:400px;width:100%;">
+    <div class="login-wrapper">
+
+      <div id="passo1">
+        <h2>Esqueci minha senha</h2>
+        <div class="underline"></div>
+        <p style="font-size:13px;color:#555;margin-bottom:1.2rem;">Informe seu CPF cadastrado para redefinir a senha.</p>
+
+        <label class="label-upper">Seu CPF <span class="obrigatorio">*</span></label>
+        <input type="text" id="cpfRecupera" placeholder="000.000.000-00" maxlength="14">
+
+        <p id="msgPasso1" class="text-danger" style="font-size:13px;margin-top:8px;"></p>
+
+        <button class="btn-entrar" onclick="verificarCPF()">Continuar</button>
+        <div class="forgot" style="margin-top:12px;">
+          <a href="index.html">← Voltar ao login</a>
+        </div>
+      </div>
+
+      <div id="passo2" style="display:none;">
+        <h2>Nova senha</h2>
+        <div class="underline"></div>
+        <p style="font-size:13px;color:#555;margin-bottom:1.2rem;">CPF encontrado. Defina sua nova senha.</p>
+
+        <label class="label-upper">Nova senha <span class="obrigatorio">*</span></label>
+        <input type="password" id="novaSenha">
+
+        <label class="label-upper" style="margin-top:12px;">Confirmar nova senha <span class="obrigatorio">*</span></label>
+        <input type="password" id="confirmarNovaSenha">
+
+        <p id="msgPasso2" class="text-danger" style="font-size:13px;margin-top:8px;"></p>
+
+        <button class="btn-entrar" onclick="redefinirSenha()">Salvar nova senha</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<p style="text-align:center;font-size:12px;color:#888;padding:1.5rem 0;">&copy; 2026 UpFinances</p>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.getElementById("cpfRecupera").addEventListener("input", function () {
+    let valor = this.value.replace(/\D/g, "").slice(0, 11);
+    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+    valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    this.value = valor;
+  });
+
+  function verificarCPF() {
+    const cpf = document.getElementById("cpfRecupera").value.replace(/\D/g, "");
+    const msg = document.getElementById("msgPasso1");
+
+    if (cpf.length !== 11) {
+      msg.innerText = "Informe um CPF válido.";
+      return;
+    }
+
+    fetch("/recuperar-senha/verificar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cpf })
+    })
+    .then(res => {
+      if (res.status === 404) throw new Error("CPF não encontrado.");
+      if (!res.ok) throw new Error("Erro ao verificar CPF.");
+      return res.json();
+    })
+    .then(() => {
+      msg.innerText = "";
+      document.getElementById("passo1").style.display = "none";
+      document.getElementById("passo2").style.display = "block";
+    })
+    .catch(err => {
+      msg.innerText = err.message;
+    });
+  }
+
+  function redefinirSenha() {
+    const cpf = document.getElementById("cpfRecupera").value.replace(/\D/g, "");
+    const novaSenha = document.getElementById("novaSenha").value;
+    const confirmar = document.getElementById("confirmarNovaSenha").value;
+    const msg = document.getElementById("msgPasso2");
+
+    if (!novaSenha || novaSenha.length < 4) {
+      msg.innerText = "A senha deve ter pelo menos 4 caracteres.";
+      return;
+    }
+
+    if (novaSenha !== confirmar) {
+      msg.innerText = "As senhas não conferem.";
+      return;
+    }
+
+    fetch("/recuperar-senha/redefinir", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cpf, novaSenha })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao redefinir senha.");
+      return res.json();
+    })
+    .then(() => {
+      alert("Senha redefinida com sucesso!");
+      window.location.href = "index.html";
+    })
+    .catch(err => {
+      msg.innerText = err.message;
+    });
+  }
+</script>
+
+</body>
+</html>

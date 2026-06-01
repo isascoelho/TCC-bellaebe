@@ -36,9 +36,16 @@ function formatarValor(valor) {
 
 function formatarData(data) {
   if (!data) return "-";
-  const dt = new Date(data);
-  if (isNaN(dt.getTime())) return data;
-  return dt.toLocaleDateString("pt-BR");
+  // Evita problema de timezone: usa apenas a parte da data
+  const soData = (typeof data === "string" ? data : data.toISOString()).slice(0, 10);
+  const [ano, mes, dia] = soData.split("-").map(Number);
+  return new Date(ano, mes - 1, dia).toLocaleDateString("pt-BR");
+}
+
+function getPeriodoAtual() {
+  if (periodoSelecionado) return periodoSelecionado;
+  const agora = new Date();
+  return `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, "0")}`;
 }
 
 /* =========================
@@ -58,7 +65,6 @@ function preencherSelectPeriodo() {
     .then(mesesDisponiveis => {
       selectPeriodo.innerHTML = "";
 
-      // sempre inclui o mês atual mesmo sem dados
       const agora = new Date();
       const mesAtual = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, "0")}`;
       if (!mesesDisponiveis.includes(mesAtual)) {
@@ -83,7 +89,6 @@ function preencherSelectPeriodo() {
       carregarResumoDespesas();
     })
     .catch(() => {
-      // fallback: gera 24 meses se a rota falhar
       selectPeriodo.innerHTML = "";
       const agora = new Date();
       for (let i = 0; i < 24; i++) {
@@ -142,18 +147,11 @@ function definirPeriodoResumo() {
     "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"
   ];
 
-  if (periodoSelecionado) {
-    const [ano, mes] = periodoSelecionado.split("-");
-    const periodoEl = document.getElementById("periodoResumo");
-    if (periodoEl) {
-      periodoEl.innerText = `Período: ${meses[parseInt(mes) - 1]} / ${ano}`;
-    }
-  } else {
-    const agora = new Date();
-    const periodoEl = document.getElementById("periodoResumo");
-    if (periodoEl) {
-      periodoEl.innerText = `Período: ${meses[agora.getMonth()]} / ${agora.getFullYear()}`;
-    }
+  const periodo = getPeriodoAtual();
+  const [ano, mes] = periodo.split("-");
+  const periodoEl = document.getElementById("periodoResumo");
+  if (periodoEl) {
+    periodoEl.innerText = `Período: ${meses[parseInt(mes) - 1]} / ${ano}`;
   }
 }
 
@@ -175,8 +173,13 @@ function salvarDespesa() {
     return;
   }
 
-  const despesa = { periodo, valor, categoria: categoria || null, banco: banco || null,
-    descricao: descricao || null, situacao, periodicidade, parcelamento };
+  const despesa = {
+    periodo, valor,
+    categoria: categoria || null,
+    banco: banco || null,
+    descricao: descricao || null,
+    situacao, periodicidade, parcelamento
+  };
 
   const metodo = despesaEditando ? "PUT" : "POST";
   const url = despesaEditando ? `/despesas/${despesaEditando}` : "/despesas";
@@ -337,13 +340,8 @@ function atualizarCardsDespesas() {
   fetch("/despesas", { credentials: "include" })
     .then(res => res.json())
     .then(despesas => {
-      let filtradas = despesas || [];
-      if (periodoSelecionado) {
-        filtradas = filtradas.filter(d => {
-          const mesAno = (d.periodo || "").slice(0, 7);
-          return mesAno === periodoSelecionado;
-        });
-      }
+      const periodo = getPeriodoAtual();
+      let filtradas = (despesas || []).filter(d => (d.periodo || "").slice(0, 7) === periodo);
 
       if (!filtradas.length) {
         document.getElementById("totalMesDespesa").innerText = "R$ 0,00";
@@ -387,21 +385,15 @@ function carregarResumoDespesas() {
   fetch("/despesas", { credentials: "include" })
     .then(res => res.json())
     .then(despesas => {
-      let filtradas = despesas || [];
+      const periodo = getPeriodoAtual();
+      const filtradas = (despesas || []).filter(d => (d.periodo || "").slice(0, 7) === periodo);
 
-      if (periodoSelecionado) {
-        filtradas = filtradas.filter(d => {
-          const mesAno = (d.periodo || "").slice(0, 7);
-          return mesAno === periodoSelecionado;
-        });
-      }
-
-      const resumoTotal     = document.getElementById("resumoTotal");
-      const resumoMedia     = document.getElementById("resumoMedia");
-      const resumoMaior     = document.getElementById("resumoMaior");
-      const resumoEstado    = document.getElementById("resumoEstado");
-      const categoriaMaior  = document.getElementById("categoriaMaiorGasto");
-      const periodoResumo   = document.getElementById("periodoResumo");
+      const resumoTotal    = document.getElementById("resumoTotal");
+      const resumoMedia    = document.getElementById("resumoMedia");
+      const resumoMaior    = document.getElementById("resumoMaior");
+      const resumoEstado   = document.getElementById("resumoEstado");
+      const categoriaMaior = document.getElementById("categoriaMaiorGasto");
+      const periodoResumo  = document.getElementById("periodoResumo");
 
       if (!filtradas.length) {
         if (resumoTotal)  resumoTotal.innerText  = "R$ 0,00";
@@ -421,8 +413,8 @@ function carregarResumoDespesas() {
       if (resumoMaior)  resumoMaior.innerText  = `R$ ${formatarValor(maior)}`;
       if (resumoEstado) resumoEstado.hidden     = true;
 
-      if (periodoResumo && periodoSelecionado) {
-        const [ano, mes] = periodoSelecionado.split("-");
+      if (periodoResumo) {
+        const [ano, mes] = periodo.split("-");
         const meses = ["","Janeiro","Fevereiro","Março","Abril","Maio","Junho",
                        "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
         periodoResumo.innerText = `Período: ${meses[parseInt(mes)]} / ${ano}`;
@@ -445,15 +437,12 @@ function aplicarFiltros() {
   const categoria = document.getElementById("filtro-categoria").value.toLowerCase();
   const status    = document.getElementById("filtro-status").value;
   const ordem     = document.getElementById("filtro-ordem").value;
+  const periodo   = getPeriodoAtual();
 
   let filtradas = JSON.parse(JSON.stringify(despesasOriginais));
 
-  if (periodoSelecionado) {
-    filtradas = filtradas.filter(d => {
-      const mesAno = (d.periodo || "").slice(0, 7);
-      return mesAno === periodoSelecionado;
-    });
-  }
+  // Filtra pelo período selecionado (sempre garante um valor)
+  filtradas = filtradas.filter(d => (d.periodo || "").slice(0, 7) === periodo);
 
   if (busca) {
     filtradas = filtradas.filter(d =>

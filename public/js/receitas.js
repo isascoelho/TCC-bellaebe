@@ -36,7 +36,10 @@ function formatarValor(valor) {
 }
 
 function formatarData(data) {
-  return new Date(data).toLocaleDateString("pt-BR");
+  if (!data) return "-";
+  const soData = (typeof data === "string" ? data : data.toISOString()).slice(0, 10);
+  const [ano, mes, dia] = soData.split("-").map(Number);
+  return new Date(ano, mes - 1, dia).toLocaleDateString("pt-BR");
 }
 
 function limparFormulario() {
@@ -63,7 +66,6 @@ function popularFiltroPeriodo() {
     .then(mesesDisponiveis => {
       select.innerHTML = "";
 
-      // sempre inclui o mês atual mesmo sem dados
       const agora = new Date();
       const mesAtual = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, "0")}`;
       if (!mesesDisponiveis.includes(mesAtual)) {
@@ -85,7 +87,6 @@ function popularFiltroPeriodo() {
       carregarResumoReceitas();
     })
     .catch(() => {
-      // fallback: gera 24 meses se a rota falhar
       select.innerHTML = "";
       const agora = new Date();
       for (let i = 0; i < 24; i++) {
@@ -104,28 +105,28 @@ function popularFiltroPeriodo() {
     });
 }
 
+// CORRIGIDO: sem toISOString() para evitar desvio de fuso horário
 function getPeriodoSelecionado() {
   const value = document.getElementById("filtro-periodo")?.value;
   const agora = new Date();
 
+  let ano, mes;
+
   if (!value) {
-    const ano = agora.getFullYear();
-    const mes = agora.getMonth();
-    return {
-      inicio: new Date(ano, mes, 1).toISOString().split("T")[0],
-      fim: new Date(ano, mes + 1, 0).toISOString().split("T")[0],
-      mes, ano
-    };
+    ano = agora.getFullYear();
+    mes = agora.getMonth(); // 0-based
+  } else {
+    const [anoStr, mesStr] = value.split("-");
+    ano = Number(anoStr);
+    mes = Number(mesStr) - 1; // 0-based
   }
 
-  const [ano, mesStr] = value.split("-");
-  const mes = Number(mesStr) - 1;
-  return {
-    inicio: new Date(Number(ano), mes, 1).toISOString().split("T")[0],
-    fim: new Date(Number(ano), mes + 1, 0).toISOString().split("T")[0],
-    mes,
-    ano: Number(ano)
-  };
+  // Monta as datas localmente (sem UTC) e formata manualmente
+  const inicio = `${ano}-${String(mes + 1).padStart(2, "0")}-01`;
+  const ultimoDia = new Date(ano, mes + 1, 0).getDate();
+  const fim = `${ano}-${String(mes + 1).padStart(2, "0")}-${String(ultimoDia).padStart(2, "0")}`;
+
+  return { inicio, fim, mes, ano };
 }
 
 function definirPeriodoResumoReceitas() {
@@ -280,7 +281,7 @@ function editarReceita(id) {
       if (!r) { alert("Receita não encontrada."); return; }
 
       document.getElementById("valor").value = r.valor;
-      document.getElementById("data").value = r.periodo.split("T")[0];
+      document.getElementById("data").value = (r.periodo || "").slice(0, 10);
       document.getElementById("categoria").value = r.categoria;
       document.getElementById("banco").value = r.banco;
       document.getElementById("periodicidade").value = r.periodicidade;
@@ -318,17 +319,17 @@ function atualizarCardsReceitas() {
     fetch("/receitas/ultima", { credentials: "include" }).then(r => r.json())
   ])
     .then(([totalMes, ultimaReceita]) => {
-      const totalValor = Number(totalMes?.total || 0);
+      const totalValor  = Number(totalMes?.total || 0);
       const ultimaValor = Number(ultimaReceita?.valor || 0);
 
       const totalMesEl   = document.getElementById("totalMes");
       const ultimaEl     = document.getElementById("ultimaReceita");
       const ultimaDataEl = document.getElementById("ultimaReceitaData");
 
-      if (totalMesEl) totalMesEl.innerText = `R$ ${formatarValor(totalValor)}`;
-      if (ultimaEl) ultimaEl.innerText = ultimaReceita ? `R$ ${formatarValor(ultimaValor)}` : "—";
+      if (totalMesEl)   totalMesEl.innerText  = `R$ ${formatarValor(totalValor)}`;
+      if (ultimaEl)     ultimaEl.innerText     = ultimaReceita ? `R$ ${formatarValor(ultimaValor)}` : "—";
       if (ultimaDataEl && ultimaReceita?.periodo) {
-        ultimaDataEl.innerText = new Date(ultimaReceita.periodo).toLocaleDateString("pt-BR");
+        ultimaDataEl.innerText = formatarData(ultimaReceita.periodo);
       }
     })
     .catch(err => console.error("Erro ao atualizar cards:", err));

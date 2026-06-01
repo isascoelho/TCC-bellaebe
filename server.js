@@ -881,6 +881,44 @@ app.put("/me/senha", auth, (req, res) => {
 
 
 /* =========================
+   RECUPERAR SENHA
+========================= */
+app.post("/recuperar-senha/verificar", (req, res) => {
+  let { cpf } = req.body;
+  cpf = (cpf || "").replace(/\D/g, "").trim();
+
+  if (!cpf) return res.status(400).json({ error: "CPF obrigatório" });
+
+  db.query(
+    "SELECT ID FROM usuario WHERE cpf = ? LIMIT 1",
+    [cpf],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: true });
+      if (!result.length) return res.status(404).json({ error: "CPF não encontrado" });
+      res.json({ success: true });
+    }
+  );
+});
+
+app.post("/recuperar-senha/redefinir", (req, res) => {
+  let { cpf, novaSenha } = req.body;
+  cpf = (cpf || "").replace(/\D/g, "").trim();
+  novaSenha = (novaSenha || "").trim();
+
+  if (!cpf || !novaSenha) return res.status(400).json({ error: "Campos obrigatórios" });
+
+  db.query(
+    "UPDATE usuario SET senha = ? WHERE cpf = ?",
+    [novaSenha, cpf],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: true });
+      if (result.affectedRows === 0) return res.status(404).json({ error: "CPF não encontrado" });
+      res.json({ success: true });
+    }
+  );
+});
+
+/* =========================
    LOGOUT / EXCLUIR CONTA
 ========================= */
 app.post("/logout", (req, res) => {

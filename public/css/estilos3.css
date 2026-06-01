@@ -1521,9 +1521,9 @@ button.acao.excluir:hover { background: rgba(255, 107, 107, 0.25); }
   color: #f59e0b;
 }
 
-.kpi-icon.icon-wallet { color: #af7107; background-color: #f4e6d1; }
-.kpi-icon.icon-trending { color: #0c7451; background-color: #d8f7d6; }
-.kpi-icon.icon-clock { color: #7b1313; background-color: #f7cfca; }
+.kpi-icon.icon-wallet { color: #b50e03; background-color: #f7ddd6; }
+.kpi-icon.icon-trending { color: #b50e03; background-color: #f7ddd6; }
+.kpi-icon.icon-clock { color: #e3b41a; background-color: #f7eab6; }
 .kpi-icon.icon-average { color: #32117e; background-color: #efdaf6; }
 
 .kpi-content { display: flex; flex-direction: column; gap: 6px; flex: 1; }

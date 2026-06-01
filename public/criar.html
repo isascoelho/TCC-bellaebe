@@ -4,120 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crie sua conta</title>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-DQvkBjpPgn7RC31MCQoOeC9TI2kdqa4+BSgNMNj8v77fdC77Kj5zpWFTJaaAoMbC" crossorigin="anonymous">
-      <link rel="icon" type="image/png" href="imagens/logo1.png">
-     <link rel="stylesheet" href="css/estilos2.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="imagens/logo1.png">
+    <link rel="stylesheet" href="css/estilos2.css">
 </head>
 <body>
+
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-    <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center" style="gap: 0; padding: 0;">
-        <img src="imagens/logo1.png" alt="Logo" width="100" height="80"
-          style="margin: 0; padding: 0; display: block;">
-        <span class="fw-bold" style="margin: 0; padding: 0;">SmartCash</span>
-      </a>
-
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" href="index.html">Página principal</a>
-          </li>
-        </ul>
-</div>
-</div>
-</nav>
-
-
-
-<div class="container my-5 d-flex justify-content-center form-box">
-  <div class="card shadow">
-    <div class="card-body">
-          <div class="stepper d-flex justify-content-center mb-4">
-          <div class="step active">
-            <div class="circle">1</div>
-            <div class="label">
-              <strong>Informações de usuário</strong><br>
-              <small>Preencha seus dados</small>
-            </div>
-          </div>
-          <div class="step">
-            <div class="circle">2</div>
-            <div class="label">
-              <strong>Preencher senha</strong><br>
-              <small>Preencha e confirme sua senha</small>
-            </div>
-          </div>
-        </div>
-        
-       <h3 class="card-title text-center mb-4">Preencha seus dados pessoais</h3>
-      <form id="cadastroForm" class="row g-2">
-
-        <div class="col-md-12">
-          <label for="nome" class="form-label">Nome completo<span class="obrigatorio">*</span></label>
-          <input type="text" class="form-control" id="nome" placeholder="Isabella Sofia Machado Coelho" required>
-        </div>
-
-         <div class="col-md-6">
-          <label for="email" class="form-label">e-mail</label>
-          <input type="email" class="form-control" id="email" placeholder="xxxxxxxxxxxxxxx@gmail.com">
-        </div>
-
-        <div class="col-md-6">
-          <label for="cpf" class="form-label">CPF<span class="obrigatorio">*</span></label>
-          <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" required>
-        </div>
-
-        <div class="col-md-6">
-          <label for="nascimento" class="form-label">Data de nascimento<span class="obrigatorio">*</span></label>
-          <input type="date" class="form-control" id="data_nascimento">
-        </div>
-
-        
-        <div class="col-md-6">
-          <label for="telefone" class="form-label">Telefone<span class="obrigatorio">*</span></label>
-          <input type="tel" class="form-control" id="fone" placeholder="(00) 00000-0000">
-        </div>
-
-    <div class="col-12 text-center">
-  <input type="submit" value="Próximo" class="btn btn-primary px-5" />
-</div>
-<p class="aviso">* Campos obrigatórios</p>
-      </form> 
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" style="gap:0;padding:0;">
+      <img src="imagens/logo1.png" alt="Logo" width="100" height="80" style="margin:0;padding:0;display:block;">
+      <span class="fw-bold" style="margin:0;padding:0;">UpFinances</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" href="index.html">Página principal</a>
+        </li>
+      </ul>
     </div>
   </div>
-  
+</nav>
 
-</div>
+<div class="container my-5 d-flex justify-content-center form-box">
+  <div class="card" style="max-width:560px;width:100%;border-radius:16px;border:0.5px solid #e0e0e0;box-shadow:0 4px 24px rgba(0,0,0,0.07);padding:2rem 2.5rem;">
 
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <img src="imagens/logo1.png" alt="Logo SmartCash" width="90" height="70">
-        <span class="fw-bold">SmartCash</span>
+    <!-- STEPPER -->
+    <div class="stepper">
+      <div class="step active">
+        <div class="circle">1</div>
+        <div class="label">
+          <strong>Informações de usuário</strong>
+          <small>Preencha seus dados</small>
+        </div>
       </div>
-
-      <p class="footer-pill">Simples • Seguro • Educativo</p>
-
-      <div class="footer-copy">
-        <p>&copy; 2026 SmartCash. Todos os direitos reservados.</p>
-        <p>Este site foi desenvolvido para fins educativos e pessoais.</p>
+      <div class="step">
+        <div class="circle">2</div>
+        <div class="label">
+          <strong>Preencher senha</strong>
+          <small>Confirme sua senha</small>
+        </div>
       </div>
     </div>
-  </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js" integrity="sha384-YUe2LzesAfftltw+PEaao2tjU/QATaW/rOitAq67e0CT0Zi2VVRL0oC4+gAaeBKu" crossorigin="anonymous"></script>     
+    <h3 class="card-title text-center mb-4">Preencha seus dados pessoais</h3>
+
+    <form id="cadastroForm" class="row g-3">
+
+      <div class="col-12">
+        <label class="form-label-upper">Nome completo <span class="obrigatorio">*</span></label>
+        <input type="text" class="form-control" id="nome" placeholder="Isabella Sofia Machado Coelho" required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label-upper">E-mail</label>
+        <input type="email" class="form-control" id="email" placeholder="seu@email.com">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label-upper">CPF <span class="obrigatorio">*</span></label>
+        <input type="text" class="form-control" id="cpf" placeholder="000.000.000-00" required>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label-upper">Nascimento <span class="obrigatorio">*</span></label>
+        <input type="date" class="form-control" id="data_nascimento">
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label-upper">Telefone <span class="obrigatorio">*</span></label>
+        <input type="tel" class="form-control" id="fone" placeholder="(00) 00000-0000">
+      </div>
+
+      <div class="col-12 d-flex justify-content-between align-items-center mt-2">
+        <span class="obrigatorio" style="font-size:11px;">* Campos obrigatórios</span>
+        <button type="submit" class="btn-proximo">Próximo →</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<p style="text-align: center; font-size: 12px; color: #888; padding: 1.5rem 0;">
+  &copy; 2026 UpFinances
+</p>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.4/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("cadastroForm");
-
-  form.addEventListener("submit", function (e) {
+  document.getElementById("cadastroForm").addEventListener("submit", function (e) {
     e.preventDefault();
-
     const dadosUsuario = {
       nome: document.getElementById("nome").value,
       email: document.getElementById("email").value,
@@ -125,20 +107,11 @@ document.addEventListener("DOMContentLoaded", function () {
       data_nascimento: document.getElementById("data_nascimento").value,
       fone: document.getElementById("fone").value
     };
-
-    console.log("📦 SALVANDO NO localStorage:", dadosUsuario);
-
-    localStorage.setItem(
-      "dadosCadastro",
-      JSON.stringify(dadosUsuario)
-    );
-
+    localStorage.setItem("dadosCadastro", JSON.stringify(dadosUsuario));
     window.location.href = "senha.html";
   });
 });
 </script>
-
-
 
 </body>
 </html>

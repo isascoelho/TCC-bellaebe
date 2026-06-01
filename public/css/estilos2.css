@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
-:root{
+:root {
   --brand: #0d0a48;
   --bg: rgb(215, 224, 251);
   --gold: #FFD700;
@@ -9,53 +9,50 @@
 }
 
 .navbar-brand {
-      gap: 0;
-      padding: 0;
-    }
-
-    .navbar-brand img {
-      margin: 0;
-      padding: 0;
-      display: block;
-    }
-
-    .navbar-brand span {
-      margin: 0;
-      padding: 0;
-    }
-
-    /* Espaçamento entre os botões da navbar */
-    .navbar-nav .nav-item {
-      margin-right: 1.5rem;
-    }
-
-    .navbar-nav .nav-item:last-child {
-      margin-right: 0;
-    }
-
-    body{
-        background-color: rgb(196, 210, 255) !important;
-         font-family: 'Poppins', sans-serif;
-    }
-
-    .navbar-custom {
-    background-color: #0d0a48; /* Roxo escuro, por exemplo */
-    }
-
-    .navbar-custom .nav-link,
-    .navbar-custom .navbar-brand {
-     color: white;
-    }
-
-    .navbar-custom .nav-link:hover {
-    color: #FFD700; /* Dourado no hover, opcional */
-    }
-
-.card-title{
-    color:#0d0a48
+  gap: 0;
+  padding: 0;
 }
 
+.navbar-brand img {
+  margin: 0;
+  padding: 0;
+  display: block;
+}
 
+.navbar-brand span {
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-nav .nav-item {
+  margin-right: 1.5rem;
+}
+
+.navbar-nav .nav-item:last-child {
+  margin-right: 0;
+}
+
+body {
+  background-color: rgb(196, 210, 255) !important;
+  font-family: 'Poppins', sans-serif;
+}
+
+.navbar-custom {
+  background-color: #0d0a48;
+}
+
+.navbar-custom .nav-link,
+.navbar-custom .navbar-brand {
+  color: white;
+}
+
+.navbar-custom .nav-link:hover {
+  color: #FFD700;
+}
+
+.card-title {
+  color: #0d0a48;
+}
 
 html, body {
   height: 100%;
@@ -69,13 +66,12 @@ body > .container {
 }
 
 .form-box {
-  max-width: 600px; /* você pode ajustar para 500px, 400px, etc */
+  max-width: 600px;
   width: 100%;
 }
 
 .card-body1 {
   padding: 20px;
-
 }
 
 .form-control {
@@ -83,83 +79,115 @@ body > .container {
   font-size: 14px;
 }
 
+/* ===== STEPPER ===== */
 .stepper {
-  gap: 2rem;
+  display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: nowrap;
 }
 
 .step {
   display: flex;
   align-items: center;
-  flex-direction: column;
-  text-align: center;
-  color: #999;
+  gap: 10px;
+  opacity: 0.35;
 }
 
-.step.active {
-  color: #3B5BDB; /* azul moderno */
+.step.active,
+.step.done {
+  opacity: 1;
 }
 
-.circle {
-  border: 2px solid currentColor;
+.step .circle {
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  border: 1.5px solid #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
+  color: #888;
+  margin-bottom: 0;
 }
 
-.site-footer{
-  background-color: var(--brand);
+.step.active .circle {
+  background: #0d0a48;
+  border-color: #0d0a48;
   color: #fff;
-  padding: 48px 0 42px;
-  text-align: center;
 }
 
-.footer-inner{
+.step.done .circle {
+  background: #0d0a48;
+  border-color: #0d0a48;
+  color: #fff;
+  font-size: 16px;
+}
+
+.step .label {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 14px;
-}
-
-.footer-brand{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 20px;
-}
-
-.footer-pill{
+  white-space: nowrap;
   font-size: 13px;
-  color: rgba(255,255,255,.75);
-  margin: 4px 0 6px;
 }
 
-.footer-copy{
-  font-size: 13px;
-  color: rgba(255,255,255,.70);
-  line-height: 1.6;
+.step .label strong {
+  color: #0d0a48;
+  font-weight: 500;
 }
+
+.step .label small {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+}
+
+/* ===== LABELS DOS CAMPOS ===== */
+.form-label-upper {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+/* ===== BOTÃO PRÓXIMO / FINALIZAR ===== */
+.btn-proximo {
+  background: #0d0a48;
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btn-proximo:hover {
+  opacity: 0.85;
+}
+
 
 .obrigatorio {
   color: red;
 }
 
 .formulario {
-  position: relative; /* importante */
+  position: relative;
 }
 
 .aviso {
   font-size: 10px;
   color: red;
   margin-top: 10px;
-
-  /* deixa no canto inferior esquerdo do form */
   position: absolute;
   bottom: 10px;
   left: 10px;

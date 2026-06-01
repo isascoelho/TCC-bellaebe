@@ -41,43 +41,24 @@ function atualizarResumoDashboard() {
       return res.json();
     })
     .then(data => {
-      const totalMesEl = document.getElementById("totalMes");
+      const totalMesEl      = document.getElementById("totalMes");
       const ultimaReceitaEl = document.getElementById("ultimaReceita");
       const ultimaDespesaEl = document.getElementById("ultimaDespesa");
-      const saldoEl = document.getElementById("saldoValor");
+      const saldoEl         = document.getElementById("saldoValor");
 
-      const totalMes = Number(data.totalMes || 0);
-      const saldo = Number(data.saldo || 0);
+      // CORRIGIDO: a rota retorna totalReceitas (não totalMes)
+      const totalReceitas = Number(data.totalReceitas || 0);
+      const saldo         = Number(data.saldo || 0);
       const ultimaReceita = data.ultimaReceita ? Number(data.ultimaReceita.valor) : 0;
       const ultimaDespesa = data.ultimaDespesa ? Number(data.ultimaDespesa.valor) : 0;
 
-      if (totalMesEl) {
-        totalMesEl.innerText = formatarMoedaBR(totalMes);
-      }
+      if (totalMesEl)      totalMesEl.innerText      = formatarMoedaBR(totalReceitas);
+      if (ultimaReceitaEl) ultimaReceitaEl.innerText  = data.ultimaReceita ? formatarMoedaBR(ultimaReceita) : "—";
+      if (ultimaDespesaEl) ultimaDespesaEl.innerText  = data.ultimaDespesa ? formatarMoedaBR(ultimaDespesa) : "—";
+      if (saldoEl)         saldoEl.innerText          = formatarMoedaBR(saldo);
 
-      if (ultimaReceitaEl) {
-        ultimaReceitaEl.innerText = data.ultimaReceita
-          ? formatarMoedaBR(ultimaReceita)
-          : "—";
-      }
-
-      if (ultimaDespesaEl) {
-        ultimaDespesaEl.innerText = data.ultimaDespesa
-          ? formatarMoedaBR(ultimaDespesa)
-          : "—";
-      }
-
-      if (saldoEl) {
-        saldoEl.innerText = formatarMoedaBR(saldo);
-      }
-
-      // avisa o resumo inteligente que os dados chegaram
       document.dispatchEvent(new CustomEvent("dashboardResumoAtualizado", {
-        detail: {
-          saldo,
-          ultimaReceita,
-          ultimaDespesa
-        }
+        detail: { saldo, ultimaReceita, ultimaDespesa }
       }));
     })
     .catch(err => {
@@ -96,7 +77,7 @@ function carregarAtividadesHome() {
     .then(([receitas, despesas]) => {
       const atividades = [];
 
-      receitas.forEach(r => {
+      (receitas || []).forEach(r => {
         atividades.push({
           tipo: "receita",
           nome: r.categoria || "Receita",
@@ -105,7 +86,7 @@ function carregarAtividadesHome() {
         });
       });
 
-      despesas.forEach(d => {
+      (despesas || []).forEach(d => {
         atividades.push({
           tipo: "despesa",
           nome: d.categoria || "Despesa",
