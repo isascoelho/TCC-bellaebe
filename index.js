@@ -80,6 +80,7 @@ app.post("/cadastro", (req, res) => {
 
   email = email.trim().toLowerCase();
   senha = senha.trim();
+  cpf = (cpf || "").replace(/\D/g, "").trim();
 
   const sql = `
     INSERT INTO usuario
