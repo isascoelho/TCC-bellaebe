@@ -929,16 +929,27 @@ app.post("/logout", (req, res) => {
 });
 
 app.delete("/me", auth, (req, res) => {
-  db.query(
-    "DELETE FROM usuario WHERE ID = ?",
-    [req.session.userId],
-    err => {
+  const id = req.session.userId;
+
+  db.query("DELETE FROM agenda WHERE codusuario = ?", [id], err => {
+    if (err) return res.status(500).json({ error: true });
+
+    db.query("DELETE FROM receita WHERE idusuario = ?", [id], err => {
       if (err) return res.status(500).json({ error: true });
-      req.session.destroy(() => {
-        res.json({ success: true });
+
+      db.query("DELETE FROM despesa WHERE idusuario = ?", [id], err => {
+        if (err) return res.status(500).json({ error: true });
+
+        db.query("DELETE FROM usuario WHERE ID = ?", [id], err => {
+          if (err) return res.status(500).json({ error: true });
+
+          req.session.destroy(() => {
+            res.json({ success: true });
+          });
+        });
       });
-    }
-  );
+    });
+  });
 });
 
 /* =========================
