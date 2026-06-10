@@ -453,7 +453,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fetch("/me", { method: "DELETE", credentials: "include" })
         .then(res => {
           if (!res.ok) throw new Error();
-          window.location.href = "/login.html";
+          window.location.href = "/home.html";
         })
         .catch(() => alert("Erro ao excluir conta"));
     });
