@@ -145,15 +145,20 @@ app.get("/me", auth, (req, res) => {
 
 app.put("/me", auth, (req, res) => {
   const { field, value } = req.body;
-const permitidos = ["cpf", "data_nascimento", "fone", "email", "sexo", "endereco", "vinculo"];
+  const permitidos = ["cpf", "data_nascimento", "fone", "email", "sexo", "endereco", "vinculo"];
 
   if (!permitidos.includes(field)) {
     return res.status(400).json({ error: "Campo inválido" });
   }
 
+  let finalValue = value;
+  if (field === "cpf") {
+    finalValue = value.replace(/\D/g, "");
+  }
+
   db.query(
     `UPDATE usuario SET ${field} = ? WHERE ID = ?`,
-    [value, req.session.userId],
+    [finalValue, req.session.userId],
     err => {
       if (err) {
         console.error("Erro ao atualizar usuário:", err);

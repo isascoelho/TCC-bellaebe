@@ -68,7 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (value && String(value).trim() !== "") {
         if (field === "data_nascimento") {
-          valueEl.textContent = new Date(value).toLocaleDateString("pt-BR");
+          const [ano, mes, dia] = String(value).slice(0, 10).split("-").map(Number);
+valueEl.textContent = `${String(dia).padStart(2,"0")}/${String(mes).padStart(2,"0")}/${ano}`;
         } else if (field === "cpf") {
           valueEl.textContent = mascaraCPF(String(value));
         } else {
@@ -153,7 +154,10 @@ document.addEventListener("DOMContentLoaded", () => {
       input.value = mascaraCPF(String(user.cpf));
     } else {
       input.value = user?.[field] || "";
-    }
+    } 
+    if (field === "data_nascimento" && input.value) {
+  input.value = input.value.slice(0, 10);
+}
 
     // aplica máscara em tempo real no CPF
     if (field === "cpf") {
@@ -314,6 +318,16 @@ document.addEventListener("DOMContentLoaded", () => {
               body: JSON.stringify({ field: c.field, value })
             }).then(() => { user[c.field] = value; });
           });
+    const cpfEl = document.getElementById("edit_cpf");
+        if (cpfEl && cpfEl.value.trim()) {
+          const apenasNumeros = cpfEl.value.replace(/\D/g, "");
+          if (apenasNumeros.length !== 11) {
+            alert("CPF inválido. Digite os 11 dígitos.");
+            return;
+          }
+        }
+
+
 
         Promise.all(promessas)
           .then(() => { fecharModal(); render(); })
@@ -356,6 +370,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const value = modalInputAtual.value.trim();
       if (!value) return;
+
+        if (currentField === "cpf") {
+        const apenasNumeros = value.replace(/\D/g, "");
+        if (apenasNumeros.length !== 11) {
+          alert("CPF inválido. Digite os 11 dígitos.");
+          return;
+        }
+      }
 
       fetch("/me", {
         method: "PUT",
