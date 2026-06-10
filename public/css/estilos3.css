@@ -2164,3 +2164,105 @@ button.acao.excluir:hover { background: rgba(255, 107, 107, 0.25); }
   grid-template-columns: repeat(6, 1fr);
   align-items: end; /* alinha todos os campos na mesma linha base */
 }
+
+.btn-hamburger {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 9999;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #0d0a48;
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 98;
+}
+
+.sidebar-overlay.ativo { display: block; }
+
+@media (max-width: 768px) {
+  .offcanvas {
+    transform: translateX(-100%) !important;
+    visibility: hidden !important;
+    transition: transform 0.3s ease, visibility 0.3s ease !important;
+    z-index: 99 !important;
+  }
+
+  .offcanvas.sidebar-aberta {
+    transform: translateX(0) !important;
+    visibility: visible !important;
+  }
+
+  .content {
+    margin-left: 0 !important;
+    padding: 70px 16px 24px !important;
+  }
+
+  .config-container {
+    margin-left: 0 !important;
+    padding: 70px 16px 24px !important;
+  }
+
+  .btn-hamburger { display: flex; }
+
+  .receitas-form .grid,
+  .receitas-bottom-layout .receitas-form .grid,
+  .despesas-bottom-layout .receitas-form .grid,
+  .agenda-bottom-layout .receitas-form .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .btnSalvarReceita,
+  .receitas-bottom-layout .btnSalvarReceita,
+  .despesas-bottom-layout .btnSalvarReceita,
+  .agenda-bottom-layout .btnSalvarPlanejamento {
+    grid-column: 1 / -1 !important;
+    justify-self: stretch !important;
+    width: 100% !important;
+  }
+
+  .graficos-kpis, .despesas-kpis { grid-template-columns: 1fr !important; }
+  .graficos-grid { grid-template-columns: 1fr !important; }
+  .config-grid { grid-template-columns: 1fr !important; }
+  .pagina-home .home-layout { grid-template-columns: 1fr !important; }
+  .pagina-home .dashboard-cards { grid-template-columns: 1fr !important; }
+  .resumo-cards { grid-template-columns: 1fr !important; }
+  .detalhes-resumo-topo, .detalhes-grid { grid-template-columns: 1fr !important; }
+  .graficos-topbar { flex-direction: column !important; }
+  .graficos-topbar-actions { width: 100% !important; }
+  .toolbar-select, .toolbar-btn { width: 100% !important; justify-content: center !important; }
+  .despesas-header { flex-direction: column !important; }
+  .despesas-header-actions { width: 100% !important; flex-direction: column !important; }
+  .filtro-periodo, .btn-nova-despesa { width: 100% !important; justify-content: center !important; }
+  .despesas-toolbar { flex-direction: column !important; }
+  .despesas-busca-wrapper { min-width: 100% !important; }
+  .despesas-filtro { width: 100% !important; }
+  .receita-resumo { flex-direction: column !important; }
+  .resumo-bottom-row { flex-direction: column !important; }
+  .config-footer { flex-direction: column !important; gap: 12px !important; }
+  .btn-excluir, .btn-sair { width: 100% !important; justify-content: center !important; }
+  .sc-modal { width: 95vw !important; max-width: 95vw !important; }
+}
+
+@media (max-width: 480px) {
+  .content h2, .pagina-receitas h2, .pagina-despesas h2, .pagina-agenda h2 { font-size: 22px !important; }
+  .kpi-despesa, .kpi-card { padding: 16px !important; }
+  .kpi-icon { width: 44px !important; height: 44px !important; font-size: 18px !important; }
+  .kpi-content strong { font-size: 20px !important; }
+  .receita-card strong { font-size: 22px !important; }
+  .grafico-card strong { font-size: 22px !important; }
+}
