@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
 const path = require("path");
 const db = require("./db");
 const fs = require("fs");
@@ -42,12 +43,25 @@ const upload = multer({
 ========================= */
 app.use(express.json());
 
+const sessionStore = new MySQLStore({
+  host: process.env.MYSQL_HOST,
+  port: process.env.MYSQL_PORT,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
+  createDatabaseTable: true
+});
+
 app.use(session({
   secret: "smartcash-secret",
   resave: false,
   saveUninitialized: false,
+  store: sessionStore,
   cookie: {
-    httpOnly: true
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 60 * 24
   }
 }));
 
@@ -962,6 +976,10 @@ app.delete("/me", auth, (req, res) => {
 /* =========================
    SERVER
 ========================= */
-app.listen(3000, () => {
-  console.log("🚀 Fintly rodando em http://localhost:3000");
-});
+if (require.main === module) {
+  app.listen(3000, () => {
+    console.log("🚀 Fintly rodando em http://localhost:3000");
+  });
+}
+
+module.exports = app;
