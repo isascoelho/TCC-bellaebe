@@ -10,6 +10,7 @@ const multer = require("multer");
 
 
 const app = express();
+app.set("trust proxy", 1);
 
 const uploadDir = path.join(__dirname, "public", "uploads");
 
@@ -60,7 +61,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: true,
-    sameSite: "none",
+    sameSite: "lax",
     maxAge: 1000 * 60 * 60 * 24
   }
 }));
@@ -135,13 +136,31 @@ app.post("/login", (req, res) => {
   `;
 
   db.query(sql, [cpf, senha], (err, result) => {
-    if (err) return res.status(500).json({ error: "Erro no login" });
+    if (err) {
+      console.error("Erro no login:", err);
+      return res.status(500).json({ error: "Erro no login" });
+    }
+
     if (!result.length) {
-      return res.status(401).json({ error: "CPF ou senha inválidos" });
+      return res.status(401).json({
+        error: "CPF ou senha inválidos"
+      });
     }
 
     req.session.userId = result[0].ID;
-    res.json(result[0]);
+
+    req.session.save((err) => {
+      if (err) {
+        console.error("Erro ao salvar sessão:", err);
+        return res.status(500).json({
+          error: "Erro ao criar sessão"
+        });
+      }
+
+      console.log("Sessão salva. userId:", req.session.userId);
+
+      res.json(result[0]);
+    });
   });
 });
 
