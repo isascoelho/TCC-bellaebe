@@ -2266,3 +2266,86 @@ button.acao.excluir:hover { background: rgba(255, 107, 107, 0.25); }
   .receita-card strong { font-size: 22px !important; }
   .grafico-card strong { font-size: 22px !important; }
 }
+
+/* =========================
+   CORREÇÕES RESPONSIVIDADE
+========================= */
+
+@media (max-width: 768px) {
+
+  /* FORMULÁRIOS */
+
+  .receitas-form,
+  .despesas-bottom-layout .receitas-form,
+  .receitas-bottom-layout .receitas-form,
+  .agenda-bottom-layout .receitas-form {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden;
+  }
+
+  .receitas-form .grid,
+  .despesas-bottom-layout .receitas-form .grid,
+  .receitas-bottom-layout .receitas-form .grid,
+  .agenda-bottom-layout .receitas-form .grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .receitas-form input,
+  .receitas-form select,
+  .receitas-form textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+
+  /* CONFIGURAÇÕES */
+
+  .config-perfil {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .config-perfil-info {
+    min-width: 0;
+  }
+
+  .config-badge {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+}
+
+
+/* CELULARES PEQUENOS */
+
+@media (max-width: 480px) {
+
+  .config-perfil {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .config-avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .config-perfil-info {
+    min-width: 0;
+  }
+
+  .config-badge {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-left: 0;
+    margin-top: 4px;
+  }
+}
