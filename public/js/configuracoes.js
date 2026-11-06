@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnExcluir = document.querySelector(".btn-excluir");
 
   const avatar = document.getElementById("avatar");
-    const avatarInput = document.getElementById("avatarInput");
   const avatarImg = document.getElementById("avatarImg");
+  const avatarInput = document.getElementById("avatarInput");
   const btnRemoverFoto = document.getElementById("btnRemoverFoto");
 
   /* =========================
@@ -399,58 +399,36 @@ valueEl.textContent = `${String(dia).padStart(2,"0")}/${String(mes).padStart(2,"
   }
 
   /* =========================
-   FOTO DO USUÁRIO — TROCAR
-========================= */
+     FOTO DO USUÁRIO — TROCAR
+  ========================= */
+  if (avatar && avatarInput) {
+    avatar.addEventListener("click", () => avatarInput.click());
+  }
 
-if (avatar && avatarInput) {
-    avatar.addEventListener("click", (e) => {
-        if (e.target.closest("#btnRemoverFoto")) return;
-        avatarInput.click();
-    });
-}
-
-if (avatarInput) {
+  if (avatarInput) {
     avatarInput.addEventListener("change", async () => {
-        const file = avatarInput.files[0];
+      const file = avatarInput.files[0];
+      if (!file) return;
 
-        if (!file) return;
+      const formData = new FormData();
+      formData.append("foto", file);
 
-        if (!file.type.startsWith("image/")) {
-            alert("Selecione um arquivo de imagem.");
-            avatarInput.value = "";
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("foto", file);
-
-        try {
-            const res = await fetch("/me/foto", {
-                method: "POST",
-                credentials: "include",
-                body: formData
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.error || "Erro ao enviar foto");
-            }
-
-            user.foto = data.foto;
-
-            if (avatarImg) {
-                avatarImg.src = data.foto + "?t=" + Date.now();
-            }
-
-            avatarInput.value = "";
-
-        } catch (err) {
-            console.error("Erro ao enviar foto:", err);
-            alert("Não foi possível atualizar sua foto de perfil.");
-        }
+      try {
+        const res = await fetch("/me/foto", {
+          method: "POST",
+          credentials: "include",
+          body: formData
+        });
+        if (!res.ok) throw new Error("Erro ao enviar foto");
+        const data = await res.json();
+        user.foto = data.foto;
+        render();
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao enviar foto");
+      }
     });
-}
+  }
 
   /* =========================
      FOTO DO USUÁRIO — REMOVER

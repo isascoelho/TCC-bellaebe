@@ -46,20 +46,19 @@
    
   </div>
 
-<div class="config-avatar" id="avatar" style="position:relative">
-    <img id="avatarImg" src="imagens/avatar.png" alt="Foto do usuário" />
-
-    <button id="btnRemoverFoto" class="btn-remover-foto" title="Remover foto">
+  <div class="config-perfil">
+    <div class="config-avatar" id="avatar" style="position:relative">
+      <img id="avatarImg" src="imagens/avatar.png" alt="Foto do usuário" />
+      <button id="btnRemoverFoto" class="btn-remover-foto" title="Remover foto">
         <i class="fas fa-times"></i>
-    </button>
-
-    <input
-        type="file"
-        id="avatarInput"
-        accept="image/*"
-        style="display: none;"
-    />
-</div>
+      </button>
+    </div>
+    <div class="config-perfil-info">
+      <span class="user-name" id="userName"></span>
+      <span class="user-email" id="configUserEmail"></span>
+    </div>
+    <span class="config-badge">✓ Conta ativa</span>
+  </div>
 
   <input type="file" id="avatarInput" accept="image/*" style="display:none" />
 
